@@ -252,13 +252,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// ═══════════════════════════════════════════════════════════════
+// 📊 GOOGLE ANALYTICS — auto-injected before </head> on every page
+// ═══════════════════════════════════════════════════════════════
+const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PMWBHF9XY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PMWBHF9XY6', { send_page_view: true });
+</script>`;
+
 app.use((req, res, next) => {
-  const host = req.headers.host;
-  if (host && host.startsWith('www.')) {
-    const target = `https://${host.slice(4)}${req.url}`;
-    res.redirect(301, target);
-    return;
-  }
+  const originalSend = res.send;
+  res.send = function(body) {
+    if (typeof body === 'string' && body.includes('</head>')) {
+      body = body.replace('</head>', GA_SNIPPET + '\n</head>');
+    }
+    return originalSend.call(this, body);
+  };
   next();
 });
 
@@ -310,7 +323,7 @@ app.get('/favicon.ico', (req, res) => {
 app.use((req, res, next) => {
   if (!req.path.startsWith('/css/') || !req.path.endsWith('.css')) return next();
   const cached = microCache.get(req.path);
-  if (cached) { res.type('text/css'); res.set('Cache-Control', 'public, max-age=604800, immutable'); return res.send(cached); }
+  if (cached) { res.type('text/css'); res.set('Cache-Control', 'public, max-age=604800'); return res.send(cached); }
   next();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d', etag: true, lastModified: true }));
@@ -504,7 +517,7 @@ app.use('/videos', async (req, res, next) => {
           'Content-Length': slice.length,
           'Content-Type': 'video/mp4',
           'Accept-Ranges': 'bytes',
-          'Cache-Control': 'public, max-age=604800, immutable'
+          'Cache-Control': 'public, max-age=604800'
         });
         return res.end(slice);
       }
@@ -516,7 +529,7 @@ app.use('/videos', async (req, res, next) => {
     hotCache.get(filename).atime = Date.now();
     try {
       return res.sendFile(path.join(HOT_CACHE_DIR, filename), {
-        headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }
+        headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }
       });
     } catch { hotCache.delete(filename); }
   }
@@ -531,10 +544,10 @@ app.use('/videos', async (req, res, next) => {
           const start = parseInt(parts[0], 10);
           const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
           res.status(206);
-          res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' });
+          res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
           return fs.createReadStream(hddPath, { start, end });
         })()
-      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }), fs.createReadStream(hddPath));
+      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(hddPath));
     rs.pipe(res);
     rs.on('error', () => { clearTimeout(streamTimeout); res.end(); });
     res.on('close', () => { clearTimeout(streamTimeout); rs.destroy(); });
@@ -552,11 +565,11 @@ function thumbnailCache(dirs) {
     if (!filename.match(/\.(jpg|jpeg|png|webp)$/i)) return next();
     const cached = microCache.get(filename);
     if (cached) {
-      res.set('Cache-Control', 'public, max-age=604800, immutable');
+      res.set('Cache-Control', 'public, max-age=604800');
       res.type(path.extname(filename));
       return res.send(cached);
     }
-    const headers = { 'Cache-Control': 'public, max-age=604800, immutable' };
+    const headers = { 'Cache-Control': 'public, max-age=604800' };
     (function tryDir(i) {
       if (i >= dirs.length) {
         microCache.set(filename, THUMBNAIL_PLACEHOLDER);
@@ -598,7 +611,7 @@ app.use('/xamateur/videos', async (req, res, next) => {
       if (slice.length > 0 && slice.length < stat.size) {
         stats.videoDelivery.ramHits++;
         res.status(206);
-        res.set({ 'Content-Range': `bytes ${rangeStart}-${end}/${stat.size}`, 'Content-Length': slice.length, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' });
+        res.set({ 'Content-Range': `bytes ${rangeStart}-${end}/${stat.size}`, 'Content-Length': slice.length, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
         return res.end(slice);
       }
     }
@@ -606,7 +619,7 @@ app.use('/xamateur/videos', async (req, res, next) => {
 
   if (hotCache.has(filename)) {
     stats.videoDelivery.ssdHits++;
-    try { return res.sendFile(path.join(HOT_CACHE_DIR, filename), { headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' } }); }
+    try { return res.sendFile(path.join(HOT_CACHE_DIR, filename), { headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' } }); }
     catch { hotCache.delete(filename); }
   }
   // HDD read — debounced
@@ -614,8 +627,8 @@ app.use('/xamateur/videos', async (req, res, next) => {
   debounceStream(req, res, () => {
     const streamTimeout = setTimeout(() => { if (typeof rs !== 'undefined') rs.destroy(); res.end(); }, 15000);
     const rs = range
-      ? (() => { const parts = range.replace(/bytes=/, '').split('-'); const start = parseInt(parts[0], 10); const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1; res.status(206); res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }); return fs.createReadStream(hddPath, { start, end }); })()
-      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }), fs.createReadStream(hddPath));
+      ? (() => { const parts = range.replace(/bytes=/, '').split('-'); const start = parseInt(parts[0], 10); const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1; res.status(206); res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }); return fs.createReadStream(hddPath, { start, end }); })()
+      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(hddPath));
     rs.pipe(res);
     rs.on('error', () => { clearTimeout(streamTimeout); res.end(); });
     res.on('close', () => { clearTimeout(streamTimeout); rs.destroy(); });
