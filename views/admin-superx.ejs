@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super X Hero — CMS</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0b; color: #e0e0e0; padding: 20px; }
+    .admin-nav { display: flex; gap: 4px; margin-bottom: 24px; background: #1a1a1e; border-radius: 12px; padding: 4px; flex-wrap:wrap; }
+    .admin-nav a { padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #6b6b75; font-size: 13px; font-weight: 500; transition: all .2s; }
+    .admin-nav a:hover { color: #fff; background: #2a2a30; }
+    .admin-nav a.active { color: #fff; background: #ff2d55; }
+    h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; }
+    .back-link { color: #ff2d55; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 16px; }
+    .back-link:hover { text-decoration: underline; }
+    .card { background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 15px; color: #fff; margin-bottom: 16px; display:flex;align-items:center;gap:8px; }
+    .card label { display: block; color: #a0a0a8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 14px; }
+    .card label:first-child { margin-top: 0; }
+    .card input, .card textarea { width: 100%; padding: 10px 14px; background: #0a0a0b; border: 1px solid #2a2a30; border-radius: 8px; color: #fff; font-size: 13px; font-family: inherit; }
+    .card input:focus, .card textarea:focus { outline: none; border-color: #ff2d55; }
+    .card textarea { resize: vertical; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }
+    .btn { padding: 10px 24px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; margin-top: 16px; }
+    .btn-primary { background: #ff2d55; color: #fff; }
+    .btn-primary:hover { background: #ff4d6f; }
+    .btn-secondary { background: #2a2a30; color: #a0a0a8; }
+    .btn-secondary:hover { background: #3a3a40; color: #fff; }
+    .btn-small { padding: 6px 14px; font-size: 11px; margin-top: 0; }
+    .btn-danger { background: #cc2233; color: #fff; }
+    .btn-danger:hover { background: #dd3344; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+    .status { padding: 8px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .status.success { display: block; background: rgba(52,199,89,0.15); color: #34c759; border: 1px solid rgba(52,199,89,0.3); }
+    .status.error { display: block; background: rgba(255,45,85,0.15); color: #ff2d55; border: 1px solid rgba(255,45,85,0.3); }
+    .tag-item { display: flex; gap: 8px; align-items: center; padding: 8px; background: #0a0a0b; border: 1px solid #2a2a30; border-radius: 8px; margin-bottom: 6px; }
+    .tag-item input { margin-top: 0; }
+    .tag-item .drag { color: #6b6b75; cursor: grab; font-size: 16px; user-select:none; }
+    .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .col-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .hint { color: #6b6b75; font-size: 11px; margin-top: 3px; }
+  </style>
+</head>
+<body>
+  <a href="/admin" class="back-link">← Back to Dashboard</a>
+  <h1>Super X Melayu — Hero CMS</h1>
+
+  <div class="admin-nav">
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/pages">Pages</a>
+    <a href="/admin/videos">Videos</a>
+    <a href="/admin/ads">Ads</a>
+    <a href="/admin/keywords">Keywords</a>
+    <a href="/admin/super-x" class="active">Super X</a>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="card">
+    <h2>🦸 Hero Section — H1 / H2 / Subtitle</h2>
+    <label>Badge Text</label>
+    <input type="text" id="badge" placeholder="Super X Melayu">
+    <label>H1 Heading (main title)</label>
+    <input type="text" id="h1" placeholder="Super X Melayu Malay Pron — Seks Awek Tudung Lucah">
+    <label>H1 Subtitle (smaller)</label>
+    <input type="text" id="h1Sub" placeholder="Malaysian Chinese xx amateur xxx-matuer xamatuer melayu x www video rakam bilik terkini">
+    <label>Subtitle (under h1)</label>
+    <input type="text" id="subtitle" placeholder="Curated Asian Amateur Porn — xMateur xAmateur xx Amateur Asian Collection">
+  </div>
+
+  <div class="card">
+    <h2>🏷️ Niche Tags</h2>
+    <div id="nicheList"></div>
+    <button class="btn btn-secondary btn-small" onclick="addNicheTag()">+ Add Niche Tag</button>
+  </div>
+
+  <div class="card">
+    <h2>🔘 CTA Buttons</h2>
+    <div id="ctaList"></div>
+    <button class="btn btn-secondary btn-small" onclick="addCtaBtn()">+ Add CTA Button</button>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Keyword Tags (super-x-tags)</h2>
+    <p class="hint" style="margin-bottom:12px">One per line — format: label | query-string</p>
+    <textarea id="keywordTags" rows="14" placeholder="#xMateur | xmateur"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>🔗 SEO Links (hidden, search-engine only)</h2>
+    <p class="hint" style="margin-bottom:12px">One per line — format: label | /path-or-query | title-attribute</p>
+    <textarea id="seoLinks" rows="8" placeholder="Super X Melayu Malay Pron | /super-x-melayu | Super X Melayu Malay Pron - xMelayu.Online"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>📰 Section Titles (feed headings)</h2>
+    <label>Section 1 — h2</label>
+    <input type="text" id="s1" placeholder="✨ Discover">
+    <label>Section 1 — subtitle</label>
+    <input type="text" id="s1sub" placeholder="Handpicked Recommendations">
+    <label>Section 2 — h2</label>
+    <input type="text" id="s2" placeholder="🔥 Hot Now">
+    <label>Section 2 — subtitle</label>
+    <input type="text" id="s2sub" placeholder="Trending Now">
+    <label>Section 3 — h2</label>
+    <input type="text" id="s3" placeholder="🧕 Awek Tudung">
+    <label>Section 3 — subtitle</label>
+    <input type="text" id="s3sub" placeholder="Awek tudung malay terbaru">
+    <label>Section 4 — h2</label>
+    <input type="text" id="s4" placeholder="💦 Montok">
+    <label>Section 4 — subtitle</label>
+    <input type="text" id="s4sub" placeholder="Montok melayu gemuk">
+  </div>
+
+  <div class="card">
+    <h2>🗂️ Category Section Titles (filtered rows)</h2>
+    <div class="col-2">
+      <div><label>Tudung</label><input type="text" id="cat-tudung" placeholder="🧕 Awek Tudung"></div>
+      <div><label>Montok</label><input type="text" id="cat-montok" placeholder="💦 Montok Hot"></div>
+      <div><label>Indonesian</label><input type="text" id="cat-indonesian" placeholder="🇮🇩 Indonesian"></div>
+      <div><label>Thai</label><input type="text" id="cat-thai" placeholder="🇹🇭 Thai Sexy"></div>
+      <div><label>MILF</label><input type="text" id="cat-milf" placeholder="🔥 MILF"></div>
+      <div><label>Chubby</label><input type="text" id="cat-chubby" placeholder="🍑 Chubby"></div>
+      <div><label>Viral</label><input type="text" id="cat-viral" placeholder="📈 Viral"></div>
+      <div><label>Janda</label><input type="text" id="cat-janda" placeholder="💋 Janda"></div>
+      <div><label>Kolej</label><input type="text" id="cat-kolej" placeholder="🎓 Kolej"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="saveConfig()">Save Hero Config</button>
+    <button class="btn btn-secondary" onclick="loadConfig()">Reset Form</button>
+  </div>
+
+  <script>
+    let config = {};
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/admin/super-x');
+        config = await res.json();
+        // Hero headings
+        document.getElementById('badge').value = config.badge || '';
+        document.getElementById('h1').value = config.h1 || '';
+        document.getElementById('h1Sub').value = config.h1Sub || '';
+        document.getElementById('subtitle').value = config.subtitle || '';
+        // Section titles
+        const st = config.sectionTitles || {};
+        document.getElementById('s1').value = st.s1 || '';
+        document.getElementById('s2').value = st.s2 || '';
+        document.getElementById('s3').value = st.s3 || '';
+        document.getElementById('s4').value = st.s4 || '';
+        const ss = config.sectionSubs || {};
+        document.getElementById('s1sub').value = ss.s1 || '';
+        document.getElementById('s2sub').value = ss.s2 || '';
+        document.getElementById('s3sub').value = ss.s3 || '';
+        document.getElementById('s4sub').value = ss.s4 || '';
+        // Category titles
+        const cats = config.cats || {};
+        document.getElementById('cat-tudung').value = cats.tudung || '';
+        document.getElementById('cat-montok').value = cats.montok || '';
+        document.getElementById('cat-indonesian').value = cats.indonesian || '';
+        document.getElementById('cat-thai').value = cats.thai || '';
+        document.getElementById('cat-milf').value = cats.milf || '';
+        document.getElementById('cat-chubby').value = cats.chubby || '';
+        document.getElementById('cat-viral').value = cats.viral || '';
+        document.getElementById('cat-janda').value = cats.janda || '';
+        document.getElementById('cat-kolej').value = cats.kolej || '';
+        // Niche tags
+        renderNicheTags();
+        // CTA buttons
+        renderCtaButtons();
+        // Keyword tags as textarea
+        document.getElementById('keywordTags').value = (config.keywordTags || []).map(t => t.label + ' | ' + t.q).join('\n');
+        // SEO links as textarea
+        document.getElementById('seoLinks').value = (config.seoLinks || []).map(t => t.label + ' | ' + t.href + ' | ' + (t.title || '')).join('\n');
+      } catch { console.error('Failed to load hero config'); }
+    }
+
+    function renderNicheTags() {
+      const el = document.getElementById('nicheList');
+      el.innerHTML = (config.nicheTags || []).map((t, i) => `
+        <div class="tag-item">
+          <span class="drag">☰</span>
+          <input type="text" value="${t.label || ''}" placeholder="Label" style="flex:2" onchange="config.nicheTags[${i}].label = this.value">
+          <input type="text" value="${t.cls || ''}" placeholder="CSS class (p/b/l/s)" style="flex:1" onchange="config.nicheTags[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeNicheTag(${i})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addNicheTag() {
+      if (!config.nicheTags) config.nicheTags = [];
+      config.nicheTags.push({ label: '', cls: 'p' });
+      renderNicheTags();
+    }
+
+    function removeNicheTag(i) {
+      config.nicheTags.splice(i, 1);
+      renderNicheTags();
+    }
+
+    function renderCtaButtons() {
+      const el = document.getElementById('ctaList');
+      el.innerHTML = (config.ctaButtons || []).map((b, i) => `
+        <div class="tag-item">
+          <span class="drag">☰</span>
+          <input type="text" value="${b.label || ''}" placeholder="Label" style="flex:2" onchange="config.ctaButtons[${i}].label = this.value">
+          <input type="text" value="${b.href || ''}" placeholder="href" style="flex:2" onchange="config.ctaButtons[${i}].href = this.value">
+          <input type="text" value="${b.cls || ''}" placeholder="CSS class" style="flex:1" onchange="config.ctaButtons[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeCtaBtn(${i})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addCtaBtn() {
+      if (!config.ctaButtons) config.ctaButtons = [];
+      config.ctaButtons.push({ href: '', label: '', cls: 'super-x-btn' });
+      renderCtaButtons();
+    }
+
+    function removeCtaBtn(i) {
+      config.ctaButtons.splice(i, 1);
+      renderCtaButtons();
+    }
+
+    async function saveConfig() {
+      const st = {
+        s1: document.getElementById('s1').value,
+        s2: document.getElementById('s2').value,
+        s3: document.getElementById('s3').value,
+        s4: document.getElementById('s4').value
+      };
+      const ss = {
+        s1: document.getElementById('s1sub').value,
+        s2: document.getElementById('s2sub').value,
+        s3: document.getElementById('s3sub').value,
+        s4: document.getElementById('s4sub').value
+      };
+      const cats = {
+        tudung: document.getElementById('cat-tudung').value,
+        montok: document.getElementById('cat-montok').value,
+        indonesian: document.getElementById('cat-indonesian').value,
+        thai: document.getElementById('cat-thai').value,
+        milf: document.getElementById('cat-milf').value,
+        chubby: document.getElementById('cat-chubby').value,
+        viral: document.getElementById('cat-viral').value,
+        janda: document.getElementById('cat-janda').value,
+        kolej: document.getElementById('cat-kolej').value
+      };
+      // Parse keywordTags textarea
+      const kwLines = document.getElementById('keywordTags').value.split('\n').filter(l => l.trim());
+      const keywordTags = kwLines.map(l => {
+        const parts = l.split('|').map(s => s.trim());
+        return { label: parts[0] || '', q: parts[1] || '' };
+      }).filter(t => t.q);
+      // Parse seoLinks textarea
+      const seoLines = document.getElementById('seoLinks').value.split('\n').filter(l => l.trim());
+      const seoLinks = seoLines.map(l => {
+        const parts = l.split('|').map(s => s.trim());
+        return { label: parts[0] || '', href: parts[1] || '', title: parts[2] || '' };
+      }).filter(t => t.href);
+
+      const data = {
+        badge: document.getElementById('badge').value,
+        h1: document.getElementById('h1').value,
+        h1Sub: document.getElementById('h1Sub').value,
+        subtitle: document.getElementById('subtitle').value,
+        nicheTags: config.nicheTags || [],
+        ctaButtons: config.ctaButtons || [],
+        keywordTags,
+        seoLinks,
+        sectionTitles: st,
+        sectionSubs: ss,
+        cats
+      };
+
+      const status = document.getElementById('status');
+      try {
+        const res = await fetch('/api/admin/super-x', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          status.className = 'status success';
+          status.textContent = 'Hero config saved! Cache may take a moment to clear.';
+          config = data;
+        } else {
+          status.className = 'status error';
+          status.textContent = 'Save failed.';
+        }
+      } catch {
+        status.className = 'status error';
+        status.textContent = 'Network error.';
+      }
+      status.style.display = 'block';
+      setTimeout(() => status.style.display = 'none', 5000);
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>

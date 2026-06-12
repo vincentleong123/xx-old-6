@@ -1,0 +1,139 @@
+# ==========================================
+# GLOBAL RULE - Catch-all for basic bots & browsers
+# ==========================================
+User-agent: *
+Allow: /
+Allow: /en/
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /2257
+Disallow: /api/
+Disallow: /admin/
+Disallow: /temp/
+Disallow: /*?*
+Disallow: /*.json$
+
+# ==========================================
+# US & WESTERN SEARCH ENGINES
+# ==========================================
+# Googlebot (Main, Mobile, and Images)
+User-agent: Googlebot
+User-agent: Googlebot-Image
+Allow: /
+Allow: /en/
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /2257
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?*
+
+# Bingbot & MSN
+User-agent: Bingbot
+User-agent: msnbot
+Allow: /
+Allow: /en/
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /2257
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?*
+
+# DuckDuckGo (Uses its own bot + Bing)
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Yahoo!
+User-agent: Slurp
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# ==========================================
+# CHINA & ASIA SEARCH ENGINES
+# ==========================================
+# Baidu (China's largest search engine)
+User-agent: Baiduspider
+User-agent: Baiduspider-image
+Allow: /
+Allow: /en/
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /2257
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?*
+
+# Sogou (Major Chinese engine)
+User-agent: Sogou web spider
+User-agent: Sogou inst spider
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Shenma (Alibaba's massive Chinese mobile engine)
+User-agent: Yisouspider
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# 360 Qihoo (Another prominent Chinese engine)
+User-agent: 360Spider
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# ==========================================
+# RUSSIA & EASTERN EUROPE
+# ==========================================
+# Yandex (Russia's primary search engine)
+User-agent: Yandex
+User-agent: YandexBot
+User-agent: YandexImages
+Allow: /
+Allow: /en/
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /dmca
+Allow: /2257
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*?*
+
+# ==========================================
+# BROWSERS & PRIVACY APPS
+# ==========================================
+# Aloha Browser, Coc Coc, UC Browser, etc.
+# Note: Standard browsers use standard user agents.
+# These block or regulate specific custom crawlers they use to cache media.
+User-agent: AlohaBrowser
+User-agent: UCWEB
+User-agent: CocCocBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# ==========================================
+# RATE LIMITS & RESOURCES
+# Protects your server from crashing due to aggressive crawling
+# ==========================================
+User-agent: *
+Crawl-delay: 1
+
+# ==========================================
+# SITE MAPS
+# ==========================================
+Sitemap: https://xmelayu.site/sitemap.xml
+

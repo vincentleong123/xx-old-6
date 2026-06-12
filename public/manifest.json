@@ -1,0 +1,16 @@
+{
+  "name": "Lucahman",
+  "short_name": "Lucahman",
+  "description": "Premium adult video streaming platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#ff2d55",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= metaDescription %>">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="<%= canonicalUrl %>">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= metaDescription %>">
+  <meta property="og:url" content="<%= canonicalUrl %>">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="xMelayu">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= title %>">
+  <meta name="twitter:description" content="<%= metaDescription %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0b; color: #e0e0e0; line-height: 1.8;
+    }
+    .header {
+      background: #111114; border-bottom: 1px solid #2a2a30; padding: 16px 0;
+    }
+    .header-inner {
+      max-width: 960px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { color: #ff2d55; font-weight: 800; font-size: 20px; text-decoration: none; }
+    .logo span { color: #fff; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a { color: #a0a0a8; text-decoration: none; font-size: 13px; }
+    .nav-links a:hover { color: #fff; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    h1 { font-size: 34px; font-weight: 800; margin-bottom: 8px; color: #fff; letter-spacing: -0.5px; }
+    .meta { color: #6b6b75; font-size: 13px; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid #2a2a30; }
+    h2 { font-size: 26px; font-weight: 700; margin: 48px 0 16px; color: #fff; }
+    h3 { font-size: 20px; font-weight: 600; margin: 36px 0 14px; color: #fff; }
+    h4 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: #ddd; }
+    p { margin-bottom: 18px; color: #b0b0b8; font-size: 15px; }
+    strong { color: #fff; }
+    .c-accent { color: #ff2d55; }
+    .c-gold { color: #ffd700; }
+    .c-green { color: #00e676; }
+    .c-orange { color: #ff6b35; }
+    .c-blue { color: #2979ff; }
+    ul { margin-bottom: 18px; padding-left: 24px; color: #b0b0b8; }
+    li { margin-bottom: 8px; }
+    .seo-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0; }
+    .seo-tags span {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px;
+      background: #1f1f24; border: 1px solid #2a2a30;
+    }
+    .keyword-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin: 16px 0 24px; }
+    .keyword-item {
+      padding: 12px 16px; background: #111114; border: 1px solid #2a2a30; border-radius: 8px;
+      font-size: 13px; font-weight: 600; color: #ddd;
+    }
+    .keyword-item .kw { color: #ffd700; display: block; font-size: 11px; font-weight: 400; margin-top: 4px; }
+    .btn {
+      display: inline-block; background: #ff2d55; color: #fff;
+      padding: 10px 24px; border-radius: 8px; text-decoration: none;
+      font-weight: 600; font-size: 14px; margin-top: 8px;
+    }
+    .btn:hover { background: #e6264d; }
+    .highlight-box {
+      background: linear-gradient(135deg, #1a1a28, #18181c);
+      border: 1px solid #2a2a30; border-radius: 12px; padding: 24px; margin: 24px 0;
+    }
+    .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #2a2a30; text-align: center; color: #6b6b75; font-size: 13px; }
+    @media (max-width: 640px) { h1 { font-size: 26px; } .container { padding: 24px 16px; } }
+  </style>
+</head>
+<body>
+<!-- JuicyAds v3.2P Start -->
+<script type="text/javascript">
+var juicy_tags = ['a', 'img'];
+</script>
+<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- JuicyAds v3.2P End -->
+  <div class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">x<span>Melayu</span></a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/xamateur">xAmateur</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container">
+    <article>
+      <h1>What is <strong class="c-accent">xMelayu</strong>?</h1>
+      <div class="meta">Last updated: June 2026</div>
+
+      <p>
+        <strong class="c-accent">xMelayu</strong> is a <strong>Southeast Asian video discovery platform</strong> focused on 
+        <strong>Malay</strong>, <strong>Malaysian</strong>, <strong>Indonesian</strong>, <strong>Thai</strong>, and regional 
+        <strong>user-generated video content</strong>.
+      </p>
+
+      <p>
+        Originally inspired by the playful <strong class="c-gold">"LucahMan"</strong> brand — a <strong>humorous adult 
+        persona</strong> born from <strong>Malaysian internet culture</strong> — xMelayu evolved into a broader platform dedicated 
+        to showcasing the unique styles, cultures, and aesthetics that make <strong>Southeast Asian content</strong> stand out 
+        from mainstream international entertainment.
+      </p>
+
+      <p>
+        Today, visitors from <strong>Malaysia</strong>, <strong>Singapore</strong>, <strong>Indonesia</strong>, 
+        <strong>Thailand</strong>, <strong class="c-blue">Canada</strong>, <strong class="c-blue">Australia</strong>, 
+        the <strong class="c-blue">United Kingdom</strong>, and other countries discover <strong>xMelayu</strong> as a 
+        destination for <strong>regional video content</strong> that reflects local personalities, environments, and lifestyles.
+      </p>
+
+      <h2>Why <strong class="c-gold">Southeast Asian Content</strong> Has a Global Audience</h2>
+
+      <p>
+        Over the last decade, interest in <strong>Southeast Asian creators</strong> and personalities has grown significantly.
+      </p>
+
+      <p>
+        Many viewers are drawn to content that feels <strong>natural</strong>, <strong>authentic</strong>, and 
+        <strong>relatable</strong> compared to highly produced studio productions. From urban <strong>Kuala Lumpur</strong> 
+        lifestyles to traditional <strong>kampung</strong> environments, audiences enjoy seeing real locations, familiar 
+        cultures, and everyday people.
+      </p>
+
+      <p>
+        This growing demand has created a unique niche that continues to attract viewers from both 
+        <strong>Southeast Asia</strong> and international markets.
+      </p>
+
+      <h2><strong class="c-green">Amateur</strong> & User-Generated Content</h2>
+
+      <p>
+        One of the strongest categories on <strong>xMelayu</strong> is <strong>amateur</strong> and 
+        <strong>user-generated content</strong> — a space where the emerging keyword <strong class="c-gold">xmateur</strong> 
+        is gaining traction as the new wave of amateur adult entertainment.
+      </p>
+
+      <p>
+        Unlike large commercial productions, <strong>amateur videos</strong> often feature:
+      </p>
+
+      <ul>
+        <li><strong>Real environments</strong> — bedrooms, kampung homes, hotel rooms</li>
+        <li><strong>Natural interactions</strong> — unscripted, genuine chemistry</li>
+        <li><strong>Everyday locations</strong> — from KL apartments to rural villages</li>
+        <li><strong>Self-recorded content</strong> — mobile-first, DIY aesthetics</li>
+        <li><strong>Authentic passion</strong> — real people, real desire, no directors</li>
+      </ul>
+
+      <div class="highlight-box">
+        <p style="margin:0">This style — often called <strong>self-rakam</strong> or <strong>homemade bilik content</strong> — has become 
+        increasingly popular among audiences looking for content that feels more <strong>authentic</strong> and less scripted.</p>
+      </div>
+
+      <h2><strong>Malaysian</strong>, <strong>Indonesian</strong> & <strong>Philippines</strong> Video Collections</h2>
+
+      <p>
+        <strong>xMelayu</strong> brings together content inspired by the diversity of <strong>Southeast Asia</strong>.
+        Each region brings its own flavor, aesthetic, and cultural context to the <strong>amateur genre</strong>.
+      </p>
+
+      <h3><strong class="c-accent">Malaysia</strong></h3>
+      <div class="keyword-grid">
+        <div class="keyword-item">Kuala Lumpur <span class="kw">Series</span></div>
+        <div class="keyword-item">Selangor <span class="kw">Series</span></div>
+        <div class="keyword-item">Sabah & Sarawak <span class="kw">Series</span></div>
+        <div class="keyword-item">Kedah <span class="kw">Series</span></div>
+        <div class="keyword-item">Penang <span class="kw">Content</span></div>
+        <div class="keyword-item">Johor <span class="kw">Content</span></div>
+      </div>
+
+      <h3><strong class="c-orange">Indonesia</strong></h3>
+      <div class="keyword-grid">
+        <div class="keyword-item">Jakarta <span class="kw">Inspired Content</span></div>
+        <div class="keyword-item">Indonesian Creators <span class="kw">Bokep</span></div>
+        <div class="keyword-item">Local Lifestyle <span class="kw">Videos</span></div>
+      </div>
+
+      <h3><strong class="c-blue">Philippines</strong></h3>
+      <p>
+        Known internationally by the keyword <strong>Pinay</strong>, Filipino amateur content has a strong global following.
+      </p>
+
+      <h2>The <strong class="c-gold">LucahMan</strong> Story — From Joke to Movement</h2>
+
+      <p>
+        <strong>LucahMan</strong> began as a <strong>joke</strong>. The idea was simple: if there is Spider-Man for heroism 
+        and Batman for justice, why not <strong>LucahMan</strong> for <strong>laughter</strong>? It was created for 
+        <strong>adult humour</strong> — the kind of <strong>horny jokes</strong> and <strong>dirty jokes</strong> that 
+        grown-ups share when they want to laugh about the things everyone thinks about but nobody says out loud.
+      </p>
+
+      <p>
+        <strong>LucahMan</strong> was never about being vulgar for the sake of it. It was about <strong>honesty</strong>. 
+        About admitting that <strong>desire</strong>, <strong>lust</strong>, and <strong>laughter</strong> can coexist. 
+        About building a community where <strong>Malaysian adults</strong> and the global <strong>Southeast Asian diaspora</strong> 
+        could enjoy content that felt like <strong>them</strong> — not some sterile, foreign production.
+      </p>
+
+      <p>
+        Then we tried <strong>Lucah Thai X</strong>. Thai content has its own appeal, but it did not resonate with our 
+        core audience the way <strong>Malay content</strong> did. The lesson was clear: <strong>Malay baddies</strong> — 
+        the confident, attractive, authentic women and men of the <strong>Malay world</strong> — are the heart of this 
+        platform. Even <strong>international viewers</strong> agree. There is something magnetic about <strong>Malay 
+        amateur content</strong> that transcends borders.
+      </p>
+
+      <h2>Keyword Strategy — <strong class="c-gold">xmateur</strong> & Beyond</h2>
+
+      <p>
+        As the platform grows, we are targeting emerging keywords to capture <strong>market share</strong> in the 
+        <strong>amateur adult niche</strong>. Here are the key terms we focus on:
+      </p>
+
+      <div class="seo-tags">
+        <span><strong>xmateur</strong></span>
+        <span><strong>x amateur</strong></span>
+        <span><strong>amateur malay</strong></span>
+        <span><strong>malay baddies</strong></span>
+        <span><strong>homemade bilik</strong></span>
+        <span><strong>self rakam</strong></span>
+        <span><strong>melayu lucah</strong></span>
+        <span><strong>SEA amateur</strong></span>
+        <span><strong>awek tudung</strong></span>
+        <span><strong>bokep indo</strong></span>
+        <span><strong>pinay amateur</strong></span>
+        <span><strong>thai amateur</strong></span>
+      </div>
+
+      <div class="highlight-box">
+        <h3 style="margin-top:0;font-size:18px">Ready to explore?</h3>
+        <p style="margin-bottom:12px">Browse thousands of authentic <strong>Southeast Asian amateur videos</strong> — real people, real passion, real Malaysia.</p>
+        <a href="/" class="btn">Browse Videos →</a>
+        <a href="/xamateur" class="btn" style="background:#2979ff;margin-left:8px">xAmateur Collection →</a>
+      </div>
+
+    </article>
+
+    <div class="footer">
+      <p>&copy; 2026 xMelayu &middot; Southeast Asian Amateur Content &middot; All models 18+</p>
+    </div>
+  </div>
+</body>
+</html>

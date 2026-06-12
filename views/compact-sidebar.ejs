@@ -1,0 +1,521 @@
+<!-- Compact Sidebar with Auto-Extracted Categories & Trending Tags -->
+<div class="compact-sidebar-wrapper">
+  <!-- Sidebar Toggle Button -->
+  <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+    <span class="sidebar-toggle-label">Filters</span>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="compact-sidebar" class="compact-sidebar" role="navigation" aria-label="Category and tag filters">
+    
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="sidebar-title">Filters</div>
+      <span id="active-filters" class="active-filters-indicator"></span>
+      <button id="sidebar-close" class="sidebar-close" aria-label="Close sidebar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick Search -->
+    <div class="sidebar-section">
+      <input 
+        type="search" 
+        class="sidebar-search" 
+        placeholder="Search tags..." 
+        aria-label="Search tags"
+      >
+    </div>
+
+    <!-- Categories Section (Auto-Extracted) -->
+    <div class="sidebar-section" id="categories-section">
+      <button class="sidebar-section-header">
+        <span class="section-icon">▼</span>
+        <span class="section-title">Categories</span>
+        <span class="section-count">(5+)</span>
+      </button>
+      <div id="sidebar-categories" class="sidebar-tags-container">
+        <!-- Loaded dynamically -->
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px;"></div>
+      </div>
+    </div>
+
+    <!-- Trending Tags Section (Auto-Extracted & Truncated) -->
+    <div class="sidebar-section" id="trending-section">
+      <button class="sidebar-section-header">
+        <span class="section-icon">▼</span>
+        <span class="section-title">Trending</span>
+        <span class="section-count" id="trending-count">(8+)</span>
+      </button>
+      <div id="sidebar-trending-tags" class="sidebar-tags-container">
+        <!-- Loaded dynamically - shows max 8 by default -->
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px;"></div>
+      </div>
+    </div>
+
+    <!-- Popular Keywords Section (Most Common Auto-Extracted Terms) -->
+    <div class="sidebar-section" id="popular-section">
+      <button class="sidebar-section-header">
+        <span class="section-icon">▼</span>
+        <span class="section-title">Keywords</span>
+        <span class="section-count">(6+)</span>
+      </button>
+      <div id="sidebar-popular-keywords" class="sidebar-tags-container">
+        <!-- Loaded dynamically -->
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+        <div class="loading-skeleton" style="height: 32px; background: #2a2a2a; border-radius: 4px; margin-bottom: 8px;"></div>
+      </div>
+    </div>
+
+    <!-- Your Search History (Optional) -->
+    <div class="sidebar-section" id="history-section">
+      <button class="sidebar-section-header">
+        <span class="section-icon">▼</span>
+        <span class="section-title">Recent</span>
+        <span class="section-count">(3)</span>
+      </button>
+      <div id="sidebar-history" class="sidebar-tags-container">
+        <!-- Loaded from localStorage -->
+        <span class="no-items">No recent searches</span>
+      </div>
+    </div>
+
+    <!-- Active Filters Display -->
+    <% if (false) { %>
+    <div id="active-filters-display" class="sidebar-section" style="display: none;">
+      <button class="sidebar-section-header">
+        <span class="section-icon">▼</span>
+        <span class="section-title">Active</span>
+      </button>
+      <div id="active-filters-list" class="sidebar-tags-container active-filters-list">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Clear & Apply Actions -->
+    <div class="sidebar-actions">
+      <button id="sidebar-clear-filters" class="sidebar-btn sidebar-btn-secondary" title="Clear all filters">
+        Clear
+      </button>
+      <button id="sidebar-apply-filters" class="sidebar-btn sidebar-btn-primary" title="Apply selected filters">
+        Apply Filters
+      </button>
+    </div>
+
+    <!-- Footer Info -->
+    <div class="sidebar-footer">
+      <p style="font-size: 0.85em; color: #999; margin: 0;">
+        Click tags to filter • Scroll to see more
+      </p>
+    </div>
+  </aside>
+
+  <!-- Sidebar Overlay (for mobile) -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+</div>
+
+<style>
+/* Compact Sidebar Styles */
+.compact-sidebar-wrapper {
+  --sidebar-width: 280px;
+  --sidebar-bg: #1a1a1a;
+  --sidebar-border: #333;
+  --tag-bg: #2a2a2a;
+  --tag-hover: #3a3a3a;
+  --tag-active: #ff6600;
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --transition: 0.2s ease;
+}
+
+/* Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  left: 16px;
+  top: 80px;
+  z-index: 999;
+  background: var(--tag-active);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: all var(--transition);
+}
+
+.sidebar-toggle:hover {
+  background: #ff7722;
+  transform: translateX(2px);
+}
+
+.sidebar-toggle-label {
+  display: none;
+}
+
+/* Sidebar */
+.compact-sidebar {
+  position: fixed;
+  left: -var(--sidebar-width);
+  top: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  z-index: 1000;
+  overflow-y: auto;
+  transition: left var(--transition);
+  box-shadow: 2px 0 12px rgba(0,0,0,0.5);
+  padding-bottom: 80px;
+}
+
+.compact-sidebar.open {
+  left: 0;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+  gap: 8px;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.active-filters-indicator {
+  font-size: 12px;
+  color: var(--tag-active);
+  font-weight: 600;
+}
+
+.sidebar-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition);
+}
+
+.sidebar-close:hover {
+  color: var(--text-primary);
+}
+
+/* Search */
+.sidebar-search {
+  background: var(--tag-bg);
+  border: 1px solid var(--sidebar-border);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  margin: 12px;
+  border-radius: 6px;
+  width: calc(100% - 24px);
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.sidebar-search:focus {
+  border-color: var(--tag-active);
+}
+
+.sidebar-search::placeholder {
+  color: #666;
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+  border-bottom: 1px solid var(--sidebar-border);
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-section.collapsed .sidebar-tags-container {
+  display: none;
+}
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  transition: background-color var(--transition);
+}
+
+.sidebar-section-header:hover {
+  background-color: rgba(255, 102, 0, 0.1);
+}
+
+.section-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  color: var(--tag-active);
+  min-width: 14px;
+}
+
+.section-title {
+  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-count {
+  font-size: 11px;
+  color: #666;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Tags Container */
+.sidebar-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.2);
+}
+
+.sidebar-tags-container.expanded {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Tags */
+.sidebar-category-tag,
+.sidebar-keyword-tag {
+  background: var(--tag-bg);
+  border: 1px solid var(--sidebar-border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.sidebar-category-tag:hover,
+.sidebar-keyword-tag:hover {
+  background: var(--tag-hover);
+  border-color: var(--tag-active);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.sidebar-category-tag.active,
+.sidebar-keyword-tag.active {
+  background: var(--tag-active);
+  border-color: var(--tag-active);
+  color: white;
+  box-shadow: 0 0 12px rgba(255, 102, 0, 0.3);
+}
+
+.expand-more-btn {
+  background: none;
+  border: none;
+  color: var(--tag-active);
+  padding: 6px 0;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+  transition: color var(--transition);
+}
+
+.expand-more-btn:hover {
+  color: #ff7722;
+}
+
+/* No Items */
+.no-items {
+  color: #666;
+  font-size: 12px;
+  display: block;
+  text-align: center;
+  padding: 16px 8px;
+  width: 100%;
+}
+
+/* Loading Skeleton */
+.loading-skeleton {
+  animation: skeleton-load 1s infinite;
+}
+
+@keyframes skeleton-load {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Sidebar Actions */
+.sidebar-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-top: 1px solid var(--sidebar-border);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+}
+
+.sidebar-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-btn-primary {
+  background: var(--tag-active);
+  color: white;
+}
+
+.sidebar-btn-primary:hover {
+  background: #ff7722;
+}
+
+.sidebar-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--sidebar-border);
+  color: var(--text-secondary);
+}
+
+.sidebar-btn-secondary:hover {
+  border-color: var(--tag-active);
+  color: var(--tag-active);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 12px 16px;
+  text-align: center;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+/* Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.compact-sidebar.open ~ .sidebar-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .compact-sidebar {
+    position: static;
+    left: 0;
+    width: 300px;
+    height: auto;
+    border: none;
+    border-right: 1px solid var(--sidebar-border);
+    box-shadow: none;
+    padding-bottom: 0;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .sidebar-actions {
+    position: static;
+    padding: 12px 16px;
+    border-top: 1px solid var(--sidebar-border);
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .compact-sidebar-wrapper {
+    --sidebar-width: 260px;
+  }
+
+  .sidebar-toggle-label {
+    display: inline;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .compact-sidebar-wrapper {
+    --sidebar-width: 100%;
+    --sidebar-width: min(80vw, 240px);
+  }
+
+  .sidebar-toggle {
+    left: 12px;
+    top: 70px;
+    padding: 8px 10px;
+  }
+
+  .sidebar-toggle-label {
+    display: none;
+  }
+
+  .sidebar-search {
+    margin: 8px;
+    width: calc(100% - 16px);
+  }
+}
+</style>

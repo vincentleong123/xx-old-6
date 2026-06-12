@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= metaDescription %>">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="<%= canonicalUrl %>">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0b; color: #e0e0e0; line-height: 1.8;
+    }
+    .header {
+      background: #111114; border-bottom: 1px solid #2a2a30; padding: 16px 0;
+    }
+    .header-inner {
+      max-width: 960px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { color: #ff2d55; font-weight: 800; font-size: 20px; text-decoration: none; }
+    .logo span { color: #fff; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a { color: #a0a0a8; text-decoration: none; font-size: 13px; }
+    .nav-links a:hover { color: #fff; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    h1 { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+    h2 { font-size: 24px; font-weight: 700; color: #ff2d55; margin: 36px 0 16px; }
+    h3 { font-size: 18px; font-weight: 600; color: #fff; margin: 24px 0 12px; }
+    p { margin-bottom: 16px; color: #b0b0b8; font-size: 15px; }
+    strong { color: #fff; }
+    ul { margin-bottom: 16px; padding-left: 24px; color: #b0b0b8; }
+    li { margin-bottom: 8px; }
+    .back-link { display: inline-block; margin-bottom: 24px; padding: 8px 16px; background: rgba(255,45,85,0.15); color: #ff2d55; text-decoration: none; border-radius: 8px; font-size: 13px; }
+    .back-link:hover { background: rgba(255,45,85,0.25); }
+    .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #2a2a30; text-align: center; color: #6b6b75; font-size: 13px; }
+  </style>
+</head>
+<body>
+<!-- JuicyAds v3.2P Start -->
+<script type="text/javascript">
+var juicy_tags = ['a', 'img'];
+</script>
+<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- JuicyAds v3.2P End -->
+  <div class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">x<span>Melayu</span></a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container">
+    <a href="/" class="back-link">← Back to Home</a>
+    <%- content %>
+  </div>
+  <div class="footer">
+    <p>&copy; 2026 xMelayu. All rights reserved.</p>
+  </div>
+</body>
+</html>

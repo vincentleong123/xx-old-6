@@ -1,0 +1,18 @@
+{
+  "name": "keyword-filter-module",
+  "version": "1.0.0",
+  "description": "A reusable keyword filtering system for Express.js servers with NLP-powered keyword extraction",
+  "main": "index.js",
+  "keywords": [
+    "keyword-filtering",
+    "nlp",
+    "video-search",
+    "express",
+    "keyword-extraction"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

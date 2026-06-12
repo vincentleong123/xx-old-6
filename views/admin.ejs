@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0b; color: #e0e0e0; padding: 20px;
+    }
+    h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; }
+    .admin-nav { display: flex; gap: 4px; margin-bottom: 24px; background: #1a1a1e; border-radius: 12px; padding: 4px; }
+    .admin-nav a {
+      padding: 10px 20px; border-radius: 8px; text-decoration: none;
+      color: #6b6b75; font-size: 13px; font-weight: 500; transition: all .2s;
+    }
+    .admin-nav a:hover { color: #fff; background: #2a2a30; }
+    .admin-nav a.active { color: #fff; background: #ff2d55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card {
+      background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 20px;
+    }
+    .card h2 { font-size: 13px; color: #6b6b75; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1f1f24; font-size: 13px; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: #a0a0a8; }
+    .stat-value { color: #fff; font-weight: 600; }
+    .stat-value.green { color: #34c759; }
+    .stat-value.red { color: #ff2d55; }
+    .stat-value.gold { color: #ffd700; }
+    .chart-container { height: 200px; margin-top: 12px; }
+    .requests-list { max-height: 300px; overflow-y: auto; }
+    .req-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; border-bottom: 1px solid #1a1a1e; }
+    .req-item .path { color: #fff; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .req-item .code { font-weight: 600; width: 30px; text-align: center; }
+    .req-item .code.ok { color: #34c759; }
+    .req-item .code.warn { color: #ffd700; }
+    .req-item .code.err { color: #ff2d55; }
+    .req-item .time { color: #6b6b75; width: 50px; text-align: right; }
+    .refresh-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; background: #ff2d55; border: none; border-radius: 8px;
+      color: white; font-weight: 600; cursor: pointer; font-size: 13px;
+    }
+    .refresh-btn:hover { background: #ff4d6f; }
+    .last-update { color: #6b6b75; font-size: 11px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Server Admin Dashboard</h1>
+
+  <div class="admin-nav">
+    <a href="/admin" class="active">Dashboard</a>
+    <a href="/admin/pages">Pages</a>
+    <a href="/admin/videos">Videos</a>
+    <a href="/admin/ads">Ads</a>
+    <a href="/admin/keywords">Keywords</a>
+    <a href="/admin/super-x">Super X</a>
+  </div>
+
+  <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+  <span class="last-update" id="lastUpdate"></span>
+
+  <div class="grid" id="stats">
+    <div class="card"><h2>Loading...</h2></div>
+  </div>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const d = await res.json();
+        document.getElementById('lastUpdate').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+        renderStats(d);
+      } catch { document.querySelector('#stats').innerHTML = '<div class="card"><h2>Failed to load stats</h2></div>'; }
+    }
+
+    function renderStats(d) {
+      const { requests, cache, performance, memory, videos } = d;
+      const uptimeStr = d.uptime?.human || 'N/A';
+      const hddAlert = parseFloat(d.videoDelivery?.hddPressure || 0);
+      const ramChunkPct = parseFloat(d.ramChunk?.usedPct || 0);
+      const hotCachePct = parseFloat(cache.hotCache?.usedPct || 0);
+      const p95ms = parseFloat(performance.p95 || 0);
+      const p95Class = p95ms < 200 ? 'green' : (p95ms < 500 ? 'gold' : 'red');
+      const hddClass = hddAlert < 30 ? 'green' : (hddAlert < 60 ? 'gold' : 'red');
+      document.querySelector('#stats').innerHTML = `
+        <div class="card">
+          <h2>📊 Requests</h2>
+          <div class="stat-row"><span class="stat-label">Total</span><span class="stat-value">${requests.total.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">Pages</span><span class="stat-value">${requests.pages.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">API</span><span class="stat-value">${requests.api.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">Static</span><span class="stat-value">${requests.static.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">Errors</span><span class="stat-value red">${requests.errors.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">Humans</span><span class="stat-value green">${requests.humans.toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">Bots</span><span class="stat-value gold">${requests.bots.toLocaleString()}</span></div>
+        </div>
+        <div class="card">
+          <h2>🧠 Cache</h2>
+          <div class="stat-row"><span class="stat-label">microCache</span><span class="stat-value">${cache.microCache.size} / ${cache.microCache.reads > 0 ? ((cache.microCache.hits/cache.microCache.reads*100).toFixed(1)+'%') : '0%'}</span></div>
+          <div class="stat-row"><span class="stat-label">burstCache</span><span class="stat-value">${cache.burstCache.size} entries</span></div>
+          <div class="stat-row"><span class="stat-label">hotCache</span><span class="stat-value">${cache.hotCache.files} files (${cache.hotCache.usedGB} GB / ${cache.hotCache.maxGB} GB)</span></div>
+          <div class="stat-row"><span class="stat-label">hotCache fill</span><span class="stat-value ${hotCachePct > 85 ? 'gold' : 'green'}">${cache.hotCache.usedPct}%</span></div>
+        </div>
+        <div class="card">
+          <h2>⚡ Performance</h2>
+          <div class="stat-row"><span class="stat-label">Avg Response</span><span class="stat-value">${performance.avgResponseTime}ms</span></div>
+          <div class="stat-row"><span class="stat-label">P95 Latency</span><span class="stat-value ${p95Class}">${performance.p95}ms</span></div>
+          <div class="stat-row"><span class="stat-label">Slowest</span><span class="stat-value">${performance.slowest.path} (${performance.slowest.time.toFixed(1)}ms)</span></div>
+          <div class="stat-row"><span class="stat-label">Fastest</span><span class="stat-value">${performance.fastest ? performance.fastest.path+' ('+performance.fastest.time.toFixed(1)+'ms)' : 'N/A'}</span></div>
+        </div>
+        <div class="card">
+          <h2>💾 Memory</h2>
+          <div class="stat-row"><span class="stat-label">RSS</span><span class="stat-value">${memory.rss} MB</span></div>
+          <div class="stat-row"><span class="stat-label">Heap</span><span class="stat-value">${memory.heapUsed} / ${memory.heapTotal} MB</span></div>
+          <div class="stat-row"><span class="stat-label">RAM Chunk</span><span class="stat-value ${ramChunkPct > 80 ? 'gold' : 'green'}">${d.ramChunk.usedMB} MB / ${d.ramChunk.maxMB} MB (${d.ramChunk.usedPct}%)</span></div>
+          <div class="stat-row"><span class="stat-label">RAM entries</span><span class="stat-value">${d.ramChunk.entries}</span></div>
+          <div class="stat-row"><span class="stat-label">Videos</span><span class="stat-value">${videos ? videos.toLocaleString() : 'N/A'}</span></div>
+          <div class="stat-row"><span class="stat-label">Uptime</span><span class="stat-value gold">${uptimeStr}</span></div>
+        </div>
+        <div class="card">
+          <h2>🔧 HDD Pressure</h2>
+          <div class="stat-row"><span class="stat-label">RAM hits</span><span class="stat-value green">${d.videoDelivery.ramHits.toLocaleString()} (${d.videoDelivery.ramPct}%)</span></div>
+          <div class="stat-row"><span class="stat-label">SSD hits</span><span class="stat-value green">${d.videoDelivery.ssdHits.toLocaleString()} (${d.videoDelivery.ssdPct}%)</span></div>
+          <div class="stat-row"><span class="stat-label">HDD reads</span><span class="stat-value ${hddClass}">${d.videoDelivery.hddReads.toLocaleString()} (${d.videoDelivery.hddPct}%)</span></div>
+          <div class="stat-row"><span class="stat-label">HDD pressure</span><span class="stat-value ${hddClass}">${d.videoDelivery.hddPressure}% ⬇</span></div>
+        </div>
+        <div class="card">
+          <h2>📦 Promotion Queue</h2>
+          <div class="stat-row"><span class="stat-label">Queue length</span><span class="stat-value ${d.promoQueue.length > 10 ? 'red' : (d.promoQueue.length > 3 ? 'gold' : 'green')}">${d.promoQueue.length}</span></div>
+          <div class="stat-row"><span class="stat-label">Promoter busy</span><span class="stat-value ${d.promoQueue.busy ? 'gold' : 'green'}">${d.promoQueue.busy ? '⚠ Yes' : '✓ Idle'}</span></div>
+        </div>
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2>🔄 Recent Requests (last 20)</h2>
+          <div class="requests-list">
+            ${(d.recentRequests || []).map(r => {
+              const codeClass = r.status >= 500 ? 'err' : (r.status >= 400 ? 'warn' : 'ok');
+              return '<div class="req-item"><span class="path">' + r.path + '</span><span class="code ' + codeClass + '">' + r.status + '</span><span class="time">' + r.duration.toFixed(0) + 'ms</span></div>';
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    loadStats();
+    setInterval(loadStats, 10000);
+  </script>
+</body>
+</html>

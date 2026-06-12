@@ -1,0 +1,18 @@
+{
+  "name": "lucaman",
+  "version": "1.0.0",
+  "description": "Lucahman - Premium Adult Video Streaming Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "rebuild": "node rebuild-index.js"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "compression": "^1.8.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "lokijs": "^1.5.12",
+    "playwright": "^1.59.1"
+  }
+}

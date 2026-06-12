@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a0a10"/><stop offset="100%" stop-color="#0a0a0b"/></linearGradient><linearGradient id="f" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e040fb"/><stop offset="100%" stop-color="#2979ff"/></linearGradient></defs>
+  <rect width="256" height="256" fill="url(#g)" rx="24"/>
+  <ellipse cx="128" cy="140" rx="100" ry="80" fill="#8e2de2" opacity="0.12"/>
+  <text x="128" y="130" font-family="Arial Black,sans-serif" font-size="72" font-weight="900" fill="url(#f)" text-anchor="middle">xM</text>
+  <text x="128" y="180" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#e040fb" text-anchor="middle">xMateur</text>
+  <text x="128" y="200" font-family="Arial,sans-serif" font-size="12" font-weight="600" fill="#6b6b75" text-anchor="middle">MALAYSIA</text>
+  <title>Super Duper xMateur Malaysia</title>
+</svg>

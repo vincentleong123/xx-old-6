@@ -1,0 +1,155 @@
+<!-- Sidebar Navigation Menu -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3><span>📺</span> Browse</h3>
+    <button class="sidebar-close" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="sidebar-content">
+    <!-- Search -->
+    <div class="sidebar-section">
+      <form action="/" method="GET" class="sidebar-search">
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Search videos..." 
+          value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+          class="sidebar-search-input"
+        >
+        <button type="submit" class="sidebar-search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Categories -->
+    <div class="sidebar-section">
+      <h4 class="sidebar-section-title">Categories</h4>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="/" class="sidebar-link <%= !searchQuery ? 'active' : '' %>">
+            <span class="sidebar-icon">🏠</span>
+            <span>All Videos</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=teen" class="sidebar-link">
+            <span class="sidebar-icon">👩</span>
+            <span>Teen</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=milf" class="sidebar-link">
+            <span class="sidebar-icon">👩‍🦰</span>
+            <span>Milf</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=bbc" class="sidebar-link">
+            <span class="sidebar-icon">🌎</span>
+            <span>BBC</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=anal" class="sidebar-link">
+            <span class="sidebar-icon">🔞</span>
+            <span>Anal</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=hardcore" class="sidebar-link">
+            <span class="sidebar-icon">🔥</span>
+            <span>Hardcore</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=soft" class="sidebar-link">
+            <span class="sidebar-icon">💕</span>
+            <span>Soft</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=lesbian" class="sidebar-link">
+            <span class="sidebar-icon">💑</span>
+            <span>Lesbian</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=threesome" class="sidebar-link">
+            <span class="sidebar-icon">3️⃣</span>
+            <span>Threesome</span>
+          </a>
+        </li>
+        <li>
+          <a href="/?search=group" class="sidebar-link">
+            <span class="sidebar-icon">👥</span>
+            <span>Group</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Legal Links -->
+    <div class="sidebar-section">
+      <h4 class="sidebar-section-title">Legal</h4>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="/privacy" class="sidebar-link">
+            <span class="sidebar-icon">🔒</span>
+            <span>Privacy Policy</span>
+          </a>
+        </li>
+        <li>
+          <a href="/terms" class="sidebar-link">
+            <span class="sidebar-icon">📜</span>
+            <span>Terms of Use</span>
+          </a>
+        </li>
+        <li>
+          <a href="/2257" class="sidebar-link">
+            <span class="sidebar-icon">⚖️</span>
+            <span>2257 Compliance</span>
+          </a>
+        </li>
+        <li>
+          <a href="/dmca" class="sidebar-link">
+            <span class="sidebar-icon">📝</span>
+            <span>DMCA</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sitemap.xml" class="sidebar-link">
+            <span class="sidebar-icon">🗺️</span>
+            <span>Sitemap</span>
+          </a>
+        </li>
+        <li>
+          <a href="/robots.txt" class="sidebar-link">
+            <span class="sidebar-icon">🤖</span>
+            <span>Robots.txt</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</aside>
+
+<!-- Sidebar Toggle Button (visible on mobile) -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>

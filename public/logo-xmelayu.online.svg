@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff2d55"/>
+      <stop offset="50%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ff9f5a"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="50" fill="#0a0a0b" rx="6"/>
+  <rect width="4" height="50" fill="url(#g)"/>
+  <text x="12" y="32" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="white">xMelayu</text>
+  <text x="95" y="32" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#ff6b35">.online</text>
+  <circle cx="85" cy="25" r="3" fill="#ff2d55"/>
+</svg>

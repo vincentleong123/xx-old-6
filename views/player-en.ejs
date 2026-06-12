@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= video.title %> - xAmateur USA</title>
+  <meta name="description" content="<%= video.description || video.title %>">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://xmelayu.site/xamateur/<%= video.id %>">
+  <meta property="og:title" content="<%= video.title %> - xAmateur">
+  <meta property="og:description" content="<%= video.description || video.title %>">
+  <meta property="og:url" content="https://xmelayu.site/xamateur/<%= video.id %>">
+  <meta property="og:type" content="video.other">
+  <meta property="og:image" content="<%= video.thumbnail %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= video.title %> - xAmateur">
+  <meta name="twitter:description" content="<%= video.description || video.title %>">
+  <meta name="twitter:image" content="<%= video.thumbnail %>">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "<%= video.title %>",
+    "description": "<%= (video.description || video.title).replace(/"/g, '&quot;') %>",
+    "thumbnailUrl": "<%= video.thumbnail %>",
+    "uploadDate": "<%= video.uploaded %>",
+    "contentUrl": "<%= video.video %>"
+  }
+  </script>
+  <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
+  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0b; --bg2: #111114; --bg3: #18181c; --bg4: #1f1f24;
+      --text: #ffffff; --text2: #a0a0a8; --text3: #6b6b75;
+      --accent: #ff2d55; --gold: #ffd700; --border: #2a2a30;
+    }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .header {
+      background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 0;
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .logo { color: var(--accent); font-weight: 800; font-size: 20px; text-decoration: none; }
+    .logo span { color: var(--text); }
+    .back-link { color: var(--text2); text-decoration: none; font-size: 14px; }
+    .back-link:hover { color: var(--text); }
+    .video-player {
+      width: 100%; aspect-ratio: 16/9;
+      background: #000; border-radius: 12px; overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .video-player video {
+      width: 100%; height: 100%; display: block;
+    }
+    .video-info { margin-bottom: 24px; }
+    .video-info h1 {
+      font-size: 22px; font-weight: 700; margin-bottom: 8px;
+    }
+    .video-info .meta {
+      color: var(--text3); font-size: 13px; display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .video-info .meta span { display: flex; align-items: center; gap: 4px; }
+    @keyframes colorCycle {
+      0%   { background: #ff2d55; color: #fff; }
+      20%  { background: #ff6b35; color: #fff; }
+      40%  { background: #ffd700; color: #000; }
+      60%  { background: #00e676; color: #000; }
+      80%  { background: #2979ff; color: #fff; }
+      100% { background: #ff2d55; color: #fff; }
+    }
+    .tag-bar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 0; margin-bottom: 8px;
+      justify-content: center;
+    }
+    .tag-bar .pill {
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; text-decoration: none;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      animation: colorCycle 4s ease-in-out infinite;
+      transition: transform 0.15s;
+    }
+    .tag-bar .pill:hover { transform: scale(1.05); }
+    .tag-bar .pill:nth-child(2) { animation-delay: 0.5s; }
+    .tag-bar .pill:nth-child(3) { animation-delay: 1s; }
+    .tag-bar .pill:nth-child(4) { animation-delay: 1.5s; }
+    .tag-bar .pill:nth-child(5) { animation-delay: 2s; }
+    .tag-bar .pill:nth-child(6) { animation-delay: 2.5s; }
+    .tag-bar .pill:nth-child(7) { animation-delay: 3s; }
+    .tag-bar .pill:nth-child(8) { animation-delay: 3.5s; }
+    .cat-badge {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px; border-radius: 10px;
+      animation: colorCycle 3s ease-in-out infinite;
+    }
+    .kw-tag {
+      padding: 4px 10px; border-radius: 12px;
+      font-size: 11px; text-decoration: none; font-weight: 600;
+      animation: colorCycle 5s ease-in-out infinite;
+    }
+    .kw-tag:nth-child(even) { animation-delay: 1s; }
+    .kw-tag:nth-child(3n) { animation-delay: 2s; }
+    .video-info .description {
+      color: var(--text2); font-size: 14px; line-height: 1.7;
+      margin-top: 16px; padding: 16px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .tag {
+      padding: 4px 10px; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text2); font-size: 11px; text-decoration: none;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--text); }
+    h2 { font-size: 18px; font-weight: 700; margin: 24px 0 16px; }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .video-card {
+      display: block;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden; text-decoration: none;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .video-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .video-card .thumb {
+      aspect-ratio: 16/9; background: var(--bg3); position: relative; overflow: hidden;
+    }
+    .video-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .video-card .views {
+      position: absolute; bottom: 4px; right: 4px;
+      background: rgba(0,0,0,0.75); color: var(--text);
+      font-size: 10px; padding: 2px 6px; border-radius: 3px;
+    }
+    .card-body { padding: 8px 10px; }
+    .card-body .ctitle { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .footer { margin-top: 40px; text-align: center; color: var(--text3); font-size: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
+    .goodpart-area { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .gp-btn {
+      padding: 8px 16px; background: var(--accent); border: none; border-radius: 8px;
+      color: white; font-weight: 600; font-size: 12px; cursor: pointer; transition: background 0.2s;
+    }
+    .gp-btn:hover { background: #ff4d6f; }
+    .gp-marked-list { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; }
+    .gp-marked-item {
+      font-size: 10px; padding: 2px 6px; background: var(--accent);
+      color: #fff; border-radius: 4px; cursor: pointer; font-weight: 600;
+    }
+    .gp-marked-item:hover { opacity: 0.8; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+      padding: 14px 24px; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); font-weight: 500;
+      opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .nav-links { display: flex; gap: 6px; }
+    .nav-link { display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 8px; color: #a0a0a8; text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
+    .nav-link:hover { background: #1c1c21; color: #fff; }
+    .mobile-menu-btn { display: none; width: 44px; height: 44px; border-radius: 10px; background: #141417; border: 1px solid #2a2a30; color: #fff; font-size: 20px; cursor: pointer; transition: all 0.2s; align-items: center; justify-content: center; }
+    .mobile-menu-btn:hover { background: #1c1c21; }
+    .super-x-mobile-tag { font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.25); display: none; align-items: center; gap: 4px; letter-spacing: 0.3px; background: linear-gradient(135deg,#ff2d55,#ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; cursor: pointer; }
+    @media (max-width: 768px) { .nav-links { display: none; } .mobile-menu-btn { display: flex; } .super-x-mobile-tag { display: inline-flex; } }
+    .mobile-filter-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 300; background: #0a0a0b; border-top: 1px solid #2a2a30; border-radius: 16px 16px 0 0; max-height: 70vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.33,1,0.68,1); padding: 0 0 24px; }
+    .mobile-filter-panel.show { transform: translateY(0); }
+    .filter-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid #2a2a30; }
+    .filter-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .close-panel { background: none; border: none; color: #6b6b75; font-size: 24px; cursor: pointer; padding: 0 4px; }
+    .filter-panel-content { padding: 12px 20px; }
+    .mobile-section { margin-bottom: 16px; }
+    .mobile-section h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6b75; margin-bottom: 8px; }
+    .mobile-cat-btn { display: block; width: 100%; padding: 10px 14px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.2s; }
+    .mobile-cat-btn:hover { background: #141417; }
+    .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 299; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .filter-overlay.show { opacity: 1; pointer-events: auto; }
+    @media (max-width: 640px) {
+      .container { padding: 12px; }
+      .video-info h1 { font-size: 18px; }
+      .video-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<!-- JuicyAds v3.2P Start -->
+<script type="text/javascript">
+var juicy_tags = ['a', 'img'];
+</script>
+<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- JuicyAds v3.2P End -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span class="menu-icon">☰</span>
+      </button>
+      <a href="/xamateur" class="logo">x<span>Amateur</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">🏠 Home</a>
+        <a href="/super-x-melayu" class="nav-link" style="color:#ffd700;font-weight:700;">🔥 Super X</a>
+        <a href="/mega-x-melayu" class="nav-link">🚀 Mega</a>
+        <a href="/xmateur" class="nav-link">💜 xMateur</a>
+        <a href="/tudung-porn" class="nav-link">🧕 Tudung</a>
+        <a href="/xamateur" class="nav-link">🇺🇸 xAmateur</a>
+      </nav>
+      <div class="header-actions">
+        <span class="super-x-mobile-tag">🔥</span>
+      </div>
+    </div>
+  </header>
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-filter-panel" id="mobileNavPanel">
+    <div class="filter-panel-header">
+      <div class="filter-title">Navigate</div>
+      <button class="close-panel" onclick="closeMobileNav()">×</button>
+    </div>
+    <div class="filter-panel-content">
+      <div class="mobile-section">
+        <h4>Brands</h4>
+        <a href="/" class="mobile-cat-btn">🏠 Home</a>
+        <a href="/super-x-melayu" class="mobile-cat-btn">🔥 Super X Melayu</a>
+        <a href="/mega-x-melayu" class="mobile-cat-btn">🚀 Mega X Melayu</a>
+        <a href="/xmateur" class="mobile-cat-btn">💜 xMateur</a>
+        <a href="/tudung-porn" class="mobile-cat-btn">🧕 Tudung Porn</a>
+        <a href="/xamateur" class="mobile-cat-btn">🇺🇸 xAmateur</a>
+      </div>
+    </div>
+  </div>
+  <div class="filter-overlay" id="navOverlay" onclick="closeMobileNav()"></div>
+  <div class="container">
+    <div class="tag-bar">
+      <a href="/xamateur" class="pill">xamateur</a>
+      <a href="/xamateur" class="pill">xmateur</a>
+      <a href="/xamateur" class="pill">x amateur</a>
+      <a href="/xamateur" class="pill">american</a>
+      <a href="/xamateur" class="pill">homemade</a>
+      <a href="/xamateur" class="pill">real</a>
+      <a href="/xamateur" class="pill">exclusive</a>
+      <a href="/xamateur" class="pill">trending</a>
+    </div>
+    <div class="video-player">
+      <video controls preload="metadata" poster="<%= video.thumbnail %>">
+        <source src="<%= video.video %>" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="video-info">
+      <h1><%= video.title %></h1>
+      <div class="meta">
+        <span>👁 <%= (video.views || 0).toLocaleString() %> views</span>
+        <span>👍 <%= (video.likes || 0).toLocaleString() %></span>
+        <span>📅 <%= new Date(video.uploaded).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+        <span>🏷 <span class="cat-badge"><%= video.category %></span></span>
+      </div>
+      <div class="tags">
+        <% (video.keywords || []).forEach(function(kw) { %>
+          <span class="kw-tag"><%= kw %></span>
+        <% }) %>
+      </div>
+      <div class="description">
+        <%= video.description || video.title %>
+      </div>
+
+      <div class="goodpart-area">
+        <button class="gp-btn" id="gpMarkBtn" data-video="<%= video.id %>" data-title="<%= video.title.replace(/'/g, "\\'").replace(/"/g, '&quot;') %>" onclick="markGoodPart(this.dataset.video, this.dataset.title)">
+          💾 Mark Good Part
+        </button>
+        <div class="gp-marked-list" id="gpMarkedList"></div>
+      </div>
+    </div>
+
+    <div class="ad-holder" style="margin:16px 0">
+      <ins id="pde-ad" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+    </div>
+
+    <h2>More Amateur Videos</h2>
+    <div class="video-grid">
+      <% related.forEach(function(v, i) { %>
+        <a href="/xamateur/<%= v.id %>" class="video-card">
+          <div class="thumb">
+            <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy">
+            <span class="views"><%= (v.views || 0).toLocaleString() %></span>
+          </div>
+          <div class="card-body">
+            <div class="ctitle"><%= v.title %></div>
+          </div>
+        </a>
+        <% if ((i + 1) % 5 === 0 && i < related.length - 1) { %>
+          <div style="grid-column:1/-1" class="ad-holder">
+            <ins id="ad-per<%= i %>" data-width="300" data-height="250"></ins>
+            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+          </div>
+        <% } %>
+      <% }) %>
+    </div>
+
+    <div class="ad-holder ad-holder--strip">
+      <ins id="pef1" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+      <ins id="pef2" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+    </div>
+
+    <%- include('_about') %>
+    <div class="footer">
+      <p>&copy; 2026 xAmateur &middot; USA Amateur Content &middot; All models 18+</p>
+    </div>
+  </div>
+  <script>
+    function toggleMobileMenu() {
+      const panel = document.getElementById('mobileNavPanel');
+      const overlay = document.getElementById('navOverlay');
+      const btn = document.getElementById('mobileMenuBtn');
+      panel.classList.toggle('show');
+      overlay.classList.toggle('show');
+      btn.setAttribute('aria-expanded', panel.classList.contains('show'));
+      document.body.style.overflow = panel.classList.contains('show') ? 'hidden' : '';
+    }
+    function closeMobileNav() {
+      const panel = document.getElementById('mobileNavPanel');
+      const overlay = document.getElementById('navOverlay');
+      const btn = document.getElementById('mobileMenuBtn');
+      panel.classList.remove('show');
+      overlay.classList.remove('show');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+    function h(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    async function markGoodPart(videoId, title) {
+      try {
+        var v = document.querySelector('.video-player video');
+        if (!v) return;
+        var t = Math.floor(v.currentTime);
+        if (Number.isNaN(t) || t < 0) return;
+        var resp = await fetch('/api/goodparts/' + videoId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ time: t })
+        });
+        if (!resp.ok) throw new Error();
+        var data = await resp.json();
+        var btn = document.getElementById('gpMarkBtn');
+        try {
+          var cr = await fetch('/api/goodparts/' + videoId);
+          var cd = await cr.json();
+          var total = cd.reduce(function(a, b) { return a + b.votes; }, 0);
+          if (btn) btn.textContent = total > 0 ? '\u{1F525} ' + total + ' votes \u2014 Mark Good Part' : '\u{1F48E} Mark Good Part';
+        } catch {}
+        updateMarkedListUI(videoId);
+        toast('\u{1F4CD} ' + (data.location || 'Unknown') + ' marked \u23F1 ' + formatDuration('' + t));
+      } catch {}
+    }
+
+    async function updateMarkedListUI(videoId) {
+      try {
+        var resp = await fetch('/api/goodparts/' + videoId);
+        if (!resp.ok) throw new Error();
+        var data = await resp.json();
+        var container = document.getElementById('gpMarkedList');
+        if (!container) return;
+        if (!data || data.length === 0) { container.innerHTML = ''; return; }
+        container.innerHTML = data.map(function(item) {
+          return '<span class="gp-marked-item" data-time="' + item.time_sec + '">\u23F1 ' + formatDuration('' + item.time_sec) + ' (\u{1F525} ' + item.votes + ')</span>';
+        }).join(' &nbsp; ');
+        Array.from(container.querySelectorAll('.gp-marked-item')).forEach(function(el) {
+          el.addEventListener('click', function() {
+            var v = document.querySelector('.video-player video');
+            if (v) { v.currentTime = parseInt(el.dataset.time); v.play(); }
+          });
+        });
+      } catch {}
+    }
+
+    function formatDuration(s) {
+      s = parseInt(s) || 0;
+      var m = Math.floor(s / 60);
+      var sec = s % 60;
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function toast(msg) {
+      var t = document.querySelector('.toast');
+      if (!t) {
+        var el = document.createElement('div');
+        el.className = 'toast';
+        document.body.appendChild(el);
+        t = el;
+      }
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2500);
+    }
+
+    (function() {
+      var videoId = '<%= video.id %>';
+      if (videoId) updateMarkedListUI(videoId);
+    })();
+  </script>
+<!-- JuicyAds v3.0 -->
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+<ins id="1119407" data-width="108" data-height="140"></ins>
+<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<!-- JuicyAds Float Ad -->
+<script type="text/javascript">juicy_adzone = '1118848';</script>
+<script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
+<!-- End JuicyAds Float Ad -->
+<!--JuicyAds END-->
+</body>
+</html>

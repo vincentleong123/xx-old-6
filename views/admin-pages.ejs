@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Page Editor</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0b; color: #e0e0e0; padding: 20px;
+    }
+    .admin-nav { display: flex; gap: 4px; margin-bottom: 24px; background: #1a1a1e; border-radius: 12px; padding: 4px; }
+    .admin-nav a {
+      padding: 10px 20px; border-radius: 8px; text-decoration: none;
+      color: #6b6b75; font-size: 13px; font-weight: 500; transition: all .2s;
+    }
+    .admin-nav a:hover { color: #fff; background: #2a2a30; }
+    .admin-nav a.active { color: #fff; background: #ff2d55; }
+    h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; }
+    .page-list { display: grid; gap: 12px; margin-bottom: 24px; }
+    .page-card {
+      background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 20px;
+      cursor: pointer; transition: all .2s;
+    }
+    .page-card:hover { border-color: #ff2d55; }
+    .page-card h3 { color: #fff; font-size: 15px; margin-bottom: 4px; }
+    .page-card .url { color: #6b6b75; font-size: 12px; }
+    .page-card .updated { color: #6b6b75; font-size: 11px; margin-top: 8px; }
+    .editor-panel {
+      background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 24px;
+      display: none;
+    }
+    .editor-panel.active { display: block; }
+    .editor-panel label { display: block; color: #a0a0a8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; margin-top: 16px; }
+    .editor-panel input, .editor-panel textarea {
+      width: 100%; padding: 10px 14px; background: #0a0a0b; border: 1px solid #2a2a30;
+      border-radius: 8px; color: #fff; font-size: 13px; font-family: inherit;
+    }
+    .editor-panel textarea { min-height: 400px; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.6; resize: vertical; }
+    .editor-panel input:focus, .editor-panel textarea:focus { outline: none; border-color: #ff2d55; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+    .btn {
+      padding: 10px 24px; border-radius: 8px; border: none; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: #ff2d55; color: #fff; }
+    .btn-primary:hover { background: #ff4d6f; }
+    .btn-secondary { background: #2a2a30; color: #a0a0a8; }
+    .btn-secondary:hover { background: #3a3a40; color: #fff; }
+    .status { padding: 8px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .status.success { display: block; background: rgba(52,199,89,0.15); color: #34c759; border: 1px solid rgba(52,199,89,0.3); }
+    .status.error { display: block; background: rgba(255,45,85,0.15); color: #ff2d55; border: 1px solid rgba(255,45,85,0.3); }
+    .back-link { color: #ff2d55; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 16px; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <a href="/admin" class="back-link">← Back to Dashboard</a>
+  <h1>Page Editor</h1>
+
+  <div class="admin-nav">
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/pages" class="active">Pages</a>
+    <a href="/admin/videos">Videos</a>
+    <a href="/admin/ads">Ads</a>
+    <a href="/admin/keywords">Keywords</a>
+    <a href="/admin/super-x">Super X</a>
+  </div>
+
+  <div class="page-list" id="pageList"></div>
+  <div class="editor-panel" id="editorPanel">
+    <div class="status" id="status"></div>
+    <input type="hidden" id="pageName">
+    <label>Page Title (SEO)</label>
+    <input type="text" id="pageTitle" placeholder="Page title">
+    <label>Meta Description</label>
+    <input type="text" id="pageMeta" placeholder="Meta description">
+    <label>HTML Content</label>
+    <textarea id="pageContent" placeholder="Page HTML content"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="savePage()">Save Page</button>
+      <button class="btn btn-secondary" onclick="closeEditor()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const pages = <%- JSON.stringify(pages) %>;
+
+    function renderList() {
+      const list = document.getElementById('pageList');
+      list.innerHTML = Object.entries(pages).map(([name, p]) => `
+        <div class="page-card" onclick="openEditor('${name}')">
+          <h3>${p.title || name}</h3>
+          <div class="url">/${name}</div>
+          <div class="updated">${p.updated ? 'Last updated: ' + new Date(p.updated).toLocaleString() : 'Not yet edited'}</div>
+        </div>
+      `).join('');
+    }
+
+    function openEditor(name) {
+      const p = pages[name] || {};
+      document.getElementById('pageName').value = name;
+      document.getElementById('pageTitle').value = p.title || '';
+      document.getElementById('pageMeta').value = p.metaDescription || '';
+      document.getElementById('pageContent').value = p.content || '';
+      document.getElementById('editorPanel').classList.add('active');
+      document.getElementById('status').className = 'status';
+      document.getElementById('status').style.display = 'none';
+      document.getElementById('status').textContent = '';
+    }
+
+    function closeEditor() {
+      document.getElementById('editorPanel').classList.remove('active');
+    }
+
+    async function savePage() {
+      const name = document.getElementById('pageName').value;
+      const data = {
+        title: document.getElementById('pageTitle').value,
+        metaDescription: document.getElementById('pageMeta').value,
+        content: document.getElementById('pageContent').value
+      };
+      const status = document.getElementById('status');
+      try {
+        const res = await fetch('/api/admin/pages/' + name, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          status.className = 'status success';
+          status.textContent = 'Page saved successfully! Cache cleared.';
+          pages[name] = { ...data, updated: new Date().toISOString() };
+          renderList();
+        } else {
+          status.className = 'status error';
+          status.textContent = 'Failed to save page.';
+        }
+      } catch {
+        status.className = 'status error';
+        status.textContent = 'Network error.';
+      }
+      status.style.display = 'block';
+    }
+
+    renderList();
+  </script>
+</body>
+</html>

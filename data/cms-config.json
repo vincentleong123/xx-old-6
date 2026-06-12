@@ -1,0 +1,948 @@
+{
+    "site":  {
+                 "name":  "Lucahman",
+                 "tagline":  "Premium Adult Entertainment",
+                 "logo":  "https://xmelayu.site/logo-lucah-thai-x.png",
+"domain": "xmelayu.site"
+             },
+    "theme":  {
+                  "bgPrimary":  "#0a0a0b",
+                  "accent":  "#ff2d55",
+                  "accentHover":  "#ff4d6f",
+                  "gradientEnd":  "#ff6b35"
+              },
+    "announcements":  [
+                          {
+                              "id":  "ann-1",
+                              "text":  "New viral video launching Wednesday 10PM! Stay tuned!",
+                              "icon":  "ðŸš€",
+                              "active":  true,
+                              "priority":  1,
+                              "startDate":  "2026-01-01",
+                              "endDate":  "2026-12-31"
+                          },
+                          {
+                              "id":  "ann-2",
+                              "text":  "ðŸ”¥ 6200+ Video | Fresh Content Daily",
+                              "icon":  "ðŸ”¥",
+                              "active":  true,
+                              "priority":  2,
+                              "startDate":  "2026-01-01",
+                              "endDate":  "2026-12-31"
+                          }
+                      ],
+    "announcementRotation":  {
+                                 "enabled":  true,
+                                 "intervalSeconds":  8,
+                                 "showCount":  1
+                             },
+    "homepage":  {
+                     "seo":  {
+                                 "title":  "Awek Tudung Bogel | Melayu Seks | Malaysia 18+",
+                                 "h1":  "Awek Tudung Bogel",
+                                 "h1Alt":  "Melayu Seks",
+    "h1Highlight":  "Malaysia",
+                                 "metaDescription":  "Lucahman - Premium adult video platform featuring Malaysian Awek Tudung, Indonesian, Thai, Korean, Japanese content. HD streaming, fast loading, 18+ only.",
+    "keywords":  "Lucahman, Malay, Awek Tudung, Malaysian, Indonesian videos, HD streaming, Malaysia"
+                             },
+                     "keywords":  [
+                                      {
+                                          "text":  "Awek Tudung",
+                                          "link":  "/?q=tudung"
+                                      },
+                                      {
+                                          "text":  "ðŸ‡²ðŸ‡¾ Lokal Fav",
+                                          "link":  "/?intent=malay"
+                                      },
+                                      {
+                                          "text":  "Ustazah Bogel",
+                                          "link":  "/?q=ustazah"
+                                      },
+                                      {
+                                          "text":  "Skandal Viral",
+                                          "link":  "/?q=skandal"
+                                      },
+                                      {
+                                          "text":  "Janda Gersang",
+                                          "link":  "/?q=janda"
+                                      },
+                                      {
+                                          "text":  "Video Bocor",
+                                          "link":  "/?q=bocor"
+                                      },
+                                      {
+                                          "text":  "ðŸ”¥ Viral Seks",
+                                          "link":  "/?intent=trending"
+                                      },
+                                      {
+                                          "text":  "âš¡ Quick Fix",
+                                          "link":  "/?intent=quick"
+                                      },
+                                      {
+                                          "text":  "Selangor Series",
+                                          "link":  "/?q=selangor"
+                                      },
+                                      {
+                                          "text":  "Kelantan Series",
+                                          "link":  "/?q=kelantan"
+                                      },
+                                      {
+                                          "text":  "ðŸ‡®ðŸ‡© Indonesia",
+                                          "link":  "/?q=indonesia"
+                                      },
+                                      {
+                                          "text":  "ðŸ‡¹ðŸ‡­ Thai",
+                                          "link":  "/?q=thai"
+                                      },
+                                      {
+                                          "text":  "ðŸ‡°ðŸ‡· Korean",
+                                          "link":  "/?q=korean"
+                                      },
+                                      {
+                                          "text":  "ðŸ‡¯ðŸ‡µ Japanese",
+                                          "link":  "/?q=japanese"
+                                      },
+                                      {
+                                          "text":  "Indo Seksi",
+                                          "link":  "/?q=indo"
+                                      },
+                                      {
+                                          "text":  "ðŸŒ³ Outdoor",
+                                          "link":  "/?intent=adventure"
+                                      },
+                                      {
+                                          "text":  "ðŸ’• Couple",
+                                          "link":  "/?intent=date"
+                                      }
+                                  ],
+                     "slogans":  [
+                                     {
+                                         "text":  "ðŸ‡²ðŸ‡¾ Malaysia Boleh!",
+                                         "active":  true
+                                     },
+                                     {
+                                         "text":  "ðŸ”¥ 6200+ Video",
+                                         "active":  true
+                                     },
+                                     {
+                                         "text":  "âœ¨ Fresh Harian",
+                                         "active":  true
+                                     },
+                                     {
+                                         "text":  "ðŸŽ¯ Free Access",
+                                         "active":  true
+                                     }
+                                 ]
+                 },
+    "navigation":  {
+                       "header":  [
+                                      {
+                                          "label":  "Home",
+                                          "link":  "/",
+                                          "icon":  null
+                                      },
+                                      {
+                                          "label":  "Categories",
+                                          "action":  "showCategories()",
+                                          "icon":  null
+                                      },
+                                      {
+                                          "label":  "Tags",
+                                          "action":  "showTags()",
+                                          "icon":  null
+                                      },
+                                      {
+                                          "label":  "Filters",
+                                          "action":  "showFilters()",
+                                          "icon":  null
+                                      }
+                                  ],
+                       "search":  {
+                                      "placeholder":  "Search videos, tags...",
+                                      "button":  "Search"
+                                  }
+                   },
+"ageGate": {
+                    "enabled": false,
+    "warning": ""
+                },
+    "sidebar":  {
+                    "categories":  {
+                                       "title":  "Categories",
+                                       "allLabel":  "All Videos"
+                                   },
+                    "malaysiaSeries":  {
+                                           "title":  "Malaysia Series",
+                                           "regions":  [
+                                                           {
+                                                               "name":  "Selangor",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=selangor"
+                                                           },
+                                                           {
+                                                               "name":  "Kelantan",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=kelantan"
+                                                           },
+                                                           {
+                                                               "name":  "Terengganu",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=terengganu"
+                                                           },
+                                                           {
+                                                               "name":  "Johor",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=johor"
+                                                           },
+                                                           {
+                                                               "name":  "KL Series",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=kuala+lumpur"
+                                                           },
+                                                           {
+                                                               "name":  "Pahang",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=pahang"
+                                                           },
+                                                           {
+                                                               "name":  "Kedah",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=kedah"
+                                                           },
+                                                           {
+                                                               "name":  "Perak",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=perak"
+                                                           },
+                                                           {
+                                                               "name":  "Borneo",
+                                                               "flag":  "ðŸ‡²ðŸ‡¾",
+                                                               "link":  "/?q=sabah+sarawak"
+                                                           }
+                                                       ]
+                                       },
+                    "surpriseMe":  {
+                                       "title":  "Surprise Me",
+                                       "badge":  "Not sure what to watch?",
+                                       "hint":  "Click any button below for instant recommendations",
+                                       "buttons":  [
+                                                       {
+                                                           "id":  "random",
+                                                           "label":  "Shuffle",
+                                                           "desc":  "Random mix",
+                                                           "icon":  "ðŸŽ²",
+                                                           "main":  true
+                                                       },
+                                                       {
+                                                           "id":  "trending",
+                                                           "label":  "Hot Now",
+                                                           "desc":  "Most popular",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "quick",
+                                                           "label":  "Quick Fix",
+                                                           "desc":  "Short clips",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "premium",
+                                                           "label":  "Top Rated",
+                                                           "desc":  "Best rated",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "late",
+                                                           "label":  "Late Night",
+                                                           "desc":  "After hours",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "date",
+                                                           "label":  "Date Night",
+                                                           "desc":  "Couples vibe",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "solo",
+                                                           "label":  "Solo Time",
+                                                           "desc":  "Me time",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "adventure",
+                                                           "label":  "Risky",
+                                                           "desc":  "Outdoor/action",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "malay",
+                                                           "label":  "Lokal Fav",
+                                                           "desc":  "Awek Tudung",
+                                                           "icon":  null,
+                                                           "special":  "malay-btn"
+                                                       },
+                                                       {
+                                                           "id":  "curious",
+                                                           "label":  "Nak Cuba?",
+                                                           "desc":  "Try something new",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "indo",
+                                                           "label":  "Indonesia",
+                                                           "desc":  "Bali Jakarta",
+                                                           "icon":  null
+                                                       },
+                                                       {
+                                                           "id":  "classic",
+                                                           "label":  "Classic",
+                                                           "desc":  "Timeless",
+                                                           "icon":  null
+                                                       }
+                                                   ]
+                                   },
+                    "filters":  {
+                                    "sortTitle":  "Sort By",
+                                    "sortOptions":  [
+                                                        {
+                                                            "value":  "newest",
+                                                            "label":  "Newest First"
+                                                        },
+                                                        {
+                                                            "value":  "views",
+                                                            "label":  "Most Viewed"
+                                                        },
+                                                        {
+                                                            "value":  "likes",
+                                                            "label":  "Top Rated"
+                                                        }
+                                                    ],
+                                    "typeTitle":  "Type",
+                                    "typeOptions":  [
+                                                        {
+                                                            "value":  "amateur",
+                                                            "label":  "Amateur"
+                                                        },
+                                                        {
+                                                            "value":  "professional",
+                                                            "label":  "Professional"
+                                                        },
+                                                        {
+                                                            "value":  "reality",
+                                                            "label":  "Reality"
+                                                        },
+                                                        {
+                                                            "value":  "cosplay",
+                                                            "label":  "Cosplay"
+                                                        }
+                                                    ],
+                                    "sceneTitle":  "Scene Type",
+                                    "sceneOptions":  [
+                                                         {
+                                                             "value":  "solo",
+                                                             "label":  "Solo"
+                                                         },
+                                                         {
+                                                             "value":  "couple",
+                                                             "label":  "Couple"
+                                                         },
+                                                         {
+                                                             "value":  "group",
+                                                             "label":  "Group"
+                                                         },
+                                                         {
+                                                             "value":  "pov",
+                                                             "label":  "POV"
+                                                         }
+                                                     ],
+                                    "ratingTitle":  "Rating",
+                                    "ratingOptions":  [
+                                                          {
+                                                              "value":  "teen",
+                                                              "label":  "Teen"
+                                                          },
+                                                          {
+                                                              "value":  "milf",
+                                                              "label":  "MILF"
+                                                          }
+                                                      ],
+                                    "durationTitle":  "Duration",
+                                    "durationOptions":  [
+                                                            {
+                                                                "value":  "short",
+                                                                "label":  "Short (\u003c 5 min)"
+                                                            },
+                                                            {
+                                                                "value":  "medium",
+                                                                "label":  "Medium (5-20 min)"
+                                                            },
+                                                            {
+                                                                "value":  "long",
+                                                                "label":  "Long (\u003e 20 min)"
+                                                            }
+                                                        ],
+                                    "qualityTitle":  "Quality",
+                                    "qualityOptions":  [
+                                                           {
+                                                               "value":  "4k",
+                                                               "label":  "4K Ultra HD"
+                                                           },
+                                                           {
+                                                               "value":  "hd",
+                                                               "label":  "1080p HD"
+                                                           },
+                                                           {
+                                                               "value":  "sd",
+                                                               "label":  "720p SD"
+                                                           }
+                                                       ]
+                                }
+                },
+    "sections":  {
+                     "carousel":  {
+                                      "title":  "Hot This Week",
+                                      "subtitle":  "Most Viewed",
+                                      "badge":  "HOT",
+                                      "badgeClass":  "fire",
+                                      "videos":  12
+                                  },
+                     "grid4":  {
+                                   "title":  "Selangor Series",
+                                   "subtitle":  "KL Shah Alam Puchong",
+                                   "badge":  "ðŸ”¥",
+                                   "badgeClass":  "fire",
+                                   "videos":  12
+                               },
+                     "grid3":  {
+                                   "title":  "Kelantan Terengganu",
+                                   "subtitle":  "Dato Machap Cergas",
+                                   "badge":  "ðŸ‡²ðŸ‡¾",
+                                   "badgeClass":  "",
+                                   "videos":  9
+                               },
+                     "grid5":  {
+                                   "title":  "Melayu Ngentot",
+                                   "subtitle":  "Bogel Di Bilik Sewa",
+                                   "badge":  "SEXY",
+                                   "badgeClass":  "fire",
+                                   "videos":  15
+                               },
+                     "grid6":  {
+                                   "title":  "Video Viral Seks",
+                                   "subtitle":  "Bocor Telegram WhatsApp",
+                                   "badge":  "VIRAL",
+                                   "badgeClass":  "fire",
+                                   "videos":  18
+                               },
+                     "list":  {
+                                  "title":  "Awek Montok Malaysia",
+                                  "subtitle":  "Janda Gersang Cantik",
+                                  "badge":  "HOT",
+                                  "badgeClass":  "",
+                                  "videos":  10
+                              },
+                     "compact":  {
+                                     "title":  "Makcik Geram Bogel",
+                                     "subtitle":  "Bini Orang Di Rumah",
+                                     "badge":  "SPICY",
+                                     "badgeClass":  "",
+                                     "videos":  18
+                                 },
+                     "stagger":  {
+                                     "title":  "Skandal Ustazah",
+                                     "subtitle":  "Hijab Bogel Viral",
+                                     "badge":  "NEW",
+                                     "badgeClass":  "new",
+                                     "videos":  15
+                                 }
+                 },
+    "ads":  {
+                "enabled":  true,
+                "rotation":  {
+                                 "enabled":  true,
+                                 "refreshInterval":  300,
+                                 "positionInterval":  5
+                             },
+                "bannerAds":  [
+                                  {
+                                      "id":  "banner-1",
+                                      "type":  "banner",
+                                      "title":  "Premium VPN - Secure \u0026 Fast",
+                                      "cta":  "Learn More",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "banner-2",
+                                      "type":  "banner",
+                                      "title":  "Private Dating - 18+ Only",
+                                      "cta":  "Join Now",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "banner-3",
+                                      "type":  "banner",
+                                      "title":  "Webcam Shows - Live 24/7",
+                                      "cta":  "Watch Live",
+                                      "badge":  "Live",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "banner-4",
+                                      "type":  "banner",
+                                      "title":  "Exclusive Content - Members Area",
+                                      "cta":  "Access Now",
+                                      "badge":  "Exclusive",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "banner-5",
+                                      "type":  "banner",
+                                      "title":  "Safe Browsing - Adult VPN",
+                                      "cta":  "Get Started",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "banner-6",
+                                      "type":  "banner",
+                                      "title":  "HD Cams - International Models",
+                                      "cta":  "Enter",
+                                      "badge":  "Live",
+                                      "url":  "#",
+                                      "image":  null,
+                                      "active":  true,
+                                      "weight":  1
+                                  }
+                              ],
+                "nativeAds":  [
+                                  {
+                                      "id":  "native-1",
+                                      "type":  "native",
+                                      "title":  "Premium VPN - Secure \u0026 Fast",
+                                      "cta":  "Learn More",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "native-2",
+                                      "type":  "native",
+                                      "title":  "Private Dating - 18+ Only",
+                                      "cta":  "Join Now",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "native-3",
+                                      "type":  "native",
+                                      "title":  "Webcam Shows - Live 24/7",
+                                      "cta":  "Watch Live",
+                                      "badge":  "Live",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "native-4",
+                                      "type":  "native",
+                                      "title":  "Exclusive Content - Members Area",
+                                      "cta":  "Access Now",
+                                      "badge":  "Exclusive",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "native-5",
+                                      "type":  "native",
+                                      "title":  "Safe Browsing - Adult VPN",
+                                      "cta":  "Get Started",
+                                      "badge":  "Sponsored",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  },
+                                  {
+                                      "id":  "native-6",
+                                      "type":  "native",
+                                      "title":  "HD Cams - International Models",
+                                      "cta":  "Enter",
+                                      "badge":  "Live",
+                                      "url":  "#",
+                                      "active":  true,
+                                      "weight":  1
+                                  }
+                              ],
+                "placement":  {
+                                  "nativeInFeed":  true,
+                                  "nativePerSection":  2,
+                                  "nativeMinCards":  3,
+                                  "sidebarAds":  true,
+                                  "sidebarAdPosition":  3,
+                                  "interstitialEnabled":  false,
+                                  "interstitialInterval":  0
+                              }
+            },
+    "featured":  {
+                     "enabled":  true,
+                     "method":  "auto",
+                     "manualIds":  [
+
+                                   ],
+                     "category":  "",
+                     "minViews":  1000,
+                     "limit":  6
+                 },
+    "player":  {
+                   "channel":  {
+                                   "name":  "Lucahman Channel",
+                                   "label":  "Video Host"
+                               },
+                   "actions":  {
+                                   "like":  "Like",
+                                   "share":  "Share",
+                                   "copyLink":  "Copy Link"
+                               },
+                   "subscribe":  {
+                                     "default":  "Subscribe",
+                                     "subscribed":  "Subscribed"
+                                 }
+               },
+    "footer":  {
+                   "columns":  [
+                                   {
+                                       "title":  "Platform",
+                                       "links":  [
+                                                     {
+                                                         "text":  "Home",
+                                                         "url":  "/"
+                                                     },
+                                                     {
+                                                         "text":  "All Videos",
+                                                         "url":  "/?sort=newest"
+                                                     },
+                                                     {
+                                                         "text":  "System Status",
+                                                         "url":  "/api/health"
+                                                     }
+                                                 ]
+                                   },
+                                   {
+                                       "title":  "Legal \u0026 Compliance",
+                                       "links":  [
+                                                     {
+                                                         "text":  "Terms of Use",
+                                                         "url":  "/terms"
+                                                     },
+                                                     {
+                                                         "text":  "Privacy Policy",
+                                                         "url":  "/privacy"
+                                                     },
+                                                     {
+                                                         "text":  "DMCA Policy",
+                                                         "url":  "/dmca"
+                                                     },
+                                                     {
+                                                         "text":  "2257 Compliance",
+                                                         "url":  "/2257"
+                                                     },
+                                                     {
+                                                         "text":  "Sitemap",
+                                                         "url":  "/sitemap.xml"
+                                                     },
+                                                     {
+                                                         "text":  "Robots.txt",
+                                                         "url":  "/robots.txt"
+                                                     }
+                                                 ]
+                                   },
+                                   {
+                                       "title":  "Support",
+                                       "links":  [
+                                                     {
+                                                         "text":  "Contact Support",
+                                                          "url":  "mailto:support@xmelayu.site"
+                                                     },
+                                                     {
+                                                         "text":  "Legal Inquiries",
+                                                         "url":  "mailto:legal@lucahman.store"
+                                                     },
+                                                     {
+                                                         "text":  "Report Content",
+                                                         "url":  "mailto:report@lucahman.store"
+                                                     },
+                                                     {
+                                                         "text":  "Privacy Contact",
+                                                         "url":  "mailto:privacy@lucahman.store"
+                                                     }
+                                                 ]
+                                   },
+                                   {
+                                       "title":  "Content Categories",
+                                       "links":  [
+                                                     {
+                                                         "text":  "HD Videos",
+                                                         "url":  "/?quality=hd"
+                                                     },
+                                                     {
+                                                         "text":  "New Releases",
+                                                         "url":  "/?sort=newest"
+                                                     },
+                                                     {
+                                                         "text":  "Trending",
+                                                         "url":  "/?intent=trending"
+                                                     },
+                                                     {
+                                                         "text":  "Premium Content",
+                                                         "url":  "/?intent=premium"
+                                                     }
+                                                 ]
+                                   }
+                               ],
+                   "trustBadges":  [
+                                       "SSL Secure",
+                                       "Fast Streaming",
+                                       "Global CDN",
+                                       "Mobile Ready",
+            "HD Quality",
+            "Fast Streaming"
+                                   ],
+                   "taglines":  [
+                                    "High-Quality Video Content",
+                                    "Ultra-Fast Streaming",
+                                    "Private \u0026 Secure"
+                                ],
+                   "copyright":  "Lucahman - Premium Video Streaming Platform. All Rights Reserved.",
+"accessibilityText":  "Premium streaming platform. Fast loading, HD quality."
+               },
+    "emptyStates":  {
+                        "loading":  {
+                                        "text":  "Loading more..."
+                                    },
+                        "noResults":  {
+                                          "icon":  "ðŸ”",
+                                          "title":  "No videos found",
+                                          "message":  "Try different keywords or remove filters",
+                                          "button":  "Reset Filters"
+                                      }
+                    },
+    "seo":  {
+                "aboutTitle":  "What is Lucahman?",
+                "aboutText":  "Lucahman is a premium adult video streaming platform offering high-quality content featuring Malaysian adult videos, Awek Tudung content, Indonesian, Thai, Korean, and Japanese content. Our platform provides HD quality streaming with fast loading speeds for users in Malaysia, Singapore, Indonesia, and worldwide.",
+                "tags":  [
+                             "Adult Video",
+                             "Malay Porn",
+                             "Awek Tudung",
+                             "HD Streaming",
+                             "18+ Malaysia",
+                             "Indonesian Adult",
+                             "Thai Videos",
+                             "Amateur Content"
+                         ]
+            },
+    "about": {
+        "backlinks": [
+                      {
+                          "id":  "bl-1",
+                          "domain":  "xvideos.com",
+                          "url":  "https://xvideos.com/",
+                          "anchor":  "Free HD Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-2",
+                          "domain":  "xnxx.com",
+                          "url":  "https://xnxx.com/",
+                          "anchor":  "Free Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-3",
+                          "domain":  "pornhub.com",
+                          "url":  "https://pornhub.com/",
+                          "anchor":  "Free Porn & Sex Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-4",
+                          "domain":  "xhamster.com",
+                          "url":  "https://xhamster.com/",
+                          "anchor":  "Free HD Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-5",
+                          "domain":  "eporner.com",
+                          "url":  "https://www.eporner.com/",
+                          "anchor":  "HD Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-6",
+                          "domain":  "youporn.com",
+                          "url":  "https://www.youporn.com/",
+                          "anchor":  "Free Porn Videos Online",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-7",
+                          "domain":  "tnaflix.com",
+                          "url":  "https://www.tnaflix.com/",
+                          "anchor":  "Free Porn Tube",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-8",
+                          "domain":  "hqporner.com",
+                          "url":  "https://hqporner.com/",
+                          "anchor":  "Free HQ Porn",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-9",
+                          "domain":  "thumbzilla.com",
+                          "url":  "https://www.thumbzilla.com/",
+                          "anchor":  "Free Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-10",
+                          "domain":  "spankbang.com",
+                          "url":  "https://spankbang.com/",
+                          "anchor":  "Free Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-11",
+                          "domain":  "jetTube.com",
+                          "url":  "https://www.jettube.com/",
+                          "anchor":  "Best Free Porn Site",
+                          "status":  "Active",
+                          "type":  "affiliate",
+                          "nofollow":  true
+                      },
+                      {
+                          "id":  "bl-12",
+                          "domain":  "xfreehd.com",
+                          "url":  "https://www.xfreehd.com/",
+                          "anchor":  "Free HD Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-13",
+                          "domain":  "fapster.xxx",
+                          "url":  "https://fapster.xxx/",
+                          "anchor":  "Free Porn Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-14",
+                          "domain":  "vjav.com",
+                          "url":  "https://vjav.com/",
+                          "anchor":  "Japanese AV Videos",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-15",
+                          "domain":  "hqporner.com",
+                          "url":  "https://hqporner.com/category/malaysian/",
+                          "anchor":  "Malaysian Porn Videos",
+                          "status":  "Active",
+                          "type":  "category",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-16",
+                          "domain":  "xhamster.com",
+                          "url":  "https://xhamster.com/categories/malaysian.php",
+                          "anchor":  "Malaysian xxx",
+                          "status":  "Active",
+                          "type":  "category",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-17",
+                          "domain":  "xnxx.com",
+                          "url":  "https://xnxx.com/malaysian/",
+                          "anchor":  "xnxx malaysia",
+                          "status":  "Active",
+                          "type":  "category",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-18",
+                          "domain":  "pornhub.com",
+                          "url":  "https://www.pornhub.com/category/malaysian",
+                          "anchor":  "Malaysian Porn",
+                          "status":  "Active",
+                          "type":  "category",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-19",
+                          "domain":  "xvideos.com",
+                          "url":  "https://www.xvideos.com/profiles/malaysian-porn",
+                          "anchor":  "Malay Sex Videos",
+                          "status":  "Active",
+                          "type":  "profile",
+                          "nofollow":  false
+                      },
+                      {
+                          "id":  "bl-20",
+                          "domain":  "xhamster.desi",
+                          "url":  "https://xhamster.desi/",
+                          "anchor":  "Indian Free Porn",
+                          "status":  "Active",
+                          "type":  "directory",
+                          "nofollow":  false
+                      }
+                  ]
+            }
+}
