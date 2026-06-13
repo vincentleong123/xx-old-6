@@ -121,13 +121,20 @@ const microCache = {
   maxSize: 5000,
   hits: 0, misses: 0, reads: 0,
   has(key) { return this.store.has(key); },
-  get(key) { this.reads++; if (this.store.has(key)) { this.hits++; return this.store.get(key); } this.misses++; return null; },
+  get(key) {
+    this.reads++;
+    if (this.store.has(key)) { this.hits++; const e = this.store.get(key); e.atime = Date.now(); return e.data; }
+    this.misses++; return null;
+  },
   set(key, val) {
     if (this.store.size >= this.maxSize) {
-      const k = this.store.keys().next().value;
-      this.store.delete(k);
+      let oldest = Infinity, oldestKey = null;
+      for (const [k, v] of this.store) {
+        if (v.atime < oldest) { oldest = v.atime; oldestKey = k; }
+      }
+      if (oldestKey) this.store.delete(oldestKey);
     }
-    this.store.set(key, val);
+    this.store.set(key, { data: val, atime: Date.now() });
   },
   get size() { return this.store.size; },
   delete(key) { this.store.delete(key); }
@@ -335,12 +342,12 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d', etag: tru
 app.use(trackRef);
 
 // ═══════════════════════════════════════════════════════════════
-// RAM CHUNK CACHE — first 5MB of hot videos in process memory
+// RAM CHUNK CACHE — first 10MB of hot videos in process memory
 // Protects HDD from random seeks during preview scrubs & initial playback
 // ═══════════════════════════════════════════════════════════════
 
-const RAM_CHUNK_MAX = 200 * 1024 * 1024;
-const RAM_CHUNK_SIZE = 5 * 1024 * 1024;
+const RAM_CHUNK_MAX = 300 * 1024 * 1024;
+const RAM_CHUNK_SIZE = 10 * 1024 * 1024;
 const ramChunkCache = new Map();
 let ramChunkUsed = 0;
 const RAM_CHUNK_EVICT_PCT = 0.3;
@@ -381,7 +388,6 @@ async function preloadSpongeCache() {
   console.log(`⚡ [SPONGE] Pre-buffering top ${candidates.length} videos into RAM...`);
   let loaded = 0;
   for (const v of candidates) {
-    await new Promise(r => setTimeout(r, 50));
     const fname = path.basename(v.video);
     const hddPath = path.join(VIDEO_DIR, fname);
     try { await fsp.stat(hddPath); } catch { continue; }
@@ -394,19 +400,33 @@ async function preloadSpongeCache() {
 
 // SSD capacitor promotion queue — isolates HDD→SSD copies from playback I/O
 // Only 1 promotion at a time; each starts on setImmediate to yield the event loop
+const PROMO_CONCURRENCY = 3;
+let promoActive = 0;
 const promoQueue = [];
-let promoBusy = false;
 
 async function processPromoQueue() {
-  if (promoBusy || promoQueue.length === 0) return;
-  promoBusy = true;
-  const { filename, hddPath, st } = promoQueue.shift();
+  while (promoActive < PROMO_CONCURRENCY && promoQueue.length > 0) {
+    const { filename, hddPath, st } = promoQueue.shift();
+    promoActive++;
+    processPromoItem(filename, hddPath, st).finally(() => {
+      promoActive--;
+      setImmediate(processPromoQueue);
+    });
+  }
+}
+
+function queuePromoteToHot(filename, hddPath, st) {
+  promoQueue.push({ filename, hddPath, st });
+  setImmediate(processPromoQueue);
+}
+
+async function processPromoItem(filename, hddPath, st) {
   const tmp = path.join(HOT_CACHE_DIR, filename + '.tmp');
   const dest = path.join(HOT_CACHE_DIR, filename);
   try {
     if (hotCacheUsed + st.size > HOT_CACHE_MAX)
       await evictLeastRecent(Math.min(st.size + HOT_CACHE_EVICT_TARGET, hotCacheUsed));
-    if (hotCacheUsed + st.size > HOT_CACHE_MAX) { promoBusy = false; processPromoQueue(); return; }
+    if (hotCacheUsed + st.size > HOT_CACHE_MAX) return;
     await new Promise((resolve, reject) => {
       const rs = fs.createReadStream(hddPath, { highWaterMark: 65536 });
       const ws = fs.createWriteStream(tmp);
@@ -419,55 +439,10 @@ async function processPromoQueue() {
     hotCache.set(filename, { size: st.size, atime: Date.now() });
     hotCacheUsed += st.size;
   } catch { await fsp.unlink(tmp).catch(() => {}); }
-  promoBusy = false;
-  setImmediate(processPromoQueue);
-}
-
-function queuePromoteToHot(filename, hddPath, st) {
-  promoQueue.push({ filename, hddPath, st });
-  setImmediate(processPromoQueue);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// WATER-LIKE I/O POOL — flexible, parallel, adaptive
-// No debounce — every request fires immediately.
-// Workers scale up/down based on queue depth.
-// ═══════════════════════════════════════════════════════════════
-
-const IO = {
-  active: 0,              // currently running reads
-  queued: 0,              // waiting for a slot
-  maxWorkers: 16,         // hard ceiling (HDD can't do more)
-  minWorkers: 2,          // floor
-  readAhead: 2,           // prefetch next N chunks proactively
-  totalReads: 0,          // stats
-  totalQueued: 0,
-
-  // Adaptive scaling: more workers when queue is deep
-  desiredWorkers() {
-    if (this.queued > 8) return Math.min(this.maxWorkers, 16);
-    if (this.queued > 4) return Math.min(this.maxWorkers, 8);
-    if (this.queued > 2) return Math.min(this.maxWorkers, 4);
-    return this.minWorkers;
-  },
-
-  // Try to acquire a slot. Returns true immediately (fire-and-forget style).
-  acquire() { this.active++; this.totalReads++; },
-  release() { this.active = Math.max(0, this.active - 1); this.queued = Math.max(0, this.queued - 1); },
-  enqueue() { this.queued++; this.totalQueued++; }
-};
-
-// Direct fire — no delay, no debounce
-function fireDirect(req, res, fn) {
-  IO.acquire();
-  fn();
-  // Auto-release on response finish or client abort
-  res.on('finish', () => IO.release());
-  req.on('close', () => { IO.release(); });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// VIDEO STREAMING — HDD + SSD capacitor cache (20GB)
+// VIDEO STREAMING — HDD + SSD capacitor cache (30GB)
 // Behaves like a voltage stabilizer / capacitor:
 //   - Fills on first hit (charging)
 //   - When full, evicts oldest-least-recently-watched (leak)
@@ -476,7 +451,7 @@ function fireDirect(req, res, fn) {
 // ═══════════════════════════════════════════════════════════════
 
 const HOT_CACHE_DIR = path.join(os.tmpdir(), 'hot-cache');
-const HOT_CACHE_MAX = 20 * 1024 * 1024 * 1024; // 20GB
+const HOT_CACHE_MAX = 30 * 1024 * 1024 * 1024; // 30GB
 const HOT_CACHE_EVICT_TARGET = 2 * 1024 * 1024 * 1024; // free 2GB on eviction
 const hotCache = new Map(); // filename -> { size, atime }
 let hotCacheUsed = 0;
@@ -521,16 +496,15 @@ async function promoteToHot(filename, hddPath) {
   } catch {}
 }
 
-app.use('/videos', async (req, res, next) => {
-  const filename = path.basename(decodeURIComponent(req.path));
-  if (!filename.endsWith('.mp4')) return next();
-  const hddPath = path.join(VIDEO_DIR, filename);
+async function serveVideo(req, res, filename, sourceDir) {
+  const hddPath = path.join(sourceDir, filename);
   let stat;
-  try { stat = await fsp.stat(hddPath); } catch { return next(); }
+  try { stat = await fsp.stat(hddPath); } catch { res.status(404).end(); return; }
 
-  // RAM chunk cache: serve first 5MB from process memory (zero HDD seek)
   const range = req.headers.range;
   const rangeStart = range ? parseInt(range.replace(/bytes=/, '').split('-')[0], 10) : 0;
+
+  // RAM chunk cache: serve first 10MB from process memory
   if (range && rangeStart < RAM_CHUNK_SIZE) {
     const chunk = await getRamChunk(filename, hddPath);
     if (chunk) {
@@ -547,41 +521,51 @@ app.use('/videos', async (req, res, next) => {
           'Accept-Ranges': 'bytes',
           'Cache-Control': 'public, max-age=604800'
         });
-        return res.end(slice);
+        res.end(slice);
+        return;
       }
     }
   }
 
+  // SSD hot cache hit
   if (hotCache.has(filename)) {
     stats.videoDelivery.ssdHits++;
     hotCache.get(filename).atime = Date.now();
     try {
-      return res.sendFile(path.join(HOT_CACHE_DIR, filename), {
+      res.sendFile(path.join(HOT_CACHE_DIR, filename), {
         headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }
       });
+      return;
     } catch { hotCache.delete(filename); }
   }
 
-  // HDD read — direct fire, no debounce
+  // HDD read — capacitor promotes after response finishes (no HDD seek during playback)
   stats.videoDelivery.hddReads++;
-  IO.enqueue();
-  fireDirect(req, res, () => {
-    const streamTimeout = setTimeout(() => { if (typeof rs !== 'undefined') rs.destroy(); res.end(); }, 15000);
-    const rs = range
-      ? (() => {
-          const parts = range.replace(/bytes=/, '').split('-');
-          const start = parseInt(parts[0], 10);
-          const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
-          res.status(206);
-          res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
-          return fs.createReadStream(hddPath, { start, end });
-        })()
-      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(hddPath));
+  if (range) {
+    const parts = range.replace(/bytes=/, '').split('-');
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+    res.status(206);
+    res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
+    const rs = fs.createReadStream(hddPath, { start, end });
     rs.pipe(res);
-    rs.on('error', () => { clearTimeout(streamTimeout); res.end(); });
-    res.on('close', () => { clearTimeout(streamTimeout); rs.destroy(); });
-    promoteToHot(filename, hddPath);
-  });
+    rs.on('error', () => res.end());
+    res.on('close', () => rs.destroy());
+    res.on('finish', () => promoteToHot(filename, hddPath));
+  } else {
+    res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
+    const rs = fs.createReadStream(hddPath);
+    rs.pipe(res);
+    rs.on('error', () => res.end());
+    res.on('close', () => rs.destroy());
+    res.on('finish', () => promoteToHot(filename, hddPath));
+  }
+}
+
+app.use('/videos', (req, res, next) => {
+  if (!req.path.endsWith('.mp4')) return next();
+  const filename = path.basename(decodeURIComponent(req.path));
+  serveVideo(req, res, filename, VIDEO_DIR);
 });
 // Thumbnails — served from micro-cache first, then disk.
 // Caddy also handles these (see Caddyfile), but Express keeps a fallback
@@ -626,49 +610,10 @@ app.use('/thumbnails', thumbnailCache([THUMBNAIL_DIR]));
 app.use('/xamateur/thumbnails', thumbnailCache([XAMATEUR_THUMB_DIR]));
 
 // xMateur video streaming
-app.use('/xamateur/videos', async (req, res, next) => {
+app.use('/xamateur/videos', (req, res, next) => {
+  if (!req.path.endsWith('.mp4')) return next();
   const filename = path.basename(decodeURIComponent(req.path));
-  if (!filename.endsWith('.mp4')) return next();
-  const hddPath = path.join(XAMATEUR_VIDEO_DIR, filename);
-  let stat;
-  try { stat = await fsp.stat(hddPath); } catch { return next(); }
-
-  // RAM chunk cache
-  const range = req.headers.range;
-  const rangeStart = range ? parseInt(range.replace(/bytes=/, '').split('-')[0], 10) : 0;
-  if (range && rangeStart < RAM_CHUNK_SIZE) {
-    const chunk = await getRamChunk(filename, hddPath);
-    if (chunk) {
-      const rangeEnd = parseInt(range.replace(/bytes=/, '').split('-')[1], 10) || Math.min(rangeStart + RAM_CHUNK_SIZE, stat.size) - 1;
-      const end = Math.min(rangeEnd, stat.size - 1);
-      const slice = chunk.subarray(rangeStart, Math.min(end + 1, chunk.length));
-      if (slice.length > 0 && slice.length < stat.size) {
-        stats.videoDelivery.ramHits++;
-        res.status(206);
-        res.set({ 'Content-Range': `bytes ${rangeStart}-${end}/${stat.size}`, 'Content-Length': slice.length, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
-        return res.end(slice);
-      }
-    }
-  }
-
-  if (hotCache.has(filename)) {
-    stats.videoDelivery.ssdHits++;
-    try { return res.sendFile(path.join(HOT_CACHE_DIR, filename), { headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' } }); }
-    catch { hotCache.delete(filename); }
-  }
-  // HDD read — direct fire, no debounce
-  stats.videoDelivery.hddReads++;
-  IO.enqueue();
-  fireDirect(req, res, () => {
-    const streamTimeout = setTimeout(() => { if (typeof rs !== 'undefined') rs.destroy(); res.end(); }, 15000);
-    const rs = range
-      ? (() => { const parts = range.replace(/bytes=/, '').split('-'); const start = parseInt(parts[0], 10); const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1; res.status(206); res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }); return fs.createReadStream(hddPath, { start, end }); })()
-      : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(hddPath));
-    rs.pipe(res);
-    rs.on('error', () => { clearTimeout(streamTimeout); res.end(); });
-    res.on('close', () => { clearTimeout(streamTimeout); rs.destroy(); });
-    promoteToHot(filename, hddPath);
-  });
+  serveVideo(req, res, filename, XAMATEUR_VIDEO_DIR);
 });
 
 const nlp = require('./utils/nlp');
@@ -683,6 +628,13 @@ function rebuildVideosIndex() {
   const m = new Map();
   for (const v of videos) if (v.id) m.set(v.id, v);
   videosById = m;
+  rebuildSortedViews();
+}
+let videosByDate = [];
+let videosByViews = [];
+function rebuildSortedViews() {
+  videosByDate = [...videos].sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
+  videosByViews = [...videos].sort((a, b) => b.views - a.views);
 }
 let videoDescriptions = {};
 let idMap = {};          // fingerprint → { id, name, title, views, likes, uploaded, category, subTags, keywords }
@@ -1200,8 +1152,6 @@ app.get('/', cachePage, async (req, res) => {
   const tags = getTags();
   const extraTag = SEO_KW.sort(() => Math.random() - 0.5).slice(0, 4);
   const extraTags = extraTag.map(t => ({ tag: t, count: Math.floor(Math.random() * 500) + 50 }));
-  // Pre-sort newest and embed first 100 videos so client avoids API round-trip on first load
-  const newestFirst = [...videos].sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
   res.render('gallery', {
     title: seoInject('Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+'),
     metaDesc: 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www. Free Malay porn, Melayu lucah, awek tudung bokep malay video.',
@@ -1214,7 +1164,7 @@ app.get('/', cachePage, async (req, res) => {
     simplifiedSidebar: false,
     isSuperX: false,
     heroConfig,
-    initialVideos: newestFirst.slice(0, 100)
+    initialVideos: videosByDate.slice(0, 100)
   });
 });
 
@@ -1401,12 +1351,14 @@ app.get('/api/xmateur/search', async (req, res) => {
     const terms = q.toLowerCase().split(/\s+/).filter(t => t.length > 1);
     results = results.filter(v => { const text = (v.title + ' ' + (v.keywords || []).join(' ')).toLowerCase(); return terms.some(t => text.includes(t)); });
   }
+  const totalResults = results.length;
+  if (results.length > 5000) results.length = 5000;
   if (sort === 'views') results.sort((a, b) => b.views - a.views);
   else results.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
   const p = parseInt(page);
   const lim = Math.min(parseInt(limit) || 72, 700);
   const start = (p - 1) * lim;
-  res.json({ videos: results.slice(start, start + lim), total: results.length, page: p, totalPages: Math.ceil(results.length / lim), hasMore: start + lim < results.length });
+  res.json({ videos: results.slice(start, start + lim), total: totalResults, page: p, totalPages: Math.ceil(totalResults / lim), hasMore: start + lim < totalResults });
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -1429,13 +1381,15 @@ app.get('/api/search', async (req, res) => {
   }
   if (category && category.toLowerCase() !== 'all') results = results.filter(v => v.category.toLowerCase() === category.toLowerCase());
   if (tag) results = results.filter(v => v.subTags.some(t => t.toLowerCase().includes(tag.toLowerCase())) || v.keywords.some(k => k.toLowerCase().includes(tag.toLowerCase())));
+  const totalResults = results.length;
+  if (results.length > 5000) results.length = 5000;
   if (sort === 'views') results.sort((a, b) => b.views - a.views);
   else if (sort === 'likes') results.sort((a, b) => b.likes - a.likes);
   else results.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
   const pageNum = parseInt(page);
   const limitNum = Math.min(parseInt(limit) || 72, 700);
   const start_idx = (pageNum - 1) * limitNum;
-  const data = { videos: results.slice(start_idx, start_idx + limitNum), total: results.length, page: pageNum, totalPages: Math.ceil(results.length / limitNum), hasMore: start_idx + limitNum < results.length, queryTime: Date.now() - start };
+  const data = { videos: results.slice(start_idx, start_idx + limitNum), total: totalResults, page: pageNum, totalPages: Math.ceil(totalResults / limitNum), hasMore: start_idx + limitNum < totalResults, queryTime: Date.now() - start };
   apiCache.set(cacheKey, { data, ts: Date.now() });
   res.json(data);
 });
@@ -1476,14 +1430,6 @@ app.get('/api/stats', (req, res) => {
       hddPct: hddPressure,
       hddPressure: hddPressure
     },
-    io: {
-      active: IO.active,
-      queued: IO.queued,
-      totalReads: IO.totalReads,
-      totalQueued: IO.totalQueued,
-      maxWorkers: IO.maxWorkers,
-      desiredWorkers: IO.desiredWorkers()
-    },
     ramChunk: {
       usedMB: (ramChunkUsed / 1024 / 1024).toFixed(1),
       maxMB: (RAM_CHUNK_MAX / 1024 / 1024).toFixed(0),
@@ -1492,7 +1438,7 @@ app.get('/api/stats', (req, res) => {
     },
     promoQueue: {
       length: promoQueue.length,
-      busy: promoBusy
+      active: promoActive
     },
     uptime: { seconds: Math.floor(uptime / 1000), human: formatUptime(uptime) },
     system: { cpus: os.cpus().length, freeMemory: (os.freemem() / 1024 / 1024 / 1024).toFixed(1) + ' GB', platform: os.platform() },
@@ -1736,8 +1682,8 @@ app.get('/:id', async (req, res) => {
   const vCat = video.category;
   const vKeywords = video.keywords;
   const vSubTags = video.subTags;
-  const vTitle = video.title;
-  for (const v of videos) {
+  const candidatePool = videos.length > 5000 ? videosByDate.slice(0, 5000) : videos;
+  for (const v of candidatePool) {
     if (v.id === video.id) continue;
     let score = 0;
     if (v.category === vCat) score += 3;
@@ -1785,7 +1731,8 @@ app.get('/api/video/:id', (req, res) => {
   const vKeywords = video.keywords;
   const vSubTags = video.subTags;
   const vTitle = video.title;
-  for (const v of videos) {
+  const candidatePool = videos.length > 5000 ? videosByDate.slice(0, 5000) : videos;
+  for (const v of candidatePool) {
     if (v.id === video.id) continue;
     let score = 0;
     if (v.category === vCat) score += 3;
@@ -2391,24 +2338,39 @@ process.on('unhandledRejection', err => {
   await loadSuperXPages();
   await loadKeywordBadges();
   loadDescriptions();
-  // Thumbnail capacitor: pre-warm microCache with top 300 most-viewed thumbnails
-  (async () => {
-    const sorted = [...videos].sort((a, b) => b.views - a.views).slice(0, 300);
-    let loaded = 0;
-    for (const v of sorted) {
-      if (!v.thumbnail) continue;
-      const filename = path.basename(v.thumbnail.replace(/\?.*$/, ''));
-      if (microCache.has(filename)) continue;
-      for (const dir of [THUMBNAIL_DIR, XAMATEUR_THUMB_DIR]) {
-        const fp = path.join(dir, filename);
-        try { microCache.set(filename, await fsp.readFile(fp)); loaded++; break; } catch {}
+  // Pre-warm caches in parallel so repeat views hit instantly
+  Promise.all([
+    (async () => {
+      // Thumbnail capacitor: pre-warm microCache with top 300 most-viewed thumbnails
+      const sorted = videosByViews.slice(0, 300);
+      let loaded = 0;
+      for (const v of sorted) {
+        if (!v.thumbnail) continue;
+        const filename = path.basename(v.thumbnail.replace(/\?.*$/, ''));
+        if (microCache.has(filename)) continue;
+        for (const dir of [THUMBNAIL_DIR, XAMATEUR_THUMB_DIR]) {
+          const fp = path.join(dir, filename);
+          try { microCache.set(filename, await fsp.readFile(fp)); loaded++; break; } catch {}
+        }
       }
-    }
-    if (loaded) console.log(`🖼️ [THUMB CAPACITOR] Pre-warmed ${loaded} thumbnails in RAM`);
-  })();
+      if (loaded) console.log(`🖼️ [THUMB CAPACITOR] Pre-warmed ${loaded} thumbnails in RAM`);
+    })(),
+    (async () => {
+      // RAM sponge: pre-load first chunks of top videos into process memory
+      await preloadSpongeCache();
+    })(),
+    (async () => {
+      // Cloudflared pre-warm: hit origin to warm tunnels
+      try {
+        const res = await fetch(`http://127.0.0.1:${PORT}/`);
+        if (res.ok) console.log(`☁️ [CLOUDFLARED] Origin warmed successfully`);
+      } catch {}
+    })()
+  ]).then(() => {
+    console.log(`⚡ [CAPACITOR] All caches primed — server ready for peak traffic`);
+  });
+
   server.listen(PORT, () => {
-    // Fire sponge preload after 30s — lets initial user traffic through first
-    setTimeout(preloadSpongeCache, 30000);
     const totalViews = videos.reduce((s, v) => s + v.views, 0);
     const cats = getCategories();
     const topCats = cats.slice(0, 5).map(([c, n]) => `${c}:${n}`).join('  ');
@@ -2442,10 +2404,7 @@ ${L(`video-index.json  │  id-map: ${Object.keys(idMap).length} fingerprints`)}
 ${D}
 ║  CACHING                                                        ║
 ${L(`microCache: ${microCache.size} items${microPct}  │  burstCache: 5s TTL`)}
-${L(`SSD capacitor: ${caps}GB / 20GB${capPct}  │  LRU eviction`)}
-${D}
-║  I/O POOL (water-like)                                          ║
-${L(`Active: ${IO.active}  │  Queued: ${IO.queued}  │  Max: ${IO.maxWorkers}  │  Reads: ${IO.totalReads}`)}
+${L(`SSD capacitor: ${caps}GB / 30GB${capPct}  │  LRU eviction`)}
 ${D}
 ║  RATE LIMITS                                                    ║
 ${L(`Pages: ${RL_MAX}/min  │  Static: ${RL_STATIC_MAX}/min  │  Bots: unlimited`)}

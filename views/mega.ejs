@@ -91,7 +91,7 @@
 /* Responsive */
 @media (max-width:768px) {
   .grid-43 { grid-template-columns:repeat(2,1fr); gap:12px; }
-  .card-43 .thumb { aspect-ratio:32/21; }
+  .card-43 .thumb { aspect-ratio:16/11; }
   :root { --mega-card-min: 280px; }
 }
 @media (max-width:480px) {
@@ -338,7 +338,7 @@ function toggleFloat(id) {
   if (window.__floatEl) { window.__floatEl.remove(); window.__floatEl = null; }
   const el = document.createElement('div');
   el.id = 'floatingPlayer';
-  el.innerHTML = `<div style="position:fixed;bottom:20px;right:20px;z-index:9999;width:320px;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1)"><button onclick="this.parentElement.remove();window.__floatEl=null" style="position:absolute;top:4px;right:4px;z-index:10;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px">×</button><video src="${v.video}" autoplay loop muted playsinline style="width:100%;display:block;aspect-ratio:16/9"></video></div>`;
+  el.innerHTML = `<div style="position:fixed;bottom:20px;right:20px;z-index:9999;width:320px;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1)"><button onclick="this.parentElement.remove();window.__floatEl=null" style="position:absolute;top:4px;right:4px;z-index:10;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px">×</button><video src="${v.video}" autoplay loop muted playsinline style="width:100%;display:block;aspect-ratio:16/11"></video></div>`;
   document.body.appendChild(el);
   window.__floatEl = el;
 }

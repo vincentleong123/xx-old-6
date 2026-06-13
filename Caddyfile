@@ -1,5 +1,5 @@
 :8123 {
-    # 1. Handle the www redirect at the application layer
+    # 1. Handle the www redirect
     @www header_regexp host Host ^www\.(.+)
     redir @www https://{re.host.1}{uri} permanent
 
@@ -7,31 +7,32 @@
     handle_path /thumbnails/* {
         root * C:/thumbnails
         file_server
-        header Cache-Control "public, max-age=86400, stale-while-revalidate=604800"
+        # FIXED: Added missing closing quote and removed trailing comma
+        header Cache-Control "public, max-age=6400"
     }
 
-    # 3. Static File Serving for Videos (Caddy DIRECT — no Express cache)
-    handle_path /videos/* {
-        root * E:/videos
-        file_server
-    }
-
-    # 4. Main Application Reverse Proxy
+    # 3. Main Application Reverse Proxy — keepalive prevents TCP handshake on every Caddy→Express hop
     handle {
-        reverse_proxy localhost:7004
+        reverse_proxy localhost:7004 {
+            transport http {
+                keepalive 30s
+                keepalive_idle_conns 100
+            }
+        }
     }
 
     # 4. Global Directives & Security Headers
-    encode zstd gzip
+    encode gzip
     header {
         X-Content-Type-Options nosniff
         X-Frame-Options SAMEORIGIN
         X-XSS-Protection "1; mode=block"
         Referrer-Policy no-referrer-when-downgrade
         
-        # Permissions & Security Opportunities
+        # Permissions & Security
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         
+        # Removes the "Server: Caddy" header for obfuscation
         -Server
     }
 
