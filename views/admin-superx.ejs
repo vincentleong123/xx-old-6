@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super X Hero — CMS</title>
+  <title><%= title %></title>
   <meta name="robots" content="noindex, nofollow">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,16 +12,18 @@
     .admin-nav a { padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #6b6b75; font-size: 13px; font-weight: 500; transition: all .2s; }
     .admin-nav a:hover { color: #fff; background: #2a2a30; }
     .admin-nav a.active { color: #fff; background: #ff2d55; }
-    h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; }
+    h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+    h1 small { font-size:14px; font-weight:400; color:#6b6b75; }
     .back-link { color: #ff2d55; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 16px; }
     .back-link:hover { text-decoration: underline; }
     .card { background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
     .card h2 { font-size: 15px; color: #fff; margin-bottom: 16px; display:flex;align-items:center;gap:8px; }
     .card label { display: block; color: #a0a0a8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 14px; }
     .card label:first-child { margin-top: 0; }
-    .card input, .card textarea { width: 100%; padding: 10px 14px; background: #0a0a0b; border: 1px solid #2a2a30; border-radius: 8px; color: #fff; font-size: 13px; font-family: inherit; }
-    .card input:focus, .card textarea:focus { outline: none; border-color: #ff2d55; }
+    .card input, .card textarea, .card select { width: 100%; padding: 10px 14px; background: #0a0a0b; border: 1px solid #2a2a30; border-radius: 8px; color: #fff; font-size: 13px; font-family: inherit; }
+    .card input:focus, .card textarea:focus, .card select:focus { outline: none; border-color: #ff2d55; }
     .card textarea { resize: vertical; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }
+    .card select { cursor:pointer; }
     .btn { padding: 10px 24px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; margin-top: 16px; }
     .btn-primary { background: #ff2d55; color: #fff; }
     .btn-primary:hover { background: #ff4d6f; }
@@ -40,11 +42,23 @@
     .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .col-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
     .hint { color: #6b6b75; font-size: 11px; margin-top: 3px; }
+    .page-tabs { display:flex; gap:4px; margin-bottom:20px; flex-wrap:wrap; }
+    .page-tab { padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight:600; background: #1a1a1e; color: #6b6b75; border:1px solid #2a2a30; transition: all .2s; }
+    .page-tab:hover { background: #2a2a30; color:#fff; }
+    .page-tab.active { background: #ff2d55; color:#fff; border-color:#ff2d55; }
+    .page-tab.main-tab { border-color:rgba(255,215,0,0.3); }
+    .page-tab.main-tab.active { background:#ffd700; color:#000; }
+    .badge-new { font-size:9px; background:#ff2d55; color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px; }
+    .inline-group { display:flex; gap:8px; align-items:center; }
+    .inline-group input { flex:1; }
+    .ad-zone-row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+    .ad-zone-row label { margin:0; min-width:80px; text-transform:none; font-weight:400; }
+    .ad-zone-row input { flex:1; }
   </style>
 </head>
 <body>
   <a href="/admin" class="back-link">← Back to Dashboard</a>
-  <h1>Super X Melayu — Hero CMS</h1>
+  <h1>Super X Melayu — <small><%= superxPage ? 'Page: ' + superxPage : 'Hero CMS' %></small></h1>
 
   <div class="admin-nav">
     <a href="/admin">Dashboard</a>
@@ -55,10 +69,23 @@
     <a href="/admin/super-x" class="active">Super X</a>
   </div>
 
+  <!-- Sub-page tabs -->
+  <div class="page-tabs">
+    <a href="/admin/super-x" class="page-tab main-tab <%= superxPage === '' ? 'active' : '' %>">🏠 Main</a>
+    <a href="/admin/super-x/amateur" class="page-tab <%= superxPage === 'amateur' ? 'active' : '' %>">🔥 Amateur</a>
+    <a href="/admin/super-x/tudung" class="page-tab <%= superxPage === 'tudung' ? 'active' : '' %>">🧕 Tudung</a>
+    <a href="/admin/super-x/skandal" class="page-tab <%= superxPage === 'skandal' ? 'active' : '' %>">📈 Skandal</a>
+    <a href="/admin/super-x/montok" class="page-tab <%= superxPage === 'montok' ? 'active' : '' %>">🍑 Montok</a>
+    <a href="/admin/super-x/indo" class="page-tab <%= superxPage === 'indo' ? 'active' : '' %>">🇮🇩 Indo</a>
+    <a href="/admin/super-x/thai" class="page-tab <%= superxPage === 'thai' ? 'active' : '' %>">🇹🇭 Thai</a>
+  </div>
+
   <div class="status" id="status"></div>
 
+<% if (!superxPage) { %>
+  <!-- MAIN HERO CONFIG (existing) -->
   <div class="card">
-    <h2>🦸 Hero Section — H1 / H2 / Subtitle</h2>
+    <h2>🦸 Main Hero Section — H1 / H2 / Subtitle</h2>
     <label>Badge Text</label>
     <input type="text" id="badge" placeholder="Super X Melayu">
     <label>H1 Heading (main title)</label>
@@ -84,13 +111,13 @@
   <div class="card">
     <h2>🔗 Keyword Tags (super-x-tags)</h2>
     <p class="hint" style="margin-bottom:12px">One per line — format: label | query-string</p>
-    <textarea id="keywordTags" rows="14" placeholder="#xMateur | xmateur"></textarea>
+    <textarea id="keywordTags" rows="8" placeholder="#xMateur | xmateur"></textarea>
   </div>
 
   <div class="card">
     <h2>🔗 SEO Links (hidden, search-engine only)</h2>
     <p class="hint" style="margin-bottom:12px">One per line — format: label | /path-or-query | title-attribute</p>
-    <textarea id="seoLinks" rows="8" placeholder="Super X Melayu Malay Pron | /super-x-melayu | Super X Melayu Malay Pron - xMelayu.Online"></textarea>
+    <textarea id="seoLinks" rows="6" placeholder="Super X Melayu Malay Pron | /super-x-melayu | Super X Melayu Malay Pron - xMelayu.Online"></textarea>
   </div>
 
   <div class="card">
@@ -129,35 +156,32 @@
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="saveConfig()">Save Hero Config</button>
-    <button class="btn btn-secondary" onclick="loadConfig()">Reset Form</button>
+    <button class="btn btn-primary" onclick="saveMainConfig()">Save Main Hero Config</button>
+    <button class="btn btn-secondary" onclick="loadMainConfig()">Reset Form</button>
   </div>
 
   <script>
-    let config = {};
+    let mainConfig = {};
 
-    async function loadConfig() {
+    async function loadMainConfig() {
       try {
         const res = await fetch('/api/admin/super-x');
-        config = await res.json();
-        // Hero headings
-        document.getElementById('badge').value = config.badge || '';
-        document.getElementById('h1').value = config.h1 || '';
-        document.getElementById('h1Sub').value = config.h1Sub || '';
-        document.getElementById('subtitle').value = config.subtitle || '';
-        // Section titles
-        const st = config.sectionTitles || {};
+        mainConfig = await res.json();
+        document.getElementById('badge').value = mainConfig.badge || '';
+        document.getElementById('h1').value = mainConfig.h1 || '';
+        document.getElementById('h1Sub').value = mainConfig.h1Sub || '';
+        document.getElementById('subtitle').value = mainConfig.subtitle || '';
+        const st = mainConfig.sectionTitles || {};
         document.getElementById('s1').value = st.s1 || '';
         document.getElementById('s2').value = st.s2 || '';
         document.getElementById('s3').value = st.s3 || '';
         document.getElementById('s4').value = st.s4 || '';
-        const ss = config.sectionSubs || {};
+        const ss = mainConfig.sectionSubs || {};
         document.getElementById('s1sub').value = ss.s1 || '';
         document.getElementById('s2sub').value = ss.s2 || '';
         document.getElementById('s3sub').value = ss.s3 || '';
         document.getElementById('s4sub').value = ss.s4 || '';
-        // Category titles
-        const cats = config.cats || {};
+        const cats = mainConfig.cats || {};
         document.getElementById('cat-tudung').value = cats.tudung || '';
         document.getElementById('cat-montok').value = cats.montok || '';
         document.getElementById('cat-indonesian').value = cats.indonesian || '';
@@ -167,140 +191,282 @@
         document.getElementById('cat-viral').value = cats.viral || '';
         document.getElementById('cat-janda').value = cats.janda || '';
         document.getElementById('cat-kolej').value = cats.kolej || '';
-        // Niche tags
-        renderNicheTags();
-        // CTA buttons
-        renderCtaButtons();
-        // Keyword tags as textarea
-        document.getElementById('keywordTags').value = (config.keywordTags || []).map(t => t.label + ' | ' + t.q).join('\n');
-        // SEO links as textarea
-        document.getElementById('seoLinks').value = (config.seoLinks || []).map(t => t.label + ' | ' + t.href + ' | ' + (t.title || '')).join('\n');
+        renderNicheTagsMain();
+        renderCtaButtonsMain();
+        document.getElementById('keywordTags').value = (mainConfig.keywordTags || []).map(t => t.label + ' | ' + t.q).join('\n');
+        document.getElementById('seoLinks').value = (mainConfig.seoLinks || []).map(t => t.label + ' | ' + t.href + ' | ' + (t.title || '')).join('\n');
       } catch { console.error('Failed to load hero config'); }
     }
 
-    function renderNicheTags() {
+    function renderNicheTagsMain() {
       const el = document.getElementById('nicheList');
-      el.innerHTML = (config.nicheTags || []).map((t, i) => `
+      el.innerHTML = (mainConfig.nicheTags || []).map((t, i) => `
         <div class="tag-item">
           <span class="drag">☰</span>
-          <input type="text" value="${t.label || ''}" placeholder="Label" style="flex:2" onchange="config.nicheTags[${i}].label = this.value">
-          <input type="text" value="${t.cls || ''}" placeholder="CSS class (p/b/l/s)" style="flex:1" onchange="config.nicheTags[${i}].cls = this.value">
-          <button class="btn btn-danger btn-small" onclick="removeNicheTag(${i})">✕</button>
-        </div>
-      `).join('');
+          <input type="text" value="${escapeHtml(t.label)}" placeholder="Label" style="flex:2" onchange="mainConfig.nicheTags[${i}].label = this.value">
+          <input type="text" value="${escapeHtml(t.cls)}" placeholder="CSS class (p/b/l/s)" style="flex:1" onchange="mainConfig.nicheTags[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeNicheTagMain(${i})">✕</button>
+        </div>`).join('');
     }
-
-    function addNicheTag() {
-      if (!config.nicheTags) config.nicheTags = [];
-      config.nicheTags.push({ label: '', cls: 'p' });
-      renderNicheTags();
-    }
-
-    function removeNicheTag(i) {
-      config.nicheTags.splice(i, 1);
-      renderNicheTags();
-    }
-
-    function renderCtaButtons() {
+    function addNicheTag() { if (!mainConfig.nicheTags) mainConfig.nicheTags = []; mainConfig.nicheTags.push({ label: '', cls: 'p' }); renderNicheTagsMain(); }
+    function removeNicheTagMain(i) { mainConfig.nicheTags.splice(i, 1); renderNicheTagsMain(); }
+    function renderCtaButtonsMain() {
       const el = document.getElementById('ctaList');
-      el.innerHTML = (config.ctaButtons || []).map((b, i) => `
+      el.innerHTML = (mainConfig.ctaButtons || []).map((b, i) => `
         <div class="tag-item">
           <span class="drag">☰</span>
-          <input type="text" value="${b.label || ''}" placeholder="Label" style="flex:2" onchange="config.ctaButtons[${i}].label = this.value">
-          <input type="text" value="${b.href || ''}" placeholder="href" style="flex:2" onchange="config.ctaButtons[${i}].href = this.value">
-          <input type="text" value="${b.cls || ''}" placeholder="CSS class" style="flex:1" onchange="config.ctaButtons[${i}].cls = this.value">
-          <button class="btn btn-danger btn-small" onclick="removeCtaBtn(${i})">✕</button>
-        </div>
-      `).join('');
+          <input type="text" value="${escapeHtml(b.label)}" placeholder="Label" style="flex:2" onchange="mainConfig.ctaButtons[${i}].label = this.value">
+          <input type="text" value="${escapeHtml(b.href || '')}" placeholder="href" style="flex:2" onchange="mainConfig.ctaButtons[${i}].href = this.value">
+          <input type="text" value="${escapeHtml(b.cls || '')}" placeholder="CSS class" style="flex:1" onchange="mainConfig.ctaButtons[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeCtaBtnMain(${i})">✕</button>
+        </div>`).join('');
     }
+    function addCtaBtn() { if (!mainConfig.ctaButtons) mainConfig.ctaButtons = []; mainConfig.ctaButtons.push({ href: '', label: '', cls: 'super-x-btn' }); renderCtaButtonsMain(); }
+    function removeCtaBtnMain(i) { mainConfig.ctaButtons.splice(i, 1); renderCtaButtonsMain(); }
 
-    function addCtaBtn() {
-      if (!config.ctaButtons) config.ctaButtons = [];
-      config.ctaButtons.push({ href: '', label: '', cls: 'super-x-btn' });
-      renderCtaButtons();
-    }
+    function escapeHtml(s) { return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-    function removeCtaBtn(i) {
-      config.ctaButtons.splice(i, 1);
-      renderCtaButtons();
-    }
-
-    async function saveConfig() {
-      const st = {
-        s1: document.getElementById('s1').value,
-        s2: document.getElementById('s2').value,
-        s3: document.getElementById('s3').value,
-        s4: document.getElementById('s4').value
-      };
-      const ss = {
-        s1: document.getElementById('s1sub').value,
-        s2: document.getElementById('s2sub').value,
-        s3: document.getElementById('s3sub').value,
-        s4: document.getElementById('s4sub').value
-      };
+    async function saveMainConfig() {
+      const st = { s1: document.getElementById('s1').value, s2: document.getElementById('s2').value, s3: document.getElementById('s3').value, s4: document.getElementById('s4').value };
+      const ss = { s1: document.getElementById('s1sub').value, s2: document.getElementById('s2sub').value, s3: document.getElementById('s3sub').value, s4: document.getElementById('s4sub').value };
       const cats = {
-        tudung: document.getElementById('cat-tudung').value,
-        montok: document.getElementById('cat-montok').value,
-        indonesian: document.getElementById('cat-indonesian').value,
-        thai: document.getElementById('cat-thai').value,
-        milf: document.getElementById('cat-milf').value,
-        chubby: document.getElementById('cat-chubby').value,
-        viral: document.getElementById('cat-viral').value,
-        janda: document.getElementById('cat-janda').value,
+        tudung: document.getElementById('cat-tudung').value, montok: document.getElementById('cat-montok').value,
+        indonesian: document.getElementById('cat-indonesian').value, thai: document.getElementById('cat-thai').value,
+        milf: document.getElementById('cat-milf').value, chubby: document.getElementById('cat-chubby').value,
+        viral: document.getElementById('cat-viral').value, janda: document.getElementById('cat-janda').value,
         kolej: document.getElementById('cat-kolej').value
       };
-      // Parse keywordTags textarea
       const kwLines = document.getElementById('keywordTags').value.split('\n').filter(l => l.trim());
-      const keywordTags = kwLines.map(l => {
-        const parts = l.split('|').map(s => s.trim());
-        return { label: parts[0] || '', q: parts[1] || '' };
-      }).filter(t => t.q);
-      // Parse seoLinks textarea
+      const keywordTags = kwLines.map(l => { const p = l.split('|').map(s => s.trim()); return { label: p[0] || '', q: p[1] || '' }; }).filter(t => t.q);
       const seoLines = document.getElementById('seoLinks').value.split('\n').filter(l => l.trim());
-      const seoLinks = seoLines.map(l => {
-        const parts = l.split('|').map(s => s.trim());
-        return { label: parts[0] || '', href: parts[1] || '', title: parts[2] || '' };
-      }).filter(t => t.href);
-
+      const seoLinks = seoLines.map(l => { const p = l.split('|').map(s => s.trim()); return { label: p[0] || '', href: p[1] || '', title: p[2] || '' }; }).filter(t => t.href);
       const data = {
-        badge: document.getElementById('badge').value,
-        h1: document.getElementById('h1').value,
-        h1Sub: document.getElementById('h1Sub').value,
-        subtitle: document.getElementById('subtitle').value,
-        nicheTags: config.nicheTags || [],
-        ctaButtons: config.ctaButtons || [],
-        keywordTags,
-        seoLinks,
-        sectionTitles: st,
-        sectionSubs: ss,
-        cats
+        badge: document.getElementById('badge').value, h1: document.getElementById('h1').value,
+        h1Sub: document.getElementById('h1Sub').value, subtitle: document.getElementById('subtitle').value,
+        nicheTags: mainConfig.nicheTags || [], ctaButtons: mainConfig.ctaButtons || [],
+        keywordTags, seoLinks, sectionTitles: st, sectionSubs: ss, cats
       };
-
       const status = document.getElementById('status');
       try {
-        const res = await fetch('/api/admin/super-x', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+        const res = await fetch('/api/admin/super-x', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         const result = await res.json();
-        if (result.success) {
-          status.className = 'status success';
-          status.textContent = 'Hero config saved! Cache may take a moment to clear.';
-          config = data;
-        } else {
-          status.className = 'status error';
-          status.textContent = 'Save failed.';
-        }
-      } catch {
-        status.className = 'status error';
-        status.textContent = 'Network error.';
-      }
+        if (result.success) { status.className = 'status success'; status.textContent = 'Main hero config saved!'; mainConfig = data; }
+        else { status.className = 'status error'; status.textContent = 'Save failed.'; }
+      } catch { status.className = 'status error'; status.textContent = 'Network error.'; }
       status.style.display = 'block';
       setTimeout(() => status.style.display = 'none', 5000);
     }
 
-    loadConfig();
+    loadMainConfig();
   </script>
+
+<% } else { %>
+  <!-- SUB-PAGE CONFIG -->
+  <div class="card">
+    <h2>📄 Page Info — <strong style="color:#ffd700"><%= superxPage %></strong></h2>
+    <label>Page Title (SEO)</label>
+    <input type="text" id="title" placeholder="xMateur Amateur Malay Porn — Homemade Asian Amateur Videos">
+    <label>Meta Description</label>
+    <textarea id="metaDesc" rows="3" placeholder="Meta description"></textarea>
+    <label>Meta Keywords</label>
+    <input type="text" id="metaKeywords" placeholder="xmateur, xamateur, amateur porn, ...">
+    <label>Filter Keywords (comma-separated, used to filter videos for this page)</label>
+    <input type="text" id="filterKw" placeholder="amateur, homemade, real, personal, private">
+  </div>
+
+  <div class="card">
+    <h2>🦸 Hero Section</h2>
+    <label>Badge Text</label>
+    <input type="text" id="badge" placeholder="🔥 xMateur Amateur">
+    <label>H1 Heading</label>
+    <input type="text" id="h1" placeholder="xMateur Amateur Malay Porn — Homemade Asian Amateur">
+    <label>H1 Subtitle</label>
+    <input type="text" id="h1Sub" placeholder="Real amateur porn from Malaysia, Indonesia & Thailand">
+    <label>Subtitle (under h1)</label>
+    <input type="text" id="subtitle" placeholder="The Finest Asian Amateur Porn Collection">
+  </div>
+
+  <div class="card">
+    <h2>🏷️ Niche Tags</h2>
+    <div id="nicheList"></div>
+    <button class="btn btn-secondary btn-small" onclick="addNicheTag()">+ Add Niche Tag</button>
+  </div>
+
+  <div class="card">
+    <h2>🔘 CTA Buttons</h2>
+    <div id="ctaList"></div>
+    <button class="btn btn-secondary btn-small" onclick="addCtaBtn()">+ Add CTA Button</button>
+  </div>
+
+  <div class="card">
+    <h2>📰 Section Titles</h2>
+    <label>Section 1 — h2</label>
+    <input type="text" id="s1" placeholder="🔥 Amateur Picks">
+    <label>Section 1 — subtitle</label>
+    <input type="text" id="s1sub" placeholder="Best amateur porn">
+    <label>Section 2 — h2</label>
+    <input type="text" id="s2" placeholder="⭐ Top Rated Amateur">
+    <label>Section 2 — subtitle</label>
+    <input type="text" id="s2sub" placeholder="Top rated xx amateur asian">
+    <label>Section 3 — h2</label>
+    <input type="text" id="s3" placeholder="🎬 Fresh Homemade">
+    <label>Section 3 — subtitle</label>
+    <input type="text" id="s3sub" placeholder="Latest amateur asian uploads">
+    <label>Section 4 — h2</label>
+    <input type="text" id="s4" placeholder="💦 Amateur Favourites">
+    <label>Section 4 — subtitle</label>
+    <input type="text" id="s4sub" placeholder="Fan favourite amateur porn">
+  </div>
+
+  <div class="card">
+    <h2>🗂️ Category Section Titles</h2>
+    <div class="col-2">
+      <div><label>Tudung</label><input type="text" id="cat-tudung" placeholder="🧕 Tudung Amateur"></div>
+      <div><label>Montok</label><input type="text" id="cat-montok" placeholder="💦 Montok Amateur"></div>
+      <div><label>Indonesian</label><input type="text" id="cat-indonesian" placeholder="🇮🇩 Indo Amateur"></div>
+      <div><label>Thai</label><input type="text" id="cat-thai" placeholder="🇹🇭 Thai Amateur"></div>
+      <div><label>MILF</label><input type="text" id="cat-milf" placeholder="🔥 MILF Amateur"></div>
+      <div><label>Chubby</label><input type="text" id="cat-chubby" placeholder="🍑 Chubby Amateur"></div>
+      <div><label>Viral</label><input type="text" id="cat-viral" placeholder="📈 Viral Amateur"></div>
+      <div><label>Janda</label><input type="text" id="cat-janda" placeholder="💋 Janda Amateur"></div>
+      <div><label>Kolej</label><input type="text" id="cat-kolej" placeholder="🎓 Kolej Amateur"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📺 Ad Zones — <span style="font-size:12px;color:#6b6b75">Per-page ad slots (fill with JuicyAds zone IDs)</span></h2>
+    <div class="ad-zone-row">
+      <label>Top Banner</label>
+      <input type="text" id="adTop" placeholder="e.g. 1118844">
+    </div>
+    <div class="ad-zone-row">
+      <label>Sidebar</label>
+      <input type="text" id="adSidebar" placeholder="e.g. 1118840">
+    </div>
+    <div class="ad-zone-row">
+      <label>Inline</label>
+      <input type="text" id="adInline" placeholder="e.g. 1118846">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="savePageConfig()">💾 Save Page Config</button>
+    <button class="btn btn-secondary" onclick="loadPageConfig()">↻ Reset Form</button>
+    <a href="/super-x-melayu/<%= superxPage %>" class="btn btn-secondary" target="_blank" style="text-decoration:none">👁 Preview Page</a>
+  </div>
+
+  <script>
+    let pageConfig = {};
+    const SLUG = '<%= superxPage %>';
+
+    async function loadPageConfig() {
+      try {
+        const res = await fetch('/api/admin/superx-pages/' + SLUG);
+        pageConfig = await res.json();
+        document.getElementById('title').value = pageConfig.title || '';
+        document.getElementById('metaDesc').value = pageConfig.metaDesc || '';
+        document.getElementById('metaKeywords').value = pageConfig.metaKeywords || '';
+        document.getElementById('filterKw').value = (pageConfig.filterKw || []).join(', ');
+        document.getElementById('badge').value = pageConfig.badge || '';
+        document.getElementById('h1').value = pageConfig.h1 || '';
+        document.getElementById('h1Sub').value = pageConfig.h1Sub || '';
+        document.getElementById('subtitle').value = pageConfig.subtitle || '';
+        const st = pageConfig.sectionTitles || {};
+        document.getElementById('s1').value = st.s1 || '';
+        document.getElementById('s2').value = st.s2 || '';
+        document.getElementById('s3').value = st.s3 || '';
+        document.getElementById('s4').value = st.s4 || '';
+        const ss = pageConfig.sectionSubs || {};
+        document.getElementById('s1sub').value = ss.s1 || '';
+        document.getElementById('s2sub').value = ss.s2 || '';
+        document.getElementById('s3sub').value = ss.s3 || '';
+        document.getElementById('s4sub').value = ss.s4 || '';
+        const cats = pageConfig.cats || {};
+        document.getElementById('cat-tudung').value = cats.tudung || '';
+        document.getElementById('cat-montok').value = cats.montok || '';
+        document.getElementById('cat-indonesian').value = cats.indonesian || '';
+        document.getElementById('cat-thai').value = cats.thai || '';
+        document.getElementById('cat-milf').value = cats.milf || '';
+        document.getElementById('cat-chubby').value = cats.chubby || '';
+        document.getElementById('cat-viral').value = cats.viral || '';
+        document.getElementById('cat-janda').value = cats.janda || '';
+        document.getElementById('cat-kolej').value = cats.kolej || '';
+        const az = pageConfig.adZones || {};
+        document.getElementById('adTop').value = az.top || '';
+        document.getElementById('adSidebar').value = az.sidebar || '';
+        document.getElementById('adInline').value = az.inline || '';
+        renderNicheTags();
+        renderCtaButtons();
+      } catch { console.error('Failed to load page config'); }
+    }
+
+    function renderNicheTags() {
+      const el = document.getElementById('nicheList');
+      el.innerHTML = (pageConfig.nicheTags || []).map((t, i) => `
+        <div class="tag-item">
+          <span class="drag">☰</span>
+          <input type="text" value="${escapeHtml(t.label)}" placeholder="Label" style="flex:2" onchange="pageConfig.nicheTags[${i}].label = this.value">
+          <input type="text" value="${escapeHtml(t.cls)}" placeholder="CSS class (p/b/l/s)" style="flex:1" onchange="pageConfig.nicheTags[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeNicheTag(${i})">✕</button>
+        </div>`).join('');
+    }
+    function addNicheTag() { if (!pageConfig.nicheTags) pageConfig.nicheTags = []; pageConfig.nicheTags.push({ label: '', cls: 'p' }); renderNicheTags(); }
+    function removeNicheTag(i) { pageConfig.nicheTags.splice(i, 1); renderNicheTags(); }
+    function renderCtaButtons() {
+      const el = document.getElementById('ctaList');
+      el.innerHTML = (pageConfig.ctaButtons || []).map((b, i) => `
+        <div class="tag-item">
+          <span class="drag">☰</span>
+          <input type="text" value="${escapeHtml(b.label)}" placeholder="Label" style="flex:2" onchange="pageConfig.ctaButtons[${i}].label = this.value">
+          <input type="text" value="${escapeHtml(b.href || '')}" placeholder="href" style="flex:2" onchange="pageConfig.ctaButtons[${i}].href = this.value">
+          <input type="text" value="${escapeHtml(b.cls || '')}" placeholder="CSS class" style="flex:1" onchange="pageConfig.ctaButtons[${i}].cls = this.value">
+          <button class="btn btn-danger btn-small" onclick="removeCtaBtn(${i})">✕</button>
+        </div>`).join('');
+    }
+    function addCtaBtn() { if (!pageConfig.ctaButtons) pageConfig.ctaButtons = []; pageConfig.ctaButtons.push({ href: '', label: '', cls: 'super-x-btn' }); renderCtaButtons(); }
+    function removeCtaBtn(i) { pageConfig.ctaButtons.splice(i, 1); renderCtaButtons(); }
+
+    function escapeHtml(s) { return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    async function savePageConfig() {
+      const st = { s1: document.getElementById('s1').value, s2: document.getElementById('s2').value, s3: document.getElementById('s3').value, s4: document.getElementById('s4').value };
+      const ss = { s1: document.getElementById('s1sub').value, s2: document.getElementById('s2sub').value, s3: document.getElementById('s3sub').value, s4: document.getElementById('s4sub').value };
+      const cats = {
+        tudung: document.getElementById('cat-tudung').value, montok: document.getElementById('cat-montok').value,
+        indonesian: document.getElementById('cat-indonesian').value, thai: document.getElementById('cat-thai').value,
+        milf: document.getElementById('cat-milf').value, chubby: document.getElementById('cat-chubby').value,
+        viral: document.getElementById('cat-viral').value, janda: document.getElementById('cat-janda').value,
+        kolej: document.getElementById('cat-kolej').value
+      };
+      const filterKw = document.getElementById('filterKw').value.split(',').map(s => s.trim()).filter(Boolean);
+      const data = {
+        title: document.getElementById('title').value,
+        metaDesc: document.getElementById('metaDesc').value,
+        metaKeywords: document.getElementById('metaKeywords').value,
+        filterKw,
+        badge: document.getElementById('badge').value, h1: document.getElementById('h1').value,
+        h1Sub: document.getElementById('h1Sub').value, subtitle: document.getElementById('subtitle').value,
+        nicheTags: pageConfig.nicheTags || [], ctaButtons: pageConfig.ctaButtons || [],
+        sectionTitles: st, sectionSubs: ss, cats,
+        adZones: {
+          top: document.getElementById('adTop').value,
+          sidebar: document.getElementById('adSidebar').value,
+          inline: document.getElementById('adInline').value
+        }
+      };
+      const status = document.getElementById('status');
+      try {
+        const res = await fetch('/api/admin/superx-pages/' + SLUG, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        const result = await res.json();
+        if (result.success) { status.className = 'status success'; status.textContent = 'Page config saved for /super-x-melayu/' + SLUG + '!'; pageConfig = data; }
+        else { status.className = 'status error'; status.textContent = 'Save failed.'; }
+      } catch { status.className = 'status error'; status.textContent = 'Network error.'; }
+      status.style.display = 'block';
+      setTimeout(() => status.style.display = 'none', 5000);
+    }
+
+    loadPageConfig();
+  </script>
+<% } %>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bulk Video Editor</title>
+  <title>Video SEO Editor</title>
   <meta name="robots" content="noindex, nofollow">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +21,6 @@
     h1 { color: #ff2d55; margin-bottom: 20px; font-size: 24px; }
     .back-link { color: #ff2d55; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 16px; }
     .back-link:hover { text-decoration: underline; }
-
     .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: end; }
     .controls label { display: block; color: #a0a0a8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .controls input, .controls select {
@@ -29,7 +28,6 @@
       color: #fff; font-size: 13px;
     }
     .controls input:focus, .controls select:focus { outline: none; border-color: #ff2d55; }
-
     .bulk-bar {
       background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 20px;
       margin-bottom: 16px; display: none;
@@ -43,7 +41,6 @@
       color: #fff; font-size: 13px;
     }
     .bulk-ops input:focus, .bulk-ops select:focus { outline: none; border-color: #ff2d55; }
-
     .btn {
       padding: 8px 20px; border-radius: 8px; border: none; font-size: 13px;
       font-weight: 600; cursor: pointer; transition: all .2s;
@@ -54,34 +51,74 @@
     .btn-secondary:hover { background: #3a3a40; color: #fff; }
     .btn-warning { background: #ffd700; color: #000; }
     .btn-warning:hover { background: #ffe44d; }
-
+    .btn-sm { padding: 4px 12px; font-size: 11px; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { text-align: left; padding: 10px 12px; color: #6b6b75; font-weight: 600; border-bottom: 1px solid #2a2a30; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: #0a0a0b; }
-    td { padding: 8px 12px; border-bottom: 1px solid #1a1a1e; }
-    td.title-col { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    th { text-align: left; padding: 10px 8px; color: #6b6b75; font-weight: 600; border-bottom: 1px solid #2a2a30; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: #0a0a0b; white-space: nowrap; }
+    td { padding: 6px 8px; border-bottom: 1px solid #1a1a1e; vertical-align: top; }
     tr:hover td { background: #1a1a1e; }
     input[type="checkbox"] { accent-color: #ff2d55; width: 16px; height: 16px; cursor: pointer; }
-    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
     .pagination button {
       padding: 6px 14px; background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 6px;
       color: #a0a0a8; cursor: pointer; font-size: 12px;
     }
     .pagination button:hover { border-color: #ff2d55; color: #fff; }
     .pagination button.active { background: #ff2d55; color: #fff; border-color: #ff2d55; }
-    .select-all { color: #ff2d55; cursor: pointer; font-size: 12px; margin-left: 8px; }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; background: #1f1f24; color: #a0a0a8; margin-right: 4px; }
-    .tag.cat { background: rgba(255,45,85,0.15); color: #ff2d55; }
     .status { padding: 8px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
     .status.success { display: block; background: rgba(52,199,89,0.15); color: #34c759; border: 1px solid rgba(52,199,89,0.3); }
     .status.error { display: block; background: rgba(255,45,85,0.15); color: #ff2d55; border: 1px solid rgba(255,45,85,0.3); }
-
-    .pattern-preview { color: #6b6b75; font-size: 12px; margin-top: 4px; font-style: italic; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; background: #1f1f24; color: #a0a0a8; margin: 1px; cursor: pointer; }
+    .tag:hover { opacity: 0.8; }
+    .tag.cat { background: rgba(255,45,85,0.15); color: #ff2d55; }
+    .tag.rm:hover { background: #ff2d55; color: #fff; }
+    .tag-input { background: transparent; border: none; color: #fff; font-size: 11px; padding: 2px 4px; outline: none; width: 80px; border-bottom: 1px dashed #2a2a30; }
+    .tag-input:focus { border-bottom-color: #ff2d55; }
+    .suggest-panel {
+      display: none; position: fixed; top: 20px; right: 20px; width: 420px; max-height: 90vh;
+      background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 20px;
+      z-index: 200; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    .suggest-panel.open { display: block; }
+    .suggest-panel h2 { color: #ffd700; font-size: 14px; margin-bottom: 8px; }
+    .suggest-panel .close { float: right; cursor: pointer; color: #ff2d55; font-size: 18px; }
+    .suggest-panel .s-video-title { font-size: 12px; color: #9a9aa0; margin-bottom: 16px; word-break: break-all; }
+    .suggest-panel .s-stat { display: flex; justify-content: space-between; font-size: 11px; color: #6b6b75; padding: 4px 0; border-bottom: 1px solid #1f1f24; }
+    .suggest-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px; margin: 4px 0; border-radius: 8px;
+      background: #0f0f12; border: 1px solid #1f1f24;
+    }
+    .suggest-item .kw { color: #fff; font-size: 13px; font-weight: 600; }
+    .suggest-item .score { color: #ffd700; font-size: 11px; margin: 0 8px; }
+    .suggest-item .reasons { font-size: 10px; color: #6b6b75; }
+    .suggest-item .add-btn { cursor: pointer; color: #34c759; font-size: 18px; line-height: 1; padding: 0 4px; }
+    .suggest-item .add-btn:hover { color: #4de67a; }
+    .suggest-loading { text-align: center; color: #6b6b75; padding: 40px; }
+    .schema-preview {
+      display: none; position: fixed; bottom: 20px; right: 20px; width: 480px; max-height: 400px;
+      background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 12px; padding: 16px;
+      z-index: 100; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .schema-preview.open { display: block; }
+    .schema-preview h3 { color: #ffd700; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .schema-preview pre { font-size: 11px; color: #9a9aa0; white-space: pre-wrap; word-break: break-all; }
+    .schema-preview .close { float: right; cursor: pointer; color: #ff2d55; }
+    .col-title { min-width: 180px; }
+    .col-cat { width: 100px; }
+    .col-tags { min-width: 140px; }
+    .col-date { width: 110px; }
+    .col-views { width: 60px; text-align: right; }
+    .col-actions { width: 30px; }
+    select.compact { padding: 4px 6px; font-size: 11px; background: #0a0a0b; border: 1px solid #2a2a30; border-radius: 4px; color: #fff; width: 100%; }
+    .inline-edit { background: transparent; border: 1px solid transparent; border-radius: 4px; color: #fff; font-size: 11px; padding: 2px 6px; outline: none; width: 100%; }
+    .inline-edit:focus { border-color: #ff2d55; }
+    .date-input { width: 100%; font-size: 11px; }
   </style>
 </head>
 <body>
   <a href="/admin" class="back-link">← Back to Dashboard</a>
-  <h1>Bulk Video Title Editor</h1>
+  <h1>Video SEO Editor</h1>
 
   <div class="admin-nav">
     <a href="/admin">Dashboard</a>
@@ -94,10 +131,50 @@
 
   <div class="status" id="status"></div>
 
+  <!-- Add / Bulk Add Toggle -->
+  <div style="margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="showAddPanel()" id="showAddBtn">➕ Add Video</button>
+    <button class="btn btn-secondary" onclick="showBulkAddPanel()" id="showBulkBtn">📋 Bulk Add</button>
+  </div>
+
+  <!-- Single Add Panel -->
+  <div class="bulk-bar" id="addPanel">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+      <div><label>ID</label><input type="text" id="newId" placeholder="video-id" style="width:160px"></div>
+      <div><label>Title</label><input type="text" id="newTitle" placeholder="Video Title" style="width:240px"></div>
+      <div><label>Category</label><select id="newCategory"></select></div>
+      <div><label>Keywords (comma)</label><input type="text" id="newKeywords" placeholder="keyword1, keyword2" style="width:200px"></div>
+      <div><label>Video URL (optional)</label><input type="text" id="newVideoUrl" placeholder="https://..." style="width:260px"></div>
+      <div><label>Thumb URL (optional)</label><input type="text" id="newThumbUrl" placeholder="https://..." style="width:260px"></div>
+      <button class="btn btn-primary" onclick="addSingleVideo()">Create</button>
+    </div>
+  </div>
+
+  <!-- Bulk Add Panel -->
+  <div class="bulk-bar" id="bulkAddPanel">
+    <div style="margin-bottom:12px">
+      <label>Paste video IDs (one per line or comma-separated)</label>
+      <textarea id="bulkIds" rows="6" style="width:100%;padding:10px 14px;background:#0a0a0b;border:1px solid #2a2a30;border-radius:8px;color:#fff;font-size:13px;font-family:inherit;margin-top:4px" placeholder="video-id-1&#10;video-id-2&#10;video-id-3"></textarea>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+      <div><label>Category</label><select id="bulkNewCategory"></select></div>
+      <div><label>Keywords (comma)</label><input type="text" id="bulkNewKeywords" placeholder="keyword1, keyword2" style="width:200px"></div>
+      <div><label>Sub-tags (comma)</label><input type="text" id="bulkNewSubTags" placeholder="tag1, tag2" style="width:200px"></div>
+      <button class="btn btn-primary" onclick="bulkAddVideos()">Create All</button>
+      <button class="btn btn-secondary" onclick="loadCategories()" type="button">Reload cats</button>
+    </div>
+  </div>
+
   <div class="controls">
     <div>
-      <label>Search</label>
-      <input type="text" id="search" placeholder="Filter by ID or title" oninput="loadVideos()">
+      <label>Search (ID/title/keyword)</label>
+      <input type="text" id="search" placeholder="Filter by ID, title or keyword" oninput="loadVideos()">
+    </div>
+    <div>
+      <label>Category</label>
+      <select id="catFilter" onchange="loadVideos()">
+        <option value="">All categories</option>
+      </select>
     </div>
     <div>
       <label>Per page</label>
@@ -109,6 +186,7 @@
     </div>
     <button class="btn btn-secondary" onclick="selectAll()">Select All</button>
     <button class="btn btn-secondary" onclick="deselectAll()">Deselect All</button>
+    <button class="btn btn-secondary" onclick="showSchemaPreview()">🧬 Schema Help</button>
   </div>
 
   <div class="bulk-bar" id="bulkBar">
@@ -116,41 +194,54 @@
     <div class="bulk-ops">
       <div>
         <label>Operation</label>
-        <select id="bulkOp">
-          <option value="prepend">Prepend text</option>
-          <option value="append">Append text</option>
+        <select id="bulkOp" onchange="onBulkOpChange()">
+          <option value="prepend">Prepend text to title</option>
+          <option value="append">Append text to title</option>
           <option value="replace">Replace entire title</option>
-          <option value="renumber">Renumber with pattern</option>
+          <option value="renumber">Renumber titles</option>
+          <option value="setCategory">Set category</option>
+          <option value="addKeyword">Add keyword</option>
+          <option value="removeKeyword">Remove keyword</option>
+          <option value="addTag">Add sub-tag</option>
+          <option value="removeTag">Remove sub-tag</option>
+          <option value="seoEnrich">SEO enrich descriptions</option>
         </select>
       </div>
-      <div>
+      <div id="bulkTextInput">
         <label>Value</label>
-        <input type="text" id="bulkValue" placeholder="Text to apply" oninput="updatePreview()">
+        <input type="text" id="bulkValue" placeholder="Text">
+      </div>
+      <div id="bulkCatInput" style="display:none">
+        <label>Category</label>
+        <select id="bulkCategory"></select>
+      </div>
+      <div id="bulkTagInput" style="display:none">
+        <label>Tag/keyword</label>
+        <input type="text" id="bulkTagVal" placeholder="e.g. hijab">
       </div>
       <div id="renumberOpts" style="display:none">
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div>
             <label>Prefix</label>
-            <input type="text" id="rnPrefix" placeholder="prefix-" value="" oninput="updatePreview()">
+            <input type="text" id="rnPrefix" placeholder="prefix-" value="xmelayu-">
           </div>
           <div>
             <label>Start #</label>
-            <input type="number" id="rnStart" value="1" min="1" style="width:70px" oninput="updatePreview()">
+            <input type="number" id="rnStart" value="1" min="1" style="width:70px">
           </div>
           <div>
             <label>Padding</label>
-            <select id="rnPad" onchange="updatePreview()">
-              <option value="3">001</option>
+            <select id="rnPad">
               <option value="4">0001</option>
+              <option value="3">001</option>
               <option value="2">01</option>
             </select>
           </div>
           <div>
             <label>Suffix</label>
-            <input type="text" id="rnSuffix" placeholder="-keyword" value="" oninput="updatePreview()">
+            <input type="text" id="rnSuffix" placeholder="-keyword" value="">
           </div>
         </div>
-        <div class="pattern-preview" id="patternPreview">Preview: prefix-001-suffix, prefix-002-suffix, ...</div>
       </div>
       <button class="btn btn-primary" onclick="applyBulk()">Apply</button>
     </div>
@@ -159,38 +250,69 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th style="width:30px">#</th><th>Thumb</th><th>ID</th><th>Title</th><th>Description</th><th>Category</th><th>Views</th></tr>
+        <tr>
+          <th style="width:28px">#</th>
+          <th style="width:50px">Thumb</th>
+          <th class="col-title">Title</th>
+          <th class="col-cat">Category</th>
+          <th style="min-width:120px">Keywords</th>
+          <th class="col-tags">SubTags</th>
+          <th class="col-date">Uploaded</th>
+          <th class="col-views">Views</th>
+          <th class="col-actions">🧬</th>
+        </tr>
       </thead>
       <tbody id="videoList"></tbody>
     </table>
   </div>
   <div class="pagination" id="pagination"></div>
 
+  <div class="suggest-panel" id="suggestPanel">
+    <span class="close" onclick="closeSuggest()">✕</span>
+    <h2>🔍 SEO Keyword Suggestions</h2>
+    <div class="s-video-title" id="suggestVideoTitle"></div>
+    <div id="suggestStats"></div>
+    <div id="suggestResults"></div>
+  </div>
+
+  <div class="schema-preview" id="schemaPreview">
+    <span class="close" onclick="closeSchema()">✕</span>
+    <h3>Schema.org JSON-LD Preview</h3>
+    <div id="schemaContent">Select a video to preview</div>
+  </div>
+
   <script>
-    let currentPage = 1, totalPages = 1, allVideos = [];
+    let currentPage = 1, totalPages = 1, allVideos = [], categories = [];
 
-    document.getElementById('bulkOp').addEventListener('change', function() {
-      document.getElementById('renumberOpts').style.display = this.value === 'renumber' ? 'block' : 'none';
-      document.getElementById('bulkValue').style.display = this.value === 'renumber' ? 'none' : '';
-      updatePreview();
-    });
+    async function loadCategories() {
+      const res = await fetch('/api/admin/categories');
+      categories = await res.json();
+      ['catFilter','newCategory','bulkNewCategory','bulkCategory'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = id === 'catFilter' ? '<option value="">All categories</option>' : '';
+        categories.forEach(c => { el.innerHTML += `<option value="${c}">${c}</option>`; });
+      });
+    }
 
-    function updatePreview() {
+    document.getElementById('bulkOp').addEventListener('change', onBulkOpChange);
+    function onBulkOpChange() {
       const op = document.getElementById('bulkOp').value;
-      if (op === 'renumber') {
-        const prefix = document.getElementById('rnPrefix').value || 'video';
-        const pad = parseInt(document.getElementById('rnPad').value);
-        const suffix = document.getElementById('rnSuffix').value || '';
-        const start = parseInt(document.getElementById('rnStart').value);
-        document.getElementById('patternPreview').textContent =
-          `Preview: ${prefix}${String(start).padStart(pad,'0')}${suffix}, ${prefix}${String(start+1).padStart(pad,'0')}${suffix}, ...`;
-      }
+      document.getElementById('bulkTextInput').style.display = ['prepend','append','replace'].includes(op) ? '' : 'none';
+      document.getElementById('renumberOpts').style.display = op === 'renumber' ? '' : 'none';
+      document.getElementById('bulkCatInput').style.display = op === 'setCategory' ? '' : 'none';
+      document.getElementById('bulkTagInput').style.display = ['addKeyword','removeKeyword','addTag','removeTag'].includes(op) ? '' : 'none';
+      if (op === 'addKeyword' || op === 'addTag') document.getElementById('bulkTagVal').placeholder = op === 'addKeyword' ? 'e.g. melayu' : 'e.g. hijab';
+      if (op === 'removeKeyword' || op === 'removeTag') document.getElementById('bulkTagVal').placeholder = op === 'removeKeyword' ? 'keyword to remove' : 'tag to remove';
     }
 
     async function loadVideos() {
       const q = document.getElementById('search').value;
       const limit = document.getElementById('perPage').value;
-      const res = await fetch(`/api/admin/videos?q=${encodeURIComponent(q)}&page=${currentPage}&limit=${limit}`);
+      const cat = document.getElementById('catFilter').value;
+      let url = `/api/admin/videos?q=${encodeURIComponent(q)}&page=${currentPage}&limit=${limit}`;
+      if (cat) url += `&category=${encodeURIComponent(cat)}`;
+      const res = await fetch(url);
       const d = await res.json();
       allVideos = d.videos;
       totalPages = d.totalPages;
@@ -198,140 +320,369 @@
       renderPagination(d.total);
     }
 
+    function schemaFor(v) {
+      const desc = v.description || v.title;
+      const base = 'https://xmelayu.site';
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'VideoObject',
+        name: v.title || v.id,
+        description: desc.slice(0, 200),
+        thumbnailUrl: base + (v.thumbnail || '/thumbnails/' + v.id + '.jpg'),
+        contentUrl: base + v.video,
+        embedUrl: base + '/' + v.id,
+        uploadDate: v.uploaded || new Date().toISOString(),
+        interactionStatistic: {
+          '@type': 'InteractionCounter',
+          interactionType: 'WatchAction',
+          userInteractionCount: v.views || 0
+        },
+        keywords: (v.keywords || []).join(', '),
+        genre: v.category || 'Adult'
+      };
+    }
+
     function renderTable() {
       const tbody = document.getElementById('videoList');
-      tbody.innerHTML = allVideos.map((v, i) => `
-        <tr>
+      tbody.innerHTML = allVideos.map((v, i) => {
+        const schema = JSON.stringify(schemaFor(v), null, 2);
+        return `<tr>
           <td><input type="checkbox" class="video-cb" value="${v.id}" onchange="updateBulkBar()"></td>
           <td><img src="${v.thumbnail}" alt="" style="width:48px;height:27px;object-fit:cover;border-radius:4px;display:block" loading="lazy" onerror="this.style.display='none'"></td>
-          <td style="color:#6b6b75;font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.id}">${v.id}</td>
-          <td><input type="text" class="title-input" value="${v.title.replace(/"/g,'&quot;')}" data-id="${v.id}" style="width:100%;background:transparent;border:1px solid transparent;border-radius:4px;color:#fff;font-size:12px;padding:2px 6px;outline:none" onfocus="this.style.borderColor='#ff2d55'" onblur="saveTitle(this)" onkeydown="if(event.key==='Enter')this.blur()"></td>
-          <td style="max-width:250px;min-width:180px"><textarea class="desc-input" data-id="${v.id}" rows="2" style="width:100%;background:transparent;border:1px solid transparent;border-radius:4px;color:#9a9aa0;font-size:11px;padding:2px 6px;outline:none;resize:vertical;font-family:inherit" onfocus="this.style.borderColor='#ff2d55'" onblur="saveDesc(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey)this.blur()">${((v.description||'').replace(/"/g,'&quot;'))}</textarea></td>
-          <td><span class="tag cat">${v.category || 'N/A'}</span></td>
-          <td style="color:#6b6b75">${(v.views || 0).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    }
-
-    async function saveTitle(input) {
-      input.style.borderColor = 'transparent';
-      const id = input.dataset.id;
-      const title = input.value.trim();
-      const orig = allVideos.find(v => v.id === id)?.title;
-      if (title === orig) return;
-      try {
-        const res = await fetch('/api/admin/videos/' + encodeURIComponent(id), {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title })
-        });
-        if (res.ok) {
-          input.style.borderColor = '#34c759';
-          allVideos.forEach(v => { if (v.id === id) v.title = title; });
-        } else {
-          input.style.borderColor = '#ff2d55';
-          input.value = orig;
-        }
-      } catch {
-        input.style.borderColor = '#ff2d55';
-        input.value = orig;
-      }
-      setTimeout(() => { input.style.borderColor = 'transparent'; }, 1500);
-    }
-
-    async function saveDesc(textarea) {
-      textarea.style.borderColor = 'transparent';
-      const id = textarea.dataset.id;
-      const description = textarea.value;
-      const video = allVideos.find(v => v.id === id);
-      const orig = video?.description || '';
-      if (description === orig) return;
-      try {
-        const res = await fetch('/api/admin/videos/' + encodeURIComponent(id), {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: video?.title || id, description })
-        });
-        if (res.ok) {
-          textarea.style.borderColor = '#34c759';
-          if (video) video.description = description;
-        } else {
-          textarea.style.borderColor = '#ff2d55';
-          textarea.value = orig;
-        }
-      } catch {
-        textarea.style.borderColor = '#ff2d55';
-        textarea.value = orig;
-      }
-      setTimeout(() => { textarea.style.borderColor = 'transparent'; }, 1500);
+          <td class="col-title">
+            <input class="inline-edit title-input" value="${(v.title||'').replace(/"/g,'&quot;')}" data-id="${v.id}" data-field="title" onblur="saveField(this)" onkeydown="if(event.key==='Enter')this.blur()">
+          </td>
+          <td>
+            <select class="compact cat-select" data-id="${v.id}" data-field="category" onchange="saveField(this)">
+              <option value="">N/A</option>
+              ${categories.map(c => `<option value="${c}" ${c === v.category ? 'selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </td>
+          <td>
+            <div style="display:flex;flex-wrap:wrap;gap:2px;align-items:center">
+              ${(v.keywords||[]).map(k => `<span class="tag" onclick="removeArrayField('${v.id}','keywords','${k.replace(/'/g,"\\'")}')">${k} ✕</span>`).join('')}
+              <input class="tag-input" placeholder="+kw" data-id="${v.id}" data-field="keywords" onkeydown="if(event.key==='Enter'&&this.value.trim())addArrayField(this,'keywords')">
+            </div>
+          </td>
+          <td>
+            <div style="display:flex;flex-wrap:wrap;gap:2px;align-items:center">
+              ${(v.subTags||[]).map(t => `<span class="tag" onclick="removeArrayField('${v.id}','subTags','${t.replace(/'/g,"\\'")}')">${t} ✕</span>`).join('')}
+              <input class="tag-input" placeholder="+tag" data-id="${v.id}" data-field="subTags" onkeydown="if(event.key==='Enter'&&this.value.trim())addArrayField(this,'subTags')">
+            </div>
+          </td>
+          <td><input class="inline-edit date-input" type="datetime-local" value="${(v.uploaded||'').slice(0,16)}" data-id="${v.id}" data-field="uploaded" onblur="saveField(this)"></td>
+          <td style="color:#6b6b75;text-align:right">${(v.views||0).toLocaleString()}</td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-secondary btn-sm" onclick="seoEnrich('${v.id}')" title="Generate SEO description">📝</button>
+            <button class="btn btn-secondary btn-sm" onclick="previewSchema('${v.id}')" title="Schema preview">🧬</button>
+            <button class="btn btn-secondary btn-sm" onclick="openSuggest('${v.id}')" title="Keyword suggestions">🔍</button>
+          </td>
+        </tr>`;
+      }).join('');
     }
 
     function renderPagination(total) {
       const el = document.getElementById('pagination');
       let html = `<span style="color:#6b6b75;font-size:12px;margin-right:12px">${total} videos</span>`;
-      for (let i = 1; i <= totalPages; i++) {
+      html += `<button onclick="currentPage=1;loadVideos()">⏮</button>`;
+      const start = Math.max(1, currentPage - 2);
+      const end = Math.min(totalPages, currentPage + 2);
+      for (let i = start; i <= end; i++) {
         html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
       }
+      html += `<button onclick="currentPage=${totalPages};loadVideos()">⏭</button>`;
       el.innerHTML = html;
     }
 
     function goToPage(p) { currentPage = p; loadVideos(); }
 
-    function selectAll() {
-      document.querySelectorAll('.video-cb').forEach(cb => cb.checked = true);
-      updateBulkBar();
-    }
-    function deselectAll() {
-      document.querySelectorAll('.video-cb').forEach(cb => cb.checked = false);
-      updateBulkBar();
-    }
+    function selectAll() { document.querySelectorAll('.video-cb').forEach(cb => cb.checked = true); updateBulkBar(); }
+    function deselectAll() { document.querySelectorAll('.video-cb').forEach(cb => cb.checked = false); updateBulkBar(); }
     function updateBulkBar() {
       const checked = document.querySelectorAll('.video-cb:checked').length;
       document.getElementById('selectedCount').textContent = checked;
       document.getElementById('bulkBar').classList.toggle('active', checked > 0);
     }
 
+    async function saveField(el) {
+      const id = el.dataset.id;
+      const field = el.dataset.field;
+      const val = el.value;
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      const orig = video[field] || '';
+      if (val === orig || (!val && !orig)) return;
+      const body = { title: video.title };
+      body[field] = field === 'uploaded' ? val + ':00.000Z' : val;
+      try {
+        const res = await fetch('/api/admin/videos/' + encodeURIComponent(id), {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        if (res.ok) {
+          el.style.borderColor = '#34c759';
+          video[field] = body[field];
+        } else { el.style.borderColor = '#ff2d55'; }
+      } catch { el.style.borderColor = '#ff2d55'; }
+      setTimeout(() => { el.style.borderColor = 'transparent'; }, 1500);
+    }
+
+    async function removeArrayField(id, field, val) {
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      video[field] = (video[field] || []).filter(x => x !== val);
+      try {
+        const body = { title: video.title };
+        body[field] = video[field];
+        await fetch('/api/admin/videos/' + encodeURIComponent(id), {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        renderTable();
+      } catch {}
+    }
+
+    async function addArrayField(input, field) {
+      const id = input.dataset.id;
+      const val = input.value.trim().toLowerCase();
+      if (!val) return;
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      video[field] = video[field] || [];
+      if (!video[field].includes(val)) video[field].push(val);
+      input.value = '';
+      try {
+        const body = { title: video.title };
+        body[field] = video[field];
+        await fetch('/api/admin/videos/' + encodeURIComponent(id), {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        renderTable();
+      } catch {}
+    }
+
+    let suggestVideoId = null;
+
+    function openSuggest(id) {
+      suggestVideoId = id;
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      document.getElementById('suggestVideoTitle').textContent = video.title || id;
+      document.getElementById('suggestResults').innerHTML = '<div class="suggest-loading">Analyzing keywords...</div>';
+      document.getElementById('suggestPanel').classList.add('open');
+      loadSuggestions(id);
+    }
+
+    function closeSuggest() { document.getElementById('suggestPanel').classList.remove('open'); }
+
+    async function loadSuggestions(id) {
+      try {
+        const res = await fetch('/api/admin/keyword-suggestions/' + encodeURIComponent(id));
+        const d = await res.json();
+        renderSuggestions(d);
+      } catch {
+        document.getElementById('suggestResults').innerHTML = '<div style="color:#ff2d55;text-align:center;padding:20px">Failed to load suggestions</div>';
+      }
+    }
+
+    function renderSuggestions(d) {
+      const video = allVideos.find(v => v.id === suggestVideoId);
+      if (!video) return;
+
+      // Stats bar
+      document.getElementById('suggestStats').innerHTML = `
+        <div class="s-stat"><span>Existing keywords</span><span>${d.stats.existingKeywords} (cat avg: ${d.stats.categoryAverage})</span></div>
+        <div class="s-stat"><span>Existing subTags</span><span>${d.stats.existingSubTags}</span></div>
+        <div class="s-stat"><span>Title n-grams found</span><span>${d.stats.titleGramsFound}</span></div>
+        <div class="s-stat"><span>Related videos scanned</span><span>${d.stats.relatedVideos}</span></div>
+        <div style="height:12px"></div>
+      `;
+
+      if (d.suggestions.length === 0) {
+        document.getElementById('suggestResults').innerHTML = '<div style="color:#6b6b75;text-align:center;padding:20px">No new suggestions — your keywords are well optimized!</div>';
+        return;
+      }
+
+      document.getElementById('suggestResults').innerHTML = d.suggestions.map(s => `
+        <div class="suggest-item">
+          <div>
+            <div class="kw">${s.keyword}</div>
+            <div class="reasons">${s.reasons.join(' · ')}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="score">${s.score}</span>
+            <span class="add-btn" onclick="addSuggestedKeyword('${suggestVideoId}','${s.keyword.replace(/'/g,"\\'")}')">+</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function addSuggestedKeyword(id, keyword) {
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      video.keywords = video.keywords || [];
+      if (video.keywords.includes(keyword)) return;
+      video.keywords.push(keyword);
+      try {
+        await fetch('/api/admin/videos/' + encodeURIComponent(id), {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: video.title, keywords: video.keywords })
+        });
+        renderTable();
+        loadSuggestions(id);
+      } catch {}
+    }
+
+    async function seoEnrich(id) {
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      if (!confirm(`Generate SEO-optimized description for "${(video.title||id).slice(0,40)}..."?`)) return;
+      const status = document.getElementById('status');
+      try {
+        const res = await fetch('/api/admin/seo-enrich/' + encodeURIComponent(id), { method: 'POST' });
+        const d = await res.json();
+        if (d.success) {
+          status.className = 'status success'; status.textContent = 'SEO description generated!';
+          loadVideos();
+        } else { status.className = 'status error'; status.textContent = d.error || 'Failed.'; }
+      } catch { status.className = 'status error'; status.textContent = 'Network error.'; }
+      status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 5000);
+    }
+
+    function previewSchema(id) {
+      const video = allVideos.find(v => v.id === id);
+      if (!video) return;
+      const schema = schemaFor(video);
+      document.getElementById('schemaContent').innerHTML =
+        `<div style="margin-bottom:8px;font-size:12px;color:#34c759">${video.title}</div>
+         <pre>${JSON.stringify(schema, null, 2)}</pre>`;
+      document.getElementById('schemaPreview').classList.add('open');
+    }
+
+    function closeSchema() { document.getElementById('schemaPreview').classList.remove('open'); }
+
     async function applyBulk() {
       const checked = document.querySelectorAll('.video-cb:checked');
       const ids = Array.from(checked).map(cb => cb.value);
       const op = document.getElementById('bulkOp').value;
       const status = document.getElementById('status');
-
-      let data;
+      let data = { ids, operation: op };
+      if (['prepend','append','replace'].includes(op)) data.text = document.getElementById('bulkValue').value;
       if (op === 'renumber') {
-        const prefix = document.getElementById('rnPrefix').value;
-        const suffix = document.getElementById('rnSuffix').value;
-        const start = parseInt(document.getElementById('rnStart').value);
-        const pad = parseInt(document.getElementById('rnPad').value);
-        data = { ids, operation: 'renumber', prefix, suffix, start, pad };
-      } else {
-        data = { ids, operation: op, text: document.getElementById('bulkValue').value };
+        data.prefix = document.getElementById('rnPrefix').value;
+        data.suffix = document.getElementById('rnSuffix').value;
+        data.start = parseInt(document.getElementById('rnStart').value);
+        data.pad = parseInt(document.getElementById('rnPad').value);
       }
-
+      if (op === 'setCategory') data.category = document.getElementById('bulkCategory').value;
+      if (['addKeyword','removeKeyword'].includes(op)) {
+        const kw = document.getElementById('bulkTagVal').value.trim().toLowerCase();
+        if (!kw) { status.className = 'status error'; status.textContent = 'Enter a keyword.'; status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 3000); return; }
+        if (op === 'addKeyword') data.addKeyword = kw; else data.removeKeyword = kw;
+      }
+      if (['addTag','removeTag'].includes(op)) {
+        const tag = document.getElementById('bulkTagVal').value.trim().toLowerCase();
+        if (!tag) { status.className = 'status error'; status.textContent = 'Enter a tag.'; status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 3000); return; }
+        if (op === 'addTag') data.addTag = tag; else data.removeTag = tag;
+      }
+      if (op === 'seoEnrich') {
+        if (!confirm(`Generate SEO descriptions for ${ids.length} video(s)?`)) return;
+        try {
+          const res = await fetch('/api/admin/seo-enrich/bulk', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids })
+          });
+          const result = await res.json();
+          if (result.success) {
+            status.className = 'status success'; status.textContent = `${result.count} description(s) enriched.`;
+            loadVideos(); deselectAll();
+          } else { status.className = 'status error'; status.textContent = result.error || 'Failed.'; }
+        } catch { status.className = 'status error'; status.textContent = 'Network error.'; }
+        status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 5000);
+        return;
+      }
       try {
         const res = await fetch('/api/admin/videos/bulk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
         const result = await res.json();
         if (result.success) {
-          status.className = 'status success';
-          status.textContent = `${result.count} video(s) updated successfully.`;
+          status.className = 'status success'; status.textContent = `${result.count} video(s) updated.`;
+          loadVideos(); deselectAll();
+        } else { status.className = 'status error'; status.textContent = result.error || 'Failed.'; }
+      } catch { status.className = 'status error'; status.textContent = 'Network error.'; }
+      status.style.display = 'block'; setTimeout(() => status.style.display = 'none', 5000);
+    }
+
+    function showAddPanel() {
+      document.getElementById('addPanel').classList.toggle('active');
+      document.getElementById('bulkAddPanel').classList.remove('active');
+    }
+    function showBulkAddPanel() {
+      document.getElementById('bulkAddPanel').classList.toggle('active');
+      document.getElementById('addPanel').classList.remove('active');
+    }
+    async function addSingleVideo() {
+      const id = document.getElementById('newId').value.trim();
+      if (!id) { showStatus('Enter a video ID', true); return; }
+      const body = {
+        id,
+        title: document.getElementById('newTitle').value.trim(),
+        category: document.getElementById('newCategory').value,
+        keywords: document.getElementById('newKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+        videoUrl: document.getElementById('newVideoUrl').value.trim() || undefined,
+        thumbUrl: document.getElementById('newThumbUrl').value.trim() || undefined
+      };
+      try {
+        const res = await fetch('/api/admin/videos', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        const d = await res.json();
+        if (d.success) {
+          showStatus(`Created "${d.video.title}"`, false);
+          document.getElementById('newId').value = '';
+          document.getElementById('newTitle').value = '';
+          document.getElementById('newKeywords').value = '';
+          document.getElementById('newVideoUrl').value = '';
+          document.getElementById('newThumbUrl').value = '';
           loadVideos();
-          deselectAll();
-        } else {
-          status.className = 'status error';
-          status.textContent = result.error || 'Failed.';
-        }
-      } catch {
-        status.className = 'status error';
-        status.textContent = 'Network error.';
-      }
+        } else showStatus(d.error || 'Failed', true);
+      } catch { showStatus('Network error', true); }
+    }
+    async function bulkAddVideos() {
+      const raw = document.getElementById('bulkIds').value.trim();
+      if (!raw) { showStatus('Paste at least one ID', true); return; }
+      const ids = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      if (!ids.length) { showStatus('No valid IDs found', true); return; }
+      const body = {
+        ids,
+        category: document.getElementById('bulkNewCategory').value,
+        keywords: document.getElementById('bulkNewKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+        subTags: document.getElementById('bulkNewSubTags').value.split(',').map(s => s.trim()).filter(Boolean)
+      };
+      try {
+        const res = await fetch('/api/admin/videos/bulk-create', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        const d = await res.json();
+        if (d.success) {
+          showStatus(`Created ${d.count} video(s): ${d.created.join(', ')}`, false);
+          document.getElementById('bulkIds').value = '';
+          loadVideos();
+        } else showStatus(d.error || 'Failed', true);
+      } catch { showStatus('Network error', true); }
+    }
+    function showStatus(msg, isError) {
+      const status = document.getElementById('status');
+      status.className = 'status ' + (isError ? 'error' : 'success');
+      status.textContent = msg;
       status.style.display = 'block';
       setTimeout(() => status.style.display = 'none', 5000);
     }
 
+    function showSchemaPreview() {
+      if (allVideos.length === 0) return;
+      previewSchema(allVideos[0].id);
+    }
+
+    loadCategories();
     loadVideos();
   </script>
 </body>

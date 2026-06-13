@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <meta name="description" content="<%= video.title %> - Watch in HD quality on Lucahman. Premium adult content featuring <%= video.category %>. Fast streaming, 18+ only. Popular in United States, Canada, UK & Australia.">
+  <meta name="description" content="<%= video.title %> - <%= video.category %> video. HD streaming on Lucahman. 18+ only.">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, HD streaming, 18+">
+  <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmateur, amateur, malay, HD streaming, 18+">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
   <script>!function(){try{var v=localStorage.getItem('_cv')||'',c='<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>';if(v&&v!==c&&c){localStorage.clear();location.reload()}localStorage.setItem('_cv',c)}catch(e){}}()</script>
@@ -27,15 +27,19 @@
   <link rel="preconnect" href="https://www.googletagmanager.com">
   
   <!-- Open Graph -->
-  <meta property="og:title" content="<%= title %>">
-  <meta property="og:description" content="<%= video.title %> - HD Quality Video | <%= video.category %> | Lucahman">
+<% var ogDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').substring(0,200) : (video.title + ' - ' + video.category + ' video. HD streaming on Lucahman.'); %>
+<% var absThumb = siteBase + video.thumbnail; %>
+  <meta property="og:title" content="<%= video.title %> | xMelayu">
+  <meta property="og:description" content="<%= ogDesc %>">
   <meta property="og:type" content="video.other">
-   <meta property="og:url" content="https://xmelayu.site/<%= video.id %>">
-  <meta property="og:site_name" content="Lucahman">
-  <meta property="og:image" content="<%= video.thumbnail %>">
+  <meta property="og:url" content="https://xmelayu.site/<%= video.id %>">
+  <meta property="og:site_name" content="Lucahman - xMelayu">
+  <meta property="og:image" content="<%= absThumb %>">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="720">
-  <meta property="og:video" content="<%= video.video %>">
+  <meta property="og:image:alt" content="<%= video.title %>">
+  <meta property="og:video" content="<%= absThumb %>">
+  <meta property="og:video:url" content="<%= siteBase %><%= video.video %>">
   <meta property="og:video:type" content="video/mp4">
   <meta property="og:video:width" content="1920">
   <meta property="og:video:height" content="1080">
@@ -44,15 +48,18 @@
   <meta property="article:section" content="<%= video.category %>">
   <meta property="article:tag" content="<%= video.subTags.slice(0,5).join(', ') %>">
   
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="player">
+  <!-- Twitter Card (also used by Telegram) -->
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@lucahman">
-  <meta name="twitter:title" content="<%= title %>">
-  <meta name="twitter:description" content="<%= video.title %> - HD streaming on Lucahman. 18+ only.">
-  <meta name="twitter:image" content="<%= video.thumbnail %>">
-   <meta name="twitter:player" content="https://xmelayu.site/<%= video.id %>">
+  <meta name="twitter:title" content="<%= video.title %> | xMelayu">
+  <meta name="twitter:description" content="<%= ogDesc.substring(0, 120) %>">
+  <meta name="twitter:image" content="<%= absThumb %>">
+  <meta name="twitter:player" content="https://xmelayu.site/<%= video.id %>">
   <meta name="twitter:player:width" content="1920">
   <meta name="twitter:player:height" content="1080">
+
+  <!-- WhatsApp specific: full URL fallback -->
+  <link rel="image_src" href="<%= absThumb %>">
 
   <!-- JSON-LD Structured Data for Video SEO -->
   <script type="application/ld+json">
@@ -123,8 +130,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   
-  <!-- Preload critical resources -->
-  <link rel="preload" href="<%= video.video %>" as="video" type="video/mp4" crossorigin id="videoPreload">
+  <!-- Preload thumbnail only -->
   <link rel="preload" href="<%= video.thumbnail %>" as="image" fetchpriority="high">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -173,7 +179,7 @@ var juicy_tags = ['a', 'img'];
     </div>
     
     <div class="header-actions">
-      <a href="/super-x-melayu" class="super-x-mobile-tag" title="Super X Melayu Malay Pron" aria-label="Super X Melayu">🔥 Super X Melayu</a>
+      <a href="/super-x-melayu" class="super-x-mobile-tag" title="Super X Melayu Malay Pron" aria-label="Super X Melayu">SUPER XMELAYU</a>
       <button class="icon-btn" onclick="history.back()">←</button>
     </div>
   </header>
@@ -209,7 +215,7 @@ var juicy_tags = ['a', 'img'];
         <% const showBadge2 = Math.random() < 0.5; %>
         <% const badgeText2 = badgeList2[Math.floor(Math.random() * badgeList2.length)]; %>
         <div class="video-player" id="videoContainer">
-          <video id="videoPlayer" controls playsinline muted>
+          <video id="videoPlayer" controls playsinline muted preload="metadata">
             <source src="<%= video.video %>" type="video/mp4">
           </video>
           <button id="exitFullscreenBtn" class="exit-fullscreen-btn" aria-label="Exit fullscreen">✕</button>
@@ -627,8 +633,6 @@ var juicy_tags = ['a', 'img'];
       navInProgress = true;
       navAbort.abort();
       navAbort = new AbortController();
-      const preloadLink = document.getElementById('videoPreload');
-      if (preloadLink) preloadLink.remove();
 
       fetch('/api/video/' + encodeURIComponent(id), { signal: navAbort.signal })
         .then(r => r.json())
@@ -667,10 +671,6 @@ var juicy_tags = ['a', 'img'];
             var kws = (desc && desc.keywords) ? desc.keywords : (v.keywords || []);
             kwEl.innerHTML = kws.slice(0,8).map(function(kw){ return '<span class="keyword-tag">' + esc(kw) + '</span>'; }).join('');
           }
-          // Re-create preload link
-          var pl = document.createElement('link');
-          pl.rel = 'preload'; pl.href = v.video; pl.as = 'video'; pl.type = 'video/mp4'; pl.crossOrigin = 'anonymous'; pl.id = 'videoPreload';
-          document.head.appendChild(pl);
           // Update related cards
           if (data.related) {
             const grid = document.getElementById('relatedGrid');

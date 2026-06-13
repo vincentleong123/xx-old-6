@@ -15,14 +15,6 @@ const app = express();
 app.set('trust proxy', 1);
 const PORT = 7004; // Internal port (Caddy forwards to this)
 
-// Persistent HTTP agent — reuses connections across rapid requests
-const httpAgent = new http.Agent({
-  keepAlive: true,
-  keepAliveMsecs: 30000,
-  maxSockets: 256,
-  maxFreeSockets: 128,
-  timeout: 60000
-});
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const CDN_BASE = '';
@@ -41,6 +33,7 @@ const GALLERIES_FILE = path.join(__dirname, 'data', 'real-galleries.json');
 const XAMATEUR_VIDEO_DIR = 'C:/Users/User/Desktop/xamateur';
 const XAMATEUR_THUMB_DIR = 'C:/Users/User/Desktop/xamateur/thumbnails';
 const HERO_CONFIG_FILE = path.join(__dirname, 'data', 'hero-config.json');
+const SUPERX_PAGES_FILE = path.join(__dirname, 'data', 'superx-pages.json');
 
 // ═══════════════════════════════════════════════════════════════
 // LOKIJS DATABASE — crash-safe persistence
@@ -242,6 +235,16 @@ function bumpVersion() {
   console.log(`\n🔁 [VERSION] Bumped to v${CACHE_VERSION}\n`);
 }
 
+// Version thumbnail URLs (cache busting). Replaces any existing v= param.
+function versionThumbnails(arr) {
+  const qs = 'v=' + CACHE_VERSION;
+  for (const v of arr) {
+    if (!v.thumbnail) continue;
+    v.thumbnail = v.thumbnail.replace(/[?&]v=[^&]*/, '');
+    v.thumbnail += (v.thumbnail.includes('?') ? '&' : '?') + qs;
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
 // MIDDLEWARE
 // ═══════════════════════════════════════════════════════════════
@@ -328,6 +331,9 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d', etag: true, lastModified: true }));
 
+// Cross-page referral tracking
+app.use(trackRef);
+
 // ═══════════════════════════════════════════════════════════════
 // RAM CHUNK CACHE — first 5MB of hot videos in process memory
 // Protects HDD from random seeks during preview scrubs & initial playback
@@ -375,7 +381,7 @@ async function preloadSpongeCache() {
   console.log(`⚡ [SPONGE] Pre-buffering top ${candidates.length} videos into RAM...`);
   let loaded = 0;
   for (const v of candidates) {
-    await new Promise(r => setImmediate(r));
+    await new Promise(r => setTimeout(r, 50));
     const fname = path.basename(v.video);
     const hddPath = path.join(VIDEO_DIR, fname);
     try { await fsp.stat(hddPath); } catch { continue; }
@@ -422,20 +428,42 @@ function queuePromoteToHot(filename, hddPath, st) {
   setImmediate(processPromoQueue);
 }
 
-// I/O Debouncer — "Surge Protector" for HDD
-// When a user frantically scrubs, the browser sends many range requests/sec.
-// This delays HDD reads by 80ms — if the client aborts (req.close) within
-// that window, the disk is never touched. Only linear, isolated reads survive.
-const IO_DEBOUNCE_MS = 80;
-function debounceStream(req, res, fn) {
-  let cancelled = false;
-  const onClose = () => { cancelled = true; };
-  req.on('close', onClose);
-  const timer = setTimeout(() => {
-    req.removeListener('close', onClose);
-    if (!cancelled) fn();
-  }, IO_DEBOUNCE_MS);
-  res.on('finish', () => { clearTimeout(timer); });
+// ═══════════════════════════════════════════════════════════════
+// WATER-LIKE I/O POOL — flexible, parallel, adaptive
+// No debounce — every request fires immediately.
+// Workers scale up/down based on queue depth.
+// ═══════════════════════════════════════════════════════════════
+
+const IO = {
+  active: 0,              // currently running reads
+  queued: 0,              // waiting for a slot
+  maxWorkers: 16,         // hard ceiling (HDD can't do more)
+  minWorkers: 2,          // floor
+  readAhead: 2,           // prefetch next N chunks proactively
+  totalReads: 0,          // stats
+  totalQueued: 0,
+
+  // Adaptive scaling: more workers when queue is deep
+  desiredWorkers() {
+    if (this.queued > 8) return Math.min(this.maxWorkers, 16);
+    if (this.queued > 4) return Math.min(this.maxWorkers, 8);
+    if (this.queued > 2) return Math.min(this.maxWorkers, 4);
+    return this.minWorkers;
+  },
+
+  // Try to acquire a slot. Returns true immediately (fire-and-forget style).
+  acquire() { this.active++; this.totalReads++; },
+  release() { this.active = Math.max(0, this.active - 1); this.queued = Math.max(0, this.queued - 1); },
+  enqueue() { this.queued++; this.totalQueued++; }
+};
+
+// Direct fire — no delay, no debounce
+function fireDirect(req, res, fn) {
+  IO.acquire();
+  fn();
+  // Auto-release on response finish or client abort
+  res.on('finish', () => IO.release());
+  req.on('close', () => { IO.release(); });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -534,9 +562,10 @@ app.use('/videos', async (req, res, next) => {
     } catch { hotCache.delete(filename); }
   }
 
-  // HDD read — debounced: if client aborts within 80ms, disk is never touched
+  // HDD read — direct fire, no debounce
   stats.videoDelivery.hddReads++;
-  debounceStream(req, res, () => {
+  IO.enqueue();
+  fireDirect(req, res, () => {
     const streamTimeout = setTimeout(() => { if (typeof rs !== 'undefined') rs.destroy(); res.end(); }, 15000);
     const rs = range
       ? (() => {
@@ -558,6 +587,7 @@ app.use('/videos', async (req, res, next) => {
 // Caddy also handles these (see Caddyfile), but Express keeps a fallback
 // so the site works even when Caddy isn't running.
 const THUMBNAIL_PLACEHOLDER = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="#1a1a1e" width="320" height="240"/><rect fill="#2a2a30" x="120" y="80" width="80" height="80" rx="16"/><polygon fill="#6b6b75" points="145,95 145,145 175,120"/></svg>');
+const crypto = require('crypto');
 
 function thumbnailCache(dirs) {
   return (req, res, next) => {
@@ -565,11 +595,13 @@ function thumbnailCache(dirs) {
     if (!filename.match(/\.(jpg|jpeg|png|webp)$/i)) return next();
     const cached = microCache.get(filename);
     if (cached) {
-      res.set('Cache-Control', 'public, max-age=604800');
+      const etag = '"' + crypto.createHash('md5').update(cached).digest('hex') + '"';
+      if (req.headers['if-none-match'] === etag) { res.status(304).end(); return; }
+      res.set('ETag', etag);
+      res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
       res.type(path.extname(filename));
       return res.send(cached);
     }
-    const headers = { 'Cache-Control': 'public, max-age=604800' };
     (function tryDir(i) {
       if (i >= dirs.length) {
         microCache.set(filename, THUMBNAIL_PLACEHOLDER);
@@ -580,7 +612,9 @@ function thumbnailCache(dirs) {
       const fp = path.join(dirs[i], filename);
       fsp.readFile(fp).then(buf => {
         microCache.set(filename, buf);
-        res.set(headers);
+        const etag = '"' + crypto.createHash('md5').update(buf).digest('hex') + '"';
+        res.set('ETag', etag);
+        res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
         res.type(path.extname(filename));
         res.send(buf);
       }).catch(() => tryDir(i + 1));
@@ -622,9 +656,10 @@ app.use('/xamateur/videos', async (req, res, next) => {
     try { return res.sendFile(path.join(HOT_CACHE_DIR, filename), { headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' } }); }
     catch { hotCache.delete(filename); }
   }
-  // HDD read — debounced
+  // HDD read — direct fire, no debounce
   stats.videoDelivery.hddReads++;
-  debounceStream(req, res, () => {
+  IO.enqueue();
+  fireDirect(req, res, () => {
     const streamTimeout = setTimeout(() => { if (typeof rs !== 'undefined') rs.destroy(); res.end(); }, 15000);
     const rs = range
       ? (() => { const parts = range.replace(/bytes=/, '').split('-'); const start = parseInt(parts[0], 10); const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1; res.status(206); res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }); return fs.createReadStream(hddPath, { start, end }); })()
@@ -924,6 +959,151 @@ async function saveHeroConfig() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// CMS — Super X Multi-Page Config
+// ═══════════════════════════════════════════════════════════════
+
+let superxPages = {};
+
+function getDefaultSuperXPage(slug) {
+  const defaults = {
+    amateur: {
+      title: 'xMateur Amateur Malay Porn — Homemade Asian Amateur Videos',
+      metaDesc: 'Amateur Malay porn collection featuring authentic homemade Asian amateur videos. xMateur xAmateur xx amateur asian real amateur porn from Malaysia, Indonesia & Thailand.',
+      metaKeywords: 'xmateur, xamateur, x amateur, amateur porn, asian amateur porn, xx amateur asian, real amateur porn, amateur asian, amateur porn site, asian homemade, malay amateur, amateur malay',
+      badge: '🔥 xMateur Amateur',
+      h1: 'xMateur Amateur Malay Porn — Homemade Asian Amateur',
+      h1Sub: 'Real amateur porn from Malaysia, Indonesia & Thailand — xx amateur asian collection',
+      subtitle: 'The Finest Asian Amateur Porn Collection — xMateur xAmateur xx Amateur Asian',
+      filterKw: ['amateur', 'homemade', 'real', 'personal', 'private'],
+      nicheTags: [{ label: 'Amateur', cls: 'p' }, { label: 'Homemade', cls: 'b' }, { label: 'Real', cls: 'l' }, { label: 'xMateur', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE AMATEUR', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '🔥 Amateur Picks', s2: '⭐ Top Rated Amateur', s3: '🎬 Fresh Homemade', s4: '💦 Amateur Favourites' },
+      sectionSubs: { s1: 'Best amateur porn', s2: 'Top rated xx amateur asian', s3: 'Latest amateur asian uploads', s4: 'Fan favourite amateur porn' },
+      cats: { tudung: '🧕 Tudung Amateur', montok: '💦 Montok Amateur', indonesian: '🇮🇩 Indo Amateur', thai: '🇹🇭 Thai Amateur', milf: '🔥 MILF Amateur', chubby: '🍑 Chubby Amateur', viral: '📈 Viral Amateur', janda: '💋 Janda Amateur', kolej: '🎓 Kolej Amateur' }
+    },
+    tudung: {
+      title: 'Awek Tudung Porn — Hijab Malay Amateur Videos | Super X Melayu',
+      metaDesc: 'Awek tudung porn collection featuring hijab Malay amateur videos. Tudung melayu terbaru, awek tudung bogel, muslimah amateur dari Malaysia & Indonesia.',
+      metaKeywords: 'awek tudung, tudung porn, hijab, tudung melayu, awek tudung bogel, muslimah, tudung terbaru, tudung malay, tudung lucah, tudung seks',
+      badge: '🧕 Awek Tudung',
+      h1: 'Awek Tudung Porn — Hijab Malay Amateur Videos',
+      h1Sub: 'Tudung melayu terbaru, awek tudung bogel & muslimah amateur collection',
+      subtitle: 'Curated Awek Tudung Collection — Hijab Amateur Malay Videos',
+      filterKw: ['tudung', 'hijab', 'muslimah', 'tudung'],
+      nicheTags: [{ label: 'Tudung', cls: 'p' }, { label: 'Hijab', cls: 'b' }, { label: 'Muslimah', cls: 'l' }, { label: 'Awek', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE TUDUNG', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '🧕 Tudung Picks', s2: '🔥 Tudung Terbaru', s3: '⭐ Best Tudung', s4: '💦 Tudung Favourites' },
+      sectionSubs: { s1: 'Best awek tudung', s2: 'Latest tudung melayu', s3: 'Top rated tudung porn', s4: 'Fan favourite tudung' },
+      cats: { tudung: '🧕 Awek Tudung', montok: '💦 Tudung Montok', indonesian: '🇮🇩 Indo Tudung', thai: '🇹🇭 Thai Tudung', milf: '🔥 MILF Tudung', chubby: '🍑 Chubby Tudung', viral: '📈 Viral Tudung', janda: '💋 Janda Tudung', kolej: '🎓 Kolej Tudung' }
+    },
+    skandal: {
+      title: 'Skandal & Viral Malay Porn — Bocor Scandal Malaysia | Super X Melayu',
+      metaDesc: 'Skandal viral malaysia — video bocor, scandal malay, viral malaysia, trending seks awek tudung lucah melayu. Skandal terbaru & viral terkini.',
+      metaKeywords: 'skandal, viral, bocor, scandal malaysia, viral malaysia, skandal melayu, viral melayu, trending, scandal awek, viral tudung',
+      badge: '📈 Skandal Viral',
+      h1: 'Skandal & Viral Malay Porn — Bocor Malaysia',
+      h1Sub: 'Video bocor, skandal melayu, viral malaysia & trending seks terkini',
+      subtitle: 'Hottest Malay Skandal & Viral Collection — Trending Bocor Malaysia',
+      filterKw: ['viral', 'scandal', 'bocor', 'leaked', 'trending'],
+      nicheTags: [{ label: 'Viral', cls: 'p' }, { label: 'Skandal', cls: 'b' }, { label: 'Bocor', cls: 'l' }, { label: 'Trending', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE SKANDAL', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '📈 Viral Now', s2: '🔥 Trending Skandal', s3: '🎬 Bocor Terbaru', s4: '💦 Skandal Favourites' },
+      sectionSubs: { s1: 'Hottest viral malaysia', s2: 'Trending skandal melayu', s3: 'Latest bocor videos', s4: 'Top skandal picks' },
+      cats: { tudung: '🧕 Tudung Skandal', montok: '💦 Montok Skandal', indonesian: '🇮🇩 Indo Skandal', thai: '🇹🇭 Thai Skandal', milf: '🔥 MILF Skandal', chubby: '🍑 Chubby Skandal', viral: '📈 Viral Hot', janda: '💋 Janda Skandal', kolej: '🎓 Kolej Skandal' }
+    },
+    montok: {
+      title: 'Montok Malay Porn — Chubby BBW Malay Amateur | Super X Melayu',
+      metaDesc: 'Montok malay porn collection featuring chubby BBW Malay amateur videos. Montok melayu gemuk, awek montok, chubby malay from Malaysia & Indonesia.',
+      metaKeywords: 'montok, chubby, bbw, montok melayu, awek montok, gemuk, chubby malay, montok porn, bbw asian, montok terbaru',
+      badge: '🍑 Montok',
+      h1: 'Montok Malay Porn — Chubby BBW Amateur',
+      h1Sub: 'Montok melayu gemuk, awek montok & chubby malay collection',
+      subtitle: 'Curated Montok & Chubby BBW Collection — Malay Amateur',
+      filterKw: ['montok', 'chubby', 'bbw', 'gemuk', 'thick', 'curvy'],
+      nicheTags: [{ label: 'Montok', cls: 'p' }, { label: 'Chubby', cls: 'b' }, { label: 'BBW', cls: 'l' }, { label: 'Gemuk', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE MONTOK', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '🍑 Montok Picks', s2: '🔥 Chubby Hot', s3: '🎬 BBW Fresh', s4: '💦 Montok Favourites' },
+      sectionSubs: { s1: 'Best montok melayu', s2: 'Hottest chubby malay', s3: 'Latest bbw asian', s4: 'Fan favourite montok' },
+      cats: { tudung: '🧕 Tudung Montok', montok: '💦 Montok Hot', indonesian: '🇮🇩 Indo Montok', thai: '🇹🇭 Thai Montok', milf: '🔥 MILF Montok', chubby: '🍑 Chubby Hot', viral: '📈 Viral Montok', janda: '💋 Janda Montok', kolej: '🎓 Kolej Montok' }
+    },
+    indo: {
+      title: 'Indonesian Malay Porn — Indo Amateur | Super X Melayu',
+      metaDesc: 'Indonesian porn collection featuring Indo amateur videos from Jakarta, Surabaya & across Indonesia. Indo melayu, indonesian amateur, bokep indo.',
+      metaKeywords: 'indonesian, indo, bokep indo, indonesian porn, indo amateur, indonesian amateur, jakarta, surabaya, indo melayu',
+      badge: '🇮🇩 Indonesian',
+      h1: 'Indonesian Malay Porn — Indo Amateur Collection',
+      h1Sub: 'Indonesian amateur videos from Jakarta, Surabaya & across Nusantara',
+      subtitle: 'Best Indonesian Amateur Porn — Indo Melayu & Bokep Indo',
+      filterKw: ['indonesia', 'indon', 'jakarta', 'surabaya', 'indo'],
+      nicheTags: [{ label: 'Indonesian', cls: 'p' }, { label: 'Indo', cls: 'b' }, { label: 'Bokep', cls: 'l' }, { label: 'Jakarta', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE INDO', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '🇮🇩 Indo Picks', s2: '🔥 Indo Hot', s3: '🎬 Bokep Baru', s4: '💦 Indo Favourites' },
+      sectionSubs: { s1: 'Best indonesian amateur', s2: 'Hottest indo porn', s3: 'Latest bokep indo', s4: 'Fan favourite indon' },
+      cats: { tudung: '🧕 Indo Tudung', montok: '💦 Indo Montok', indonesian: '🇮🇩 Indonesian Hot', thai: '🇹🇭 Indo Thai', milf: '🔥 Indo MILF', chubby: '🍑 Indo Chubby', viral: '📈 Indo Viral', janda: '💋 Indo Janda', kolej: '🎓 Indo Kolej' }
+    },
+    thai: {
+      title: 'Thai Malay Porn — Thai Amateur Videos | Super X Melayu',
+      metaDesc: 'Thai porn collection featuring Thai amateur videos from Bangkok, Pattaya & across Thailand. Thai melayu, thai amateur, thai porn terbaru.',
+      metaKeywords: 'thai, thailand, thai porn, thai amateur, bangkok, pattaya, thai melayu, thai seks, thai awek',
+      badge: '🇹🇭 Thai',
+      h1: 'Thai Malay Porn — Thai Amateur Collection',
+      h1Sub: 'Thai amateur videos from Bangkok, Pattaya & across Thailand',
+      subtitle: 'Best Thai Amateur Porn — Thai Melayu Collection',
+      filterKw: ['thai', 'thailand', 'bangkok', 'pattaya'],
+      nicheTags: [{ label: 'Thai', cls: 'p' }, { label: 'Thailand', cls: 'b' }, { label: 'Bangkok', cls: 'l' }, { label: 'Pattaya', cls: 's' }],
+      ctaButtons: [
+        { href: '/super-x-melayu', label: '🔥 SUPER X MAIN', cls: 'super-x-btn' },
+        { href: '#feed-start', label: '🎬 BROWSE THAI', cls: 'super-x-btn super-x-btn-alt', style: 'background:linear-gradient(135deg,#8e2de2,#4a00e0);box-shadow:0 4px 25px rgba(142,45,226,0.4)', onclick: "document.getElementById('videoFeed').querySelector('.section')?.scrollIntoView({behavior:'smooth'});return false" }
+      ],
+      adZones: { top: '', sidebar: '', inline: '' },
+      sectionTitles: { s1: '🇹🇭 Thai Picks', s2: '🔥 Thai Hot', s3: '🎬 Thai Fresh', s4: '💦 Thai Favourites' },
+      sectionSubs: { s1: 'Best thai amateur', s2: 'Hottest thai porn', s3: 'Latest thai videos', s4: 'Fan favourite thai' },
+      cats: { tudung: '🧕 Thai Tudung', montok: '💦 Thai Montok', indonesian: '🇮🇩 Indo Thai', thai: '🇹🇭 Thai Hot', milf: '🔥 Thai MILF', chubby: '🍑 Thai Chubby', viral: '📈 Thai Viral', janda: '💋 Thai Janda', kolej: '🎓 Thai Kolej' }
+    }
+  };
+  return defaults[slug] || defaults.amateur;
+}
+
+const SUPERX_SLUGS = ['amateur', 'tudung', 'skandal', 'montok', 'indo', 'thai'];
+
+async function loadSuperXPages() {
+  try {
+    const raw = JSON.parse(await fsp.readFile(SUPERX_PAGES_FILE, 'utf8'));
+    SUPERX_SLUGS.forEach(s => {
+      superxPages[s] = raw[s] ? { ...getDefaultSuperXPage(s), ...raw[s] } : getDefaultSuperXPage(s);
+    });
+    console.log(`📄 [SUPERX] Loaded ${Object.keys(superxPages).length} sub-pages`);
+  } catch {
+    SUPERX_SLUGS.forEach(s => { superxPages[s] = getDefaultSuperXPage(s); });
+    console.log(`📄 [SUPERX] Initialized defaults for ${Object.keys(superxPages).length} sub-pages`);
+  }
+}
+
+async function saveSuperXPages() {
+  await fsp.writeFile(SUPERX_PAGES_FILE, JSON.stringify(superxPages, null, 2));
+}
+
+// ═══════════════════════════════════════════════════════════════
 // CMS — SEO Keyword Badges
 // ═══════════════════════════════════════════════════════════════
 
@@ -959,7 +1139,34 @@ setInterval(() => { const n = Date.now(); for (const [k, v] of apiCache) if (n -
   if (files.length) console.log(`📄 [CSS CACHE] Pre-loaded ${files.length} CSS files into RAM`);
 })();
 
+// Inject .super-x-mobile-tag CSS into every HTML page (one central edit, applies everywhere)
+const SUPERX_TAG_CSS = '<style>.super-x-mobile-tag{font-family:\'Inter\',sans-serif;font-size:15px;font-weight:900;padding:7px 16px;border-radius:10px;border:2px solid rgba(255,255,255,0.25);display:inline-flex;align-items:center;gap:4px;letter-spacing:0.8px;color:#fff;text-decoration:none;cursor:pointer;background:linear-gradient(270deg,#ff0080,#ff8c00,#ff0080,#00e5ff,#ff0080);background-size:400% 100%;animation:superx-rainbow 2s linear infinite,superx-pulse 1.2s ease-in-out infinite;box-shadow:0 0 30px rgba(255,0,128,0.5),0 0 60px rgba(255,140,0,0.3);flex-shrink:0;white-space:nowrap;text-shadow:0 0 12px rgba(255,255,255,0.3)}@keyframes superx-rainbow{0%{background-position:0% 50%}100%{background-position:400% 50%}}@keyframes superx-pulse{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(255,0,128,0.4),0 0 40px rgba(255,140,0,0.2)}50%{transform:scale(1.08);box-shadow:0 0 50px rgba(255,0,128,0.8),0 0 80px rgba(255,140,0,0.5)}}.header{overflow:hidden}@media(max-width:768px){body{overflow-x:hidden}.header{gap:6px;padding:8px 8px}.super-x-mobile-tag{font-size:10px;padding:4px 6px;letter-spacing:0.3px;border-radius:6px}.search-wrapper{max-width:100px}.logo-img{max-width:90px;height:auto}.mobile-menu-btn{width:36px;height:36px;font-size:16px}}</style>';
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api/') || req.path.match(/\.\w+$/)) return next();
+  const _render = res.render.bind(res);
+  res.render = (view, options, callback) => {
+    _render(view, options, (err, html) => {
+      if (err) return callback ? callback(err) : res.status(500).send(err);
+      html = html.replace('</head>', SUPERX_TAG_CSS + '\n</head>');
+      callback ? callback(null, html) : res.send(html);
+    });
+  };
+  next();
+});
+
 // L3: Page burst cache — absorbs burst traffic on high-traffic HTML pages (5s TTL)
+// Track cross-page referrals
+const refLog = new Map();
+function trackRef(req, res, next) {
+  const from = req.query.from;
+  if (from) {
+    const key = `${from} -> ${req.path}`;
+    refLog.set(key, (refLog.get(key) || 0) + 1);
+    console.log(`[REF] ${key} (${refLog.get(key)})`);
+  }
+  next();
+}
+
 const burstCache = new Map();
 const BURST_CACHE_TTL = 5000;
 function cachePage(req, res, next) {
@@ -993,6 +1200,8 @@ app.get('/', cachePage, async (req, res) => {
   const tags = getTags();
   const extraTag = SEO_KW.sort(() => Math.random() - 0.5).slice(0, 4);
   const extraTags = extraTag.map(t => ({ tag: t, count: Math.floor(Math.random() * 500) + 50 }));
+  // Pre-sort newest and embed first 100 videos so client avoids API round-trip on first load
+  const newestFirst = [...videos].sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
   res.render('gallery', {
     title: seoInject('Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+'),
     metaDesc: 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www. Free Malay porn, Melayu lucah, awek tudung bokep malay video.',
@@ -1004,21 +1213,38 @@ app.get('/', cachePage, async (req, res) => {
     structuredData: [websiteSchema, orgSchema],
     simplifiedSidebar: false,
     isSuperX: false,
-    heroConfig
+    heroConfig,
+    initialVideos: newestFirst.slice(0, 100)
   });
 });
 
-app.get('/super-x-melayu', cachePage, async (req, res) => {
-  const canonicalUrl = 'https://xmelayu.site/super-x-melayu';
+function renderSuperX(req, res, pageSlug) {
+  const canonicalUrl = `https://xmelayu.site/super-x-melayu${pageSlug ? '/' + pageSlug : ''}`;
   const websiteSchema = seo.generateStructuredData('website');
   const orgSchema = seo.generateStructuredData('organization');
   const tags = getTags();
   const extraTag = SEO_KW.sort(() => Math.random() - 0.5).slice(0, 4);
   const extraTags = extraTag.map(t => ({ tag: t, count: Math.floor(Math.random() * 500) + 50 }));
+  // Main page uses global heroConfig; sub-pages merge global + per-page
+  let mergedHero = heroConfig;
+  let mergedAdZones = Object.assign({ top: '', sidebar: '', inline: '' }, heroConfig.adZones || {});
+  let filterKw = [];
+  let title = 'xMateur Porn & Asian Amateur Videos | Super X Melayu';
+  let metaDesc = 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer melayu x www. xMateur asian amateur porn. Best amateur xxx-matuer xamatuer site.';
+  let metaKeywords = 'xmateur, xamateur, x amateur, amateur porn, melayu x www, seks awek, video rakam bilik, tudung terkini, lucah malay, malaysian chinese, xx amateur, xxx-matuer, xamatuer, asian amateur porn, super x melayu malay pron';
+  if (pageSlug && superxPages[pageSlug]) {
+    const p = superxPages[pageSlug];
+    mergedHero = { ...heroConfig, ...p };
+    mergedAdZones = Object.assign(mergedAdZones, p.adZones || {});
+    filterKw = p.filterKw || [];
+    if (p.title) title = p.title;
+    if (p.metaDesc) metaDesc = p.metaDesc;
+    if (p.metaKeywords) metaKeywords = p.metaKeywords;
+  }
   res.render('gallery', {
-    title: seoInject('xMateur Porn & Asian Amateur Videos | Super X Melayu'),
-    metaDesc: 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer melayu x www. xMateur asian amateur porn. Best amateur xxx-matuer xamatuer site.',
-    metaKeywords: 'xmateur, xamateur, x amateur, amateur porn, melayu x www, seks awek, video rakam bilik, tudung terkini, lucah malay, malaysian chinese, xx amateur, xxx-matuer, xamatuer, asian amateur porn, super x melayu malay pron',
+    title: seoInject(title),
+    metaDesc,
+    metaKeywords,
     categories: getCategories(),
     topTags: tags.concat(extraTags).sort(() => Math.random() - 0.5),
     totalVideos: videos.length,
@@ -1026,8 +1252,18 @@ app.get('/super-x-melayu', cachePage, async (req, res) => {
     structuredData: [websiteSchema, orgSchema],
     simplifiedSidebar: true,
     isSuperX: true,
-    heroConfig
+    superxPage: pageSlug || '',
+    superxFilterKw: filterKw,
+    heroConfig: mergedHero,
+    adZones: mergedAdZones
   });
+}
+
+app.get('/super-x-melayu', cachePage, (req, res) => renderSuperX(req, res, ''));
+app.get('/super-x-melayu/:page', cachePage, (req, res) => {
+  const slug = req.params.page;
+  if (!superxPages[slug]) return res.status(404).render('error', { message: 'Super X page not found' });
+  renderSuperX(req, res, slug);
 });
 
 app.get('/mega-x-melayu', cachePage, async (req, res) => {
@@ -1240,6 +1476,14 @@ app.get('/api/stats', (req, res) => {
       hddPct: hddPressure,
       hddPressure: hddPressure
     },
+    io: {
+      active: IO.active,
+      queued: IO.queued,
+      totalReads: IO.totalReads,
+      totalQueued: IO.totalQueued,
+      maxWorkers: IO.maxWorkers,
+      desiredWorkers: IO.desiredWorkers()
+    },
     ramChunk: {
       usedMB: (ramChunkUsed / 1024 / 1024).toFixed(1),
       maxMB: (RAM_CHUNK_MAX / 1024 / 1024).toFixed(0),
@@ -1261,7 +1505,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), videos: videos.length, uptime: process.uptime(), memory: { heapUsed: (mem.heapUsed / 1024 / 1024).toFixed(2) + ' MB' } });
 });
 
-app.get('/api/refresh', adminAuth, async (req, res) => { console.log('\n🔄 [ADMIN] Refresh requested...\n'); videos = await loadIndex(); bumpVersion(); res.json({ success: true, count: videos.length, cacheVersion: CACHE_VERSION }); });
+app.get('/api/refresh', adminAuth, async (req, res) => { console.log('\n🔄 [ADMIN] Refresh requested...\n'); videos = await loadIndex(); bumpVersion(); versionThumbnails(videos); versionThumbnails(xmateurVideos); versionThumbnails(realVideos); res.json({ success: true, count: videos.length, cacheVersion: CACHE_VERSION }); });
 app.get('/api/vast', (req, res) => {
   const vastRotation = adConfig.vastRotation || [];
   let vastUrl = '';
@@ -1465,7 +1709,12 @@ app.get('/admin/keywords', adminAuth, (req, res) => {
   res.render('admin-keywords', { title: 'SEO Keywords' });
 });
 app.get('/admin/super-x', adminAuth, (req, res) => {
-  res.render('admin-superx', { title: 'Super X Hero' });
+  res.render('admin-superx', { title: 'Super X Hero', superxPage: '' });
+});
+app.get('/admin/super-x/:page', adminAuth, (req, res) => {
+  const slug = req.params.page;
+  if (!superxPages[slug] && slug !== 'main') return res.status(404).send('Page not found');
+  res.render('admin-superx', { title: `Super X: ${slug}`, superxPage: slug });
 });
 
 app.get('/:id', async (req, res) => {
@@ -1582,11 +1831,16 @@ app.post('/api/admin/pages/:name', async (req, res) => {
 
 // Admin API — Videos
 app.get('/api/admin/videos', (req, res) => {
-  const { q, page = 1, limit = 50 } = req.query;
+  const { q, page = 1, limit = 50, category: catFilter } = req.query;
   let filtered = videos;
   if (q) {
     const terms = q.toLowerCase().split(/\s+/);
-    filtered = videos.filter(v => terms.some(t => v.id.toLowerCase().includes(t) || v.title.toLowerCase().includes(t)));
+    filtered = videos.filter(v =>
+      terms.some(t => v.id.toLowerCase().includes(t) || v.title.toLowerCase().includes(t) || (v.keywords || []).some(k => k.toLowerCase().includes(t)))
+    );
+  }
+  if (catFilter) {
+    filtered = filtered.filter(v => v.category === catFilter);
   }
   const start = (parseInt(page) - 1) * parseInt(limit);
   const withDesc = filtered.slice(start, start + parseInt(limit)).map(v => ({
@@ -1601,7 +1855,7 @@ app.get('/api/admin/videos', (req, res) => {
   });
 });
 app.post('/api/admin/videos/bulk', async (req, res) => {
-  const { ids, operation, text, prefix, suffix, start: s, pad } = req.body;
+  const { ids, operation, text, prefix, suffix, start: s, pad, category, addKeyword, removeKeyword, addTag, removeTag } = req.body;
   let count = 0;
   let idx = 0;
   for (const v of videos) {
@@ -1615,12 +1869,86 @@ app.post('/api/admin/videos/bulk', async (req, res) => {
       v.name = v.title;
       idx++;
     }
+    else if (operation === 'setCategory' && category) { v.category = category; }
+    else if (operation === 'addKeyword' && addKeyword) {
+      v.keywords = v.keywords || [];
+      if (!v.keywords.includes(addKeyword)) v.keywords.push(addKeyword);
+    }
+    else if (operation === 'removeKeyword' && removeKeyword) {
+      v.keywords = (v.keywords || []).filter(k => k !== removeKeyword);
+    }
+    else if (operation === 'addTag' && addTag) {
+      v.subTags = v.subTags || [];
+      if (!v.subTags.includes(addTag)) v.subTags.push(addTag);
+    }
+    else if (operation === 'removeTag' && removeTag) {
+      v.subTags = (v.subTags || []).filter(t => t !== removeTag);
+    }
     count++;
   }
   await fsp.writeFile(INDEX_FILE, JSON.stringify(videos, null, 2));
   queueDbSave(true);
   bumpVersion();
   res.json({ success: true, count });
+});
+
+// Admin API — Create single video (easy content addition)
+app.post('/api/admin/videos', async (req, res) => {
+  const { id, title, category = 'uncategorized', keywords = [], subTags = [], videoUrl, thumbUrl } = req.body;
+  if (!id) return res.status(400).json({ error: 'id required' });
+  if (videos.find(v => v.id === id)) return res.status(409).json({ error: 'Video with this ID already exists' });
+  const video = {
+    id,
+    title: title || id.replace(/[-_]+/g, ' '),
+    name: title || id.replace(/[-_]+/g, ' '),
+    category,
+    keywords: keywords || [],
+    subTags: subTags || [],
+    video: videoUrl || `https://xplayer.xmelayu.site/videos/${id}.mp4`,
+    videoUrl: videoUrl || `https://xplayer.xmelayu.site/videos/${id}.mp4`,
+    thumb: thumbUrl || `https://xplayer.xmelayu.site/thumbnails/${id}.jpg`,
+    views: 0,
+    likes: 0,
+    uploaded: new Date().toISOString(),
+    duration: '00:00'
+  };
+  videos.push(video);
+  // update idMap
+  for (const fp of Object.keys(idMap)) {
+    if (idMap[fp].name === id || idMap[fp].id === id) {
+      idMap[fp] = { id, name: video.name, title: video.title, views: 0, likes: 0, uploaded: video.uploaded, category, subTags, keywords };
+      break;
+    }
+  }
+  await fsp.writeFile(INDEX_FILE, JSON.stringify(videos, null, 2));
+  queueDbSave(true);
+  bumpVersion();
+  res.json({ success: true, video });
+});
+
+// Admin API — Bulk create videos from ID list
+app.post('/api/admin/videos/bulk-create', async (req, res) => {
+  const { ids, category = 'uncategorized', keywords = [], subTags = [] } = req.body;
+  if (!ids || !Array.isArray(ids) || !ids.length) return res.status(400).json({ error: 'ids array required' });
+  const created = [];
+  for (const id of ids) {
+    if (videos.find(v => v.id === id)) continue; // skip duplicates
+    const title = id.replace(/[-_]+/g, ' ');
+    const video = {
+      id, title, name: title, category,
+      keywords: [...(keywords || [])], subTags: [...(subTags || [])],
+      video: `https://xplayer.xmelayu.site/videos/${id}.mp4`,
+      videoUrl: `https://xplayer.xmelayu.site/videos/${id}.mp4`,
+      thumb: `https://xplayer.xmelayu.site/thumbnails/${id}.jpg`,
+      views: 0, likes: 0, uploaded: new Date().toISOString(), duration: '00:00'
+    };
+    videos.push(video);
+    created.push(video);
+  }
+  await fsp.writeFile(INDEX_FILE, JSON.stringify(videos, null, 2));
+  queueDbSave(true);
+  bumpVersion();
+  res.json({ success: true, count: created.length, created: created.map(v => v.id) });
 });
 
 async function saveDescriptions() {
@@ -1637,23 +1965,27 @@ app.get('/api/video-descriptions/:id', (req, res) => {
 app.patch('/api/admin/videos/:id', async (req, res) => {
   const video = videos.find(v => v.id === req.params.id);
   if (!video) return res.status(404).json({ error: 'Video not found' });
-  const { title, description } = req.body;
-  if (typeof title !== 'string') return res.status(400).json({ error: 'Title required' });
-  video.title = title.trim() || video.id.replace(/[-_]+/g, ' ');
-  video.name = video.title;
-  // Persist custom title to id-map (find by current id across all fingerprints)
-  for (const fp of Object.keys(idMap)) {
-    if (idMap[fp].id === video.id) {
-      idMap[fp].title = video.title;
-      idMap[fp].name = video.name;
-      break;
+  const { title, description, category, keywords, subTags, uploaded } = req.body;
+  if (title !== undefined) {
+    if (typeof title !== 'string') return res.status(400).json({ error: 'Title required' });
+    video.title = title.trim() || video.id.replace(/[-_]+/g, ' ');
+    video.name = video.title;
+    for (const fp of Object.keys(idMap)) {
+      if (idMap[fp].id === video.id) {
+        idMap[fp].title = video.title;
+        idMap[fp].name = video.name;
+        break;
+      }
     }
   }
+  if (category !== undefined) video.category = category;
+  if (keywords !== undefined) video.keywords = keywords;
+  if (subTags !== undefined) video.subTags = subTags;
+  if (uploaded !== undefined) video.uploaded = uploaded;
   const tasks = [
     fsp.writeFile(INDEX_FILE, JSON.stringify(videos, null, 2)),
     saveIdMap()
   ];
-  // Persist description to videoDescriptions + descriptions file
   if (typeof description === 'string') {
     if (!videoDescriptions[video.id]) {
       videoDescriptions[video.id] = { text: '', keywords: [], autoGenerated: false, regenerated: false, updatedAt: new Date().toISOString() };
@@ -1666,6 +1998,236 @@ app.patch('/api/admin/videos/:id', async (req, res) => {
   queueDbSave(true);
   bumpVersion();
   res.json({ success: true, video });
+});
+
+// Admin API — Categories (for video editor dropdown)
+app.get('/api/admin/categories', (req, res) => {
+  const cats = [...new Set(videos.map(v => v.category).filter(Boolean))].sort();
+  res.json(cats);
+});
+
+// Admin API — SEO Keyword Suggestions (AI-like engine)
+const STOP_WORDS = new Set(['the','a','an','in','on','at','to','for','of','and','or','is','are','was','were','be','been',
+  'with','from','by','it','its','this','that','video','new','full','hd','clear','terbaru','xmelayu','www',
+  '2026','2025','2024','0001','0002','0003','xxx','com','http','https','amp','via','vs','de','la','le',
+  'views','likes','video','videos','free','online','watch','2020','2021','2022','2023','hd']);
+const MIN_KEYWORD_LEN = 3;
+
+function extractTitleNGrams(title) {
+  const words = title.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= MIN_KEYWORD_LEN && !STOP_WORDS.has(w));
+  const grams = new Set();
+  // unigrams
+  words.forEach(w => grams.add(w));
+  // bigrams
+  for (let i = 0; i < words.length - 1; i++) {
+    const bg = words[i] + ' ' + words[i + 1];
+    if (bg.length >= MIN_KEYWORD_LEN) grams.add(bg);
+  }
+  // trigrams
+  for (let i = 0; i < words.length - 2; i++) {
+    const tg = words[i] + ' ' + words[i + 1] + ' ' + words[i + 2];
+    if (tg.length >= MIN_KEYWORD_LEN) grams.add(tg);
+  }
+  return [...grams];
+}
+
+app.get('/api/admin/keyword-suggestions/:id', (req, res) => {
+  const video = videos.find(v => v.id === req.params.id);
+  if (!video) return res.status(404).json({ error: 'Video not found' });
+
+  const existingKeys = new Set((video.keywords || []).map(k => k.toLowerCase()));
+  const existingTags = new Set((video.subTags || []).map(t => t.toLowerCase()));
+  const titleGrams = extractTitleNGrams(video.title || video.id);
+  const desc = (videoDescriptions[video.id]?.text || '').toLowerCase();
+  const descWords = new Set(desc.split(/[^a-z0-9]+/).filter(w => w.length >= MIN_KEYWORD_LEN && !STOP_WORDS.has(w)));
+
+  // Global keyword frequency (computed once)
+  const globalFreq = new Map();
+  for (const v of videos) {
+    if (!v.keywords) continue;
+    for (const kw of v.keywords) {
+      const k = kw.toLowerCase();
+      globalFreq.set(k, (globalFreq.get(k) || 0) + 1);
+    }
+  }
+
+  // Find related videos: same category (+3), same subTags (+2), title overlap (+1)
+  const relatedByCat = videos.filter(v => v.id !== video.id && v.category === video.category);
+  const relatedByTag = videos.filter(v => v.id !== video.id && v.subTags && v.subTags.some(t => existingTags.has(t.toLowerCase())));
+  const relatedPool = new Map();
+  for (const v of [...relatedByCat, ...relatedByTag]) {
+    relatedPool.set(v.id, (relatedPool.get(v.id) || 0) + 1);
+  }
+
+  // Score keywords from related videos — normalized by pool size
+  const kwScores = new Map();
+  const poolSize = Math.max(1, relatedPool.size);
+  function addScore(kw, score, reason) {
+    const key = kw.toLowerCase();
+    if (existingKeys.has(key) || STOP_WORDS.has(key) || key.length < MIN_KEYWORD_LEN) return;
+    if (!kwScores.has(key)) kwScores.set(key, { keyword: kw, score: 0, reasons: [] });
+    const entry = kwScores.get(key);
+    entry.score += score;
+    if (!entry.reasons.includes(reason)) entry.reasons.push(reason);
+  }
+
+  // From related videos' keywords — normalized so total related-video score doesn't drown out title
+  for (const [vid] of relatedPool) {
+    const rv = videos.find(v => v.id === vid);
+    if (!rv || !rv.keywords) continue;
+    for (const kw of rv.keywords) {
+      addScore(kw, 1 / Math.sqrt(poolSize), 'from related videos');
+    }
+  }
+
+  // From related videos' subTags
+  for (const [vid] of relatedPool) {
+    const rv = videos.find(v => v.id === vid);
+    if (!rv || !rv.subTags) continue;
+    for (const tag of rv.subTags) {
+      if (!existingTags.has(tag.toLowerCase())) {
+        addScore(tag, 2 / Math.sqrt(poolSize), 'related video sub-tag');
+      }
+    }
+  }
+
+  // Title n-grams that aren't keywords yet — highest priority, boosted
+  for (const gram of titleGrams) {
+    const firstWord = gram.split(' ')[0];
+    const isUnique = (globalFreq.get(firstWord) || 0) < 100;
+    addScore(gram, isUnique ? 50 : 20, 'extracted from video title');
+  }
+
+  // Words from description
+  for (const w of descWords) {
+    addScore(w, 1, 'from video description');
+  }
+
+  // Popular keywords across site (global frequency bonus)
+  for (const [kw, entry] of kwScores) {
+    const freq = globalFreq.get(kw) || 0;
+    if (freq > 50) entry.score += 3; // very popular
+    else if (freq > 10) entry.score += 1; // somewhat popular
+  }
+
+  // SubTags from same-category videos that aren't already used
+  const catTagFreq = new Map();
+  for (const v of relatedByCat) {
+    if (!v.subTags) continue;
+    for (const t of v.subTags) {
+      if (existingTags.has(t.toLowerCase())) continue;
+      catTagFreq.set(t.toLowerCase(), (catTagFreq.get(t.toLowerCase()) || 0) + 1);
+    }
+  }
+  for (const [tag, freq] of catTagFreq) {
+    if (freq >= 3 && !kwScores.has(tag)) {
+      kwScores.set(tag, { keyword: tag, score: freq, reasons: [`${freq}x in same category`] });
+    }
+  }
+
+  // Sort by score descending, take top 20
+  const sorted = [...kwScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 20)
+    .map(s => ({ keyword: s.keyword, score: s.score, reasons: [...new Set(s.reasons)].slice(0, 3) }));
+
+  // Count how many keywords the video has vs category average
+  const catAvg = relatedByCat.length > 0
+    ? Math.round(relatedByCat.reduce((s, v) => s + (v.keywords || []).length, 0) / relatedByCat.length)
+    : 0;
+
+  res.json({
+    suggestions: sorted,
+    stats: {
+      existingKeywords: video.keywords?.length || 0,
+      existingSubTags: video.subTags?.length || 0,
+      categoryAverage: catAvg,
+      relatedVideos: relatedPool.size,
+      titleGramsFound: titleGrams.length
+    }
+  });
+});
+
+// Admin API — SEO Enrichment (generate rich HTML descriptions)
+const SEO_KEYWORD_FOCUS = ['amateur', 'xmateur', 'xmatuer', 'amatuer', 'xamateur', 'xx amateur', 'melayu', 'malay', 'awek tudung', 'skandal', 'viral', 'lucah', 'malaysian pron', 'malay pron'];
+const SEO_VARIATIONS = [
+  ['amateur', 'xmateur', 'xmatuer', 'amatuer', 'xamateur'],
+  ['melayu', 'malay', 'malaysian'],
+  ['pron', 'porn', 'xxx', 'seks'],
+  ['awek', 'awek tudung', 'tudung'],
+  ['skandal', 'viral', 'bocor', 'leak', 'spy'],
+  ['lucah', 'sexy', 'hot', 'rare']
+];
+
+function generateSEODescription(video) {
+  const title = video.title || video.id;
+  const keys = (video.keywords || []).slice(0, 8);
+  const tags = (video.subTags || []).slice(0, 5);
+  const cat = video.category || 'Malay Adult';
+  const name = title.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).slice(0, 60);
+
+  const focusWords = SEO_KEYWORD_FOCUS.slice(0, 6);
+  const misspellBlock = SEO_VARIATIONS.slice(0, 4).map(group =>
+    group.join(', ')
+  ).join(' · ');
+
+  let desc = `<strong>${name}</strong> — `;
+  desc += `Exclusive ${cat} content from xMelayu. `;
+
+  // Strong emphasis on focus keywords
+  desc += `Watch <strong>${focusWords.slice(0, 3).join('</strong>, <strong>')}</strong> `;
+  desc += `and more ${cat.toLowerCase()} videos online. `;
+
+  // Keyword list with em
+  if (keys.length > 0) {
+    desc += `<br><br><em>Keywords: ${keys.join(', ')}.</em>`;
+  }
+  if (tags.length > 0) {
+    desc += `<br><em>Tags: ${tags.join(', ')}.</em>`;
+  }
+
+  // Subheading with misspellings for broad match
+  desc += `<br><br><h3>Related Searches</h3>`;
+  desc += `<p>${misspellBlock}</p>`;
+
+  // Footer
+  desc += `<br><p><strong>${title}</strong> — Full HD ${cat} video. `;
+  desc += `Search <strong>${focusWords.slice(0, 2).join('</strong>, <strong>')}</strong> `;
+  desc += `for more similar content. Updated daily.</p>`;
+
+  return desc;
+}
+
+app.post('/api/admin/seo-enrich/:id', async (req, res) => {
+  const video = videos.find(v => v.id === req.params.id);
+  if (!video) return res.status(404).json({ error: 'Video not found' });
+  const richDesc = generateSEODescription(video);
+  if (!videoDescriptions[video.id]) {
+    videoDescriptions[video.id] = { text: '', keywords: [], autoGenerated: false, regenerated: false, updatedAt: new Date().toISOString() };
+  }
+  videoDescriptions[video.id].text = richDesc;
+  videoDescriptions[video.id].updatedAt = new Date().toISOString();
+  videoDescriptions[video.id].autoGenerated = true;
+  await saveDescriptions();
+  res.json({ success: true, description: richDesc });
+});
+
+app.post('/api/admin/seo-enrich/bulk', async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !ids.length) return res.status(400).json({ error: 'No IDs provided' });
+  let count = 0;
+  for (const v of videos) {
+    if (!ids.includes(v.id)) continue;
+    if (!videoDescriptions[v.id]) {
+      videoDescriptions[v.id] = { text: '', keywords: [], autoGenerated: false, regenerated: false, updatedAt: new Date().toISOString() };
+    }
+    videoDescriptions[v.id].text = generateSEODescription(v);
+    videoDescriptions[v.id].updatedAt = new Date().toISOString();
+    videoDescriptions[v.id].autoGenerated = true;
+    count++;
+  }
+  await saveDescriptions();
+  res.json({ success: true, count });
 });
 
 // Admin API — Ads
@@ -1716,6 +2278,49 @@ app.post('/api/admin/super-x', async (req, res) => {
   if (req.body.ctaButtons) heroConfig.ctaButtons = req.body.ctaButtons;
   if (req.body.seoLinks) heroConfig.seoLinks = req.body.seoLinks;
   await saveHeroConfig();
+  res.json({ success: true });
+});
+
+// Super X Sub-Page Admin API
+app.get('/api/admin/superx-pages', (req, res) => { res.json(superxPages); });
+app.get('/api/admin/superx-pages/:page', (req, res) => {
+  const p = superxPages[req.params.page];
+  if (!p) return res.status(404).json({ error: 'Page not found' });
+  res.json(p);
+});
+app.post('/api/admin/superx-pages/:page', async (req, res) => {
+  const slug = req.params.page;
+  if (!superxPages[slug]) return res.status(404).json({ error: 'Page not found' });
+  const def = getDefaultSuperXPage(slug);
+  superxPages[slug] = { ...def, ...req.body };
+  if (req.body.sectionTitles) superxPages[slug].sectionTitles = { ...def.sectionTitles, ...req.body.sectionTitles };
+  if (req.body.sectionSubs) superxPages[slug].sectionSubs = { ...def.sectionSubs, ...req.body.sectionSubs };
+  if (req.body.cats) superxPages[slug].cats = { ...def.cats, ...req.body.cats };
+  if (req.body.nicheTags) superxPages[slug].nicheTags = req.body.nicheTags;
+  if (req.body.ctaButtons) superxPages[slug].ctaButtons = req.body.ctaButtons;
+  if (req.body.adZones) superxPages[slug].adZones = { ...def.adZones, ...req.body.adZones };
+  await saveSuperXPages();
+  res.json({ success: true });
+});
+
+// Freedom Comment Section — public doodle wall
+const COMMENTS_FILE = path.join(__dirname, 'data', 'comments.json');
+let comments = [];
+try { comments = JSON.parse(fs.readFileSync(COMMENTS_FILE, 'utf-8')); } catch { comments = []; }
+function saveComments() {
+  fs.writeFileSync(COMMENTS_FILE, JSON.stringify(comments, null, 2));
+}
+app.get('/api/comments', (req, res) => {
+  res.json(comments.slice(-50).reverse());
+});
+app.post('/api/comments', (req, res) => {
+  const { text } = req.body;
+  if (!text || typeof text !== 'string' || text.trim().length === 0) return res.status(400).json({ error: 'Empty comment' });
+  const wordCount = text.trim().split(/\s+/).length;
+  if (wordCount > 1000) return res.status(400).json({ error: 'Max 1000 words' });
+  comments.push({ id: Date.now(), text: text.trim(), time: Date.now() });
+  if (comments.length > 200) comments = comments.slice(-200);
+  saveComments();
   res.json({ success: true });
 });
 
@@ -1777,14 +2382,33 @@ process.on('unhandledRejection', err => {
   loadRealIndex();
   await loadIdMap();
   await loadIndex();
+  versionThumbnails(videos);
+  versionThumbnails(xmateurVideos);
+  versionThumbnails(realVideos);
   await loadPages();
   await loadAdConfig();
   await loadHeroConfig();
+  await loadSuperXPages();
   await loadKeywordBadges();
   loadDescriptions();
+  // Thumbnail capacitor: pre-warm microCache with top 300 most-viewed thumbnails
+  (async () => {
+    const sorted = [...videos].sort((a, b) => b.views - a.views).slice(0, 300);
+    let loaded = 0;
+    for (const v of sorted) {
+      if (!v.thumbnail) continue;
+      const filename = path.basename(v.thumbnail.replace(/\?.*$/, ''));
+      if (microCache.has(filename)) continue;
+      for (const dir of [THUMBNAIL_DIR, XAMATEUR_THUMB_DIR]) {
+        const fp = path.join(dir, filename);
+        try { microCache.set(filename, await fsp.readFile(fp)); loaded++; break; } catch {}
+      }
+    }
+    if (loaded) console.log(`🖼️ [THUMB CAPACITOR] Pre-warmed ${loaded} thumbnails in RAM`);
+  })();
   server.listen(PORT, () => {
-    // Fire sponge preload after listen — doesn't block server readiness
-    preloadSpongeCache();
+    // Fire sponge preload after 30s — lets initial user traffic through first
+    setTimeout(preloadSpongeCache, 30000);
     const totalViews = videos.reduce((s, v) => s + v.views, 0);
     const cats = getCategories();
     const topCats = cats.slice(0, 5).map(([c, n]) => `${c}:${n}`).join('  ');
@@ -1820,6 +2444,9 @@ ${D}
 ${L(`microCache: ${microCache.size} items${microPct}  │  burstCache: 5s TTL`)}
 ${L(`SSD capacitor: ${caps}GB / 20GB${capPct}  │  LRU eviction`)}
 ${D}
+║  I/O POOL (water-like)                                          ║
+${L(`Active: ${IO.active}  │  Queued: ${IO.queued}  │  Max: ${IO.maxWorkers}  │  Reads: ${IO.totalReads}`)}
+${D}
 ║  RATE LIMITS                                                    ║
 ${L(`Pages: ${RL_MAX}/min  │  Static: ${RL_STATIC_MAX}/min  │  Bots: unlimited`)}
 ${D}
@@ -1829,7 +2456,7 @@ ${L(`Thumbnails: ${THUMBNAIL_DIR}`)}
 ${D}
 ║  KEY ROUTES                                                     ║
 ${L(`/            Gallery  │  /:id           Player`)}
-${L(`/super-x-melayu Super X │  /admin         Dashboard`)}
+${L(`/super-x-melayu Super X │  /mega-x-melayu  Mega X │  /xmateur  xMateur`)}
 ${L(`/sitemap.xml  Sitemap  │  /admin/videos  Bulk editor`)}
 ${D}
 ║  LEGEND: 2xx OK  │  4xx Rate-limit  │  5xx Error              ║

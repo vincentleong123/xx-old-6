@@ -62,7 +62,8 @@
     <a href="/admin/super-x">Super X</a>
   </div>
 
-  <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+  <button class="refresh-btn" onclick="loadStats()">🔄 Refresh</button>
+  <button class="refresh-btn" id="refreshToggle" onclick="toggleRefresh()" style="background:#2a2a30">⏸ Pause</button>
   <span class="last-update" id="lastUpdate"></span>
 
   <div class="grid" id="stats">
@@ -79,6 +80,20 @@
       } catch { document.querySelector('#stats').innerHTML = '<div class="card"><h2>Failed to load stats</h2></div>'; }
     }
 
+    let autoRefresh = true;
+    let refreshInterval;
+
+    function initAutoRefresh() {
+      if (autoRefresh) { refreshInterval = setInterval(loadStats, 10000); }
+    }
+
+    function toggleRefresh() {
+      autoRefresh = !autoRefresh;
+      document.getElementById('refreshToggle').textContent = autoRefresh ? '⏸ Pause' : '▶ Resume';
+      if (autoRefresh) { refreshInterval = setInterval(loadStats, 10000); loadStats(); }
+      else { clearInterval(refreshInterval); };
+    }
+
     function renderStats(d) {
       const { requests, cache, performance, memory, videos } = d;
       const uptimeStr = d.uptime?.human || 'N/A';
@@ -88,6 +103,10 @@
       const p95ms = parseFloat(performance.p95 || 0);
       const p95Class = p95ms < 200 ? 'green' : (p95ms < 500 ? 'gold' : 'red');
       const hddClass = hddAlert < 30 ? 'green' : (hddAlert < 60 ? 'gold' : 'red');
+      const io = d.io || {};
+      const ioState = io.queued > 8 ? '🌊 Storm' : (io.queued > 4 ? '🌊 Surge' : (io.queued > 2 ? '💧 Ripple' : '💧 Calm'));
+      const ioColor = io.queued > 8 ? 'red' : (io.queued > 4 ? 'gold' : 'green');
+      const caddyDirect = location.port === '8123' || location.port === '80' || location.port === '443';
       document.querySelector('#stats').innerHTML = `
         <div class="card">
           <h2>📊 Requests</h2>
@@ -127,12 +146,27 @@
           <div class="stat-row"><span class="stat-label">RAM hits</span><span class="stat-value green">${d.videoDelivery.ramHits.toLocaleString()} (${d.videoDelivery.ramPct}%)</span></div>
           <div class="stat-row"><span class="stat-label">SSD hits</span><span class="stat-value green">${d.videoDelivery.ssdHits.toLocaleString()} (${d.videoDelivery.ssdPct}%)</span></div>
           <div class="stat-row"><span class="stat-label">HDD reads</span><span class="stat-value ${hddClass}">${d.videoDelivery.hddReads.toLocaleString()} (${d.videoDelivery.hddPct}%)</span></div>
-          <div class="stat-row"><span class="stat-label">HDD pressure</span><span class="stat-value ${hddClass}">${d.videoDelivery.hddPressure}% ⬇</span></div>
+          <div class="stat-row"><span class="stat-label">HDD pressure</span><span class="stat-value ${hddClass}">${d.videoDelivery.hddPressure}%</span></div>
+        </div>
+        <div class="card">
+          <h2>🌊 I/O Pool (water-like)</h2>
+          <div class="stat-row"><span class="stat-label">Active workers</span><span class="stat-value">${io.active || 0} / ${io.maxWorkers || 16}</span></div>
+          <div class="stat-row"><span class="stat-label">Queue depth</span><span class="stat-value ${ioColor}">${io.queued || 0}</span></div>
+          <div class="stat-row"><span class="stat-label">Desired workers</span><span class="stat-value">${io.desiredWorkers || 2}</span></div>
+          <div class="stat-row"><span class="stat-label">Total reads</span><span class="stat-value">${(io.totalReads || 0).toLocaleString()}</span></div>
+          <div class="stat-row"><span class="stat-label">State</span><span class="stat-value ${ioColor}">${ioState}</span></div>
         </div>
         <div class="card">
           <h2>📦 Promotion Queue</h2>
           <div class="stat-row"><span class="stat-label">Queue length</span><span class="stat-value ${d.promoQueue.length > 10 ? 'red' : (d.promoQueue.length > 3 ? 'gold' : 'green')}">${d.promoQueue.length}</span></div>
           <div class="stat-row"><span class="stat-label">Promoter busy</span><span class="stat-value ${d.promoQueue.busy ? 'gold' : 'green'}">${d.promoQueue.busy ? '⚠ Yes' : '✓ Idle'}</span></div>
+        </div>
+        <div class="card">
+          <h2>🌐 Delivery Path</h2>
+          <div class="stat-row"><span class="stat-label">Thumbnails</span><span class="stat-value">Caddy direct (file_server)</span></div>
+          <div class="stat-row"><span class="stat-label">Videos</span><span class="stat-value">${caddyDirect ? 'Caddy direct (file_server)' : 'Caddy → Express (cache)'}</span></div>
+          <div class="stat-row"><span class="stat-label">Videos disk</span><span class="stat-value">${d.system?.disk || 'E:/videos (HDD)'}</span></div>
+          <div class="stat-row"><span class="stat-label">Thumbnails disk</span><span class="stat-value">C:/thumbnails (SSD/HDD)</span></div>
         </div>
         <div class="card" style="grid-column: 1 / -1;">
           <h2>🔄 Recent Requests (last 20)</h2>
@@ -147,7 +181,7 @@
     }
 
     loadStats();
-    setInterval(loadStats, 10000);
+    initAutoRefresh();
   </script>
 </body>
 </html>

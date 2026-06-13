@@ -7,16 +7,22 @@
     handle_path /thumbnails/* {
         root * C:/thumbnails
         file_server
-        header Cache-Control "public, max-age=31536000"
+        header Cache-Control "public, max-age=86400, stale-while-revalidate=604800"
     }
 
-    # 3. Main Application Reverse Proxy
+    # 3. Static File Serving for Videos (Caddy DIRECT — no Express cache)
+    handle_path /videos/* {
+        root * E:/videos
+        file_server
+    }
+
+    # 4. Main Application Reverse Proxy
     handle {
         reverse_proxy localhost:7004
     }
 
     # 4. Global Directives & Security Headers
-    encode gzip
+    encode zstd gzip
     header {
         X-Content-Type-Options nosniff
         X-Frame-Options SAMEORIGIN
