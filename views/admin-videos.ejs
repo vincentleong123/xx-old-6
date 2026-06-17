@@ -257,6 +257,7 @@
           <th class="col-cat">Category</th>
           <th style="min-width:120px">Keywords</th>
           <th class="col-tags">SubTags</th>
+          <th style="min-width:180px">Description</th>
           <th class="col-date">Uploaded</th>
           <th class="col-views">Views</th>
           <th class="col-actions">🧬</th>
@@ -370,6 +371,7 @@
               <input class="tag-input" placeholder="+tag" data-id="${v.id}" data-field="subTags" onkeydown="if(event.key==='Enter'&&this.value.trim())addArrayField(this,'subTags')">
             </div>
           </td>
+          <td><input class="inline-edit" value="${(v.description||'').replace(/"/g,'&quot;')}" data-id="${v.id}" data-field="description" onblur="saveField(this)" onkeydown="if(event.key==='Enter')this.blur()" placeholder="SEO description..."></td>
           <td><input class="inline-edit date-input" type="datetime-local" value="${(v.uploaded||'').slice(0,16)}" data-id="${v.id}" data-field="uploaded" onblur="saveField(this)"></td>
           <td style="color:#6b6b75;text-align:right">${(v.views||0).toLocaleString()}</td>
           <td style="white-space:nowrap">

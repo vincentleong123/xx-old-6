@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <meta name="description" content="<%= video.title %> - <%= video.category %> video. HD streaming on Lucahman. 18+ only.">
+<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : (video.title + ' - ' + video.category + ' video. HD streaming on Lucahman. 18+ only.'); %>
+  <meta name="description" content="<%= seoMetaDesc %>">
   <meta name="robots" content="max-video-preview:large, index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmateur, amateur, malay, HD streaming, 18+">
   <meta http-equiv="pragma" content="no-cache">
@@ -63,12 +64,13 @@
   <link rel="image_src" href="<%= absThumb %>">
 
   <!-- JSON-LD Structured Data for Video SEO -->
+<% var seoJsonDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,300) : (video.title + ' - Watch in HD quality on Lucahman. Premium adult content featuring ' + video.category + '.'); %>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     "name": "<%= video.title %>",
-    "description": "<%= video.title %> - Watch in HD quality on Lucahman. Premium adult content featuring <%= video.category %>.",
+    "description": "<%= seoJsonDesc %>",
     "thumbnailUrl": ["<%= siteBase %><%= video.thumbnail %>"],
     "uploadDate": "<%= video.uploaded || new Date().toISOString() %>",
     "contentUrl": "<%= siteBase %><%= video.video %>",

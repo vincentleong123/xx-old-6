@@ -1,17 +1,25 @@
-:8123 {
-    # 1. Handle the www redirect
-    @www header_regexp host Host ^www\.(.+)
-    redir @www https://{re.host.1}{uri} permanent
+:8120 {
+    # Global Security & Obfuscation Headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy no-referrer-when-downgrade
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        -Server # Removes the "Server: Caddy" header
+    }
 
-    # 2. Static File Serving for Thumbnails
+    # 2. Static File Serving ONLY for Thumbnails
+    # This strips "/thumbnails" from the request path and looks inside C:/thumbnails
     handle_path /thumbnails/* {
         root * C:/thumbnails
         file_server
-        # FIXED: Added missing closing quote and removed trailing comma
-        header Cache-Control "public, max-age=6400"
+        
+        # Optimized for heavy lazy-loading/scrolling (Cache for 7 days)
+        header Cache-Control "public, max-age=604800, must-revalidate"
     }
 
-    # 3. Main Application Reverse Proxy — keepalive prevents TCP handshake on every Caddy→Express hop
+    # 3. Main Application Reverse Proxy (Handles all other static files, views, and API routes via Express)
     handle {
         reverse_proxy localhost:7004 {
             transport http {
@@ -19,24 +27,5 @@
                 keepalive_idle_conns 100
             }
         }
-    }
-
-    # 4. Global Directives & Security Headers
-    encode gzip
-    header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options SAMEORIGIN
-        X-XSS-Protection "1; mode=block"
-        Referrer-Policy no-referrer-when-downgrade
-        
-        # Permissions & Security
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        
-        # Removes the "Server: Caddy" header for obfuscation
-        -Server
-    }
-
-    log {
-        output file C:/Users/User/Desktop/xx/logs/caddy-xmelayu.log
     }
 }
