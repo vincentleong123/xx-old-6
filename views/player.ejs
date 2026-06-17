@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="description" content="<%= video.title %> - <%= video.category %> video. HD streaming on Lucahman. 18+ only.">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="robots" content="max-video-preview:large, index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmateur, amateur, malay, HD streaming, 18+">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
@@ -40,6 +40,7 @@
   <meta property="og:image:alt" content="<%= video.title %>">
   <meta property="og:video" content="<%= absThumb %>">
   <meta property="og:video:url" content="<%= siteBase %><%= video.video %>">
+  <meta property="og:video:secure_url" content="<%= siteBase %><%= video.video %>">
   <meta property="og:video:type" content="video/mp4">
   <meta property="og:video:width" content="1920">
   <meta property="og:video:height" content="1080">
@@ -68,9 +69,9 @@
     "@type": "VideoObject",
     "name": "<%= video.title %>",
     "description": "<%= video.title %> - Watch in HD quality on Lucahman. Premium adult content featuring <%= video.category %>.",
-    "thumbnailUrl": ["<%= video.thumbnail %>"],
+    "thumbnailUrl": ["<%= siteBase %><%= video.thumbnail %>"],
     "uploadDate": "<%= video.uploaded || new Date().toISOString() %>",
-    "contentUrl": "<%= video.video %>",
+    "contentUrl": "<%= siteBase %><%= video.video %>",
     "embedUrl": "https://xmelayu.site/<%= video.id %>",
     "duration": "PT10M",
     "interactionStatistic": {
@@ -78,7 +79,6 @@
       "interactionType": "http://schema.org/WatchAction",
       "userInteractionCount": <%= video.views || 0 %>
     },
-    "regionsAllowed": ["MY", "SG", "ID", "TH"],
     "genre": ["Adult", "<%= video.category %>"],
     "keywords": "<%= video.keywords.join(', ') %>",
     "publisher": {
@@ -532,7 +532,7 @@ var juicy_tags = ['a', 'img'];
       object-fit: cover;
       z-index: 1;
       transition: transform 0.5s cubic-bezier(0.33,1,0.68,1);
-      filter: contrast(1.08) brightness(0.98) saturate(1.15) brightness(1.02);
+      filter: contrast(1.08) saturate(1.15);
     }
     .player-carousels .video-card:hover .video-thumb img {
       transform: scale(1.05);
@@ -1279,8 +1279,16 @@ var juicy_tags = ['a', 'img'];
   tick();
 })();
 </script>
-<!-- JuicyAds v3.0 -->
-<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
+<script>
+setTimeout(function(){
+  var s=document.createElement(&apos;script&apos;);
+  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
+  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
+  s.async=true;
+  document.body.appendChild(s);
+},540000);
+</script>
 <ins id="1118840" data-width="300" data-height="250"></ins>
 <script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
