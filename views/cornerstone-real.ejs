@@ -9,19 +9,17 @@
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= metaDescription %>">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://xmelayu.site/xamateur/real">
-  <link rel="canonical" href="https://xmelayu.site/xamateur/real">
+  <meta property="og:url" content="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
+  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
   <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "xAmateur Real - Authentic Phone Amateur Videos",
+    "name": "<%= title.replace(/"/g, '&quot;') %>",
     "description": "<%= metaDescription.replace(/"/g, '&quot;') %>",
-    "url": "https://xmelayu.site/xamateur/real"
+    "url": "<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl.replace(/"/g, '&quot;') : 'https://xmelayu.site/xamateur/real' %>"
   }
   </script>
   <style>

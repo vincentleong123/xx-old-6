@@ -13,8 +13,6 @@
   <script>!function(){try{var v=localStorage.getItem('_cv')||'',c='<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>';if(v&&v!==c&&c){localStorage.clear();location.reload()}localStorage.setItem('_cv',c)}catch(e){}}()</script>
    <meta name="theme-color" content="#0a0a0b">
   <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
   <% if (typeof structuredData !== 'undefined' && structuredData) { %>
     <% structuredData.forEach(function(sd) { %>
       <script type="application/ld+json"><%- JSON.stringify(sd) %></script>
@@ -142,6 +140,73 @@
   <link rel="stylesheet" href="/css/player.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
 </head>
 <body>
+<!-- Floating Player — sticky mini-player that follows scroll, ads stay visible -->
+<style>
+#floatingPlayer { position:fixed; bottom:20px; right:20px; width:320px; z-index:9999; background:#0d0d12; border:1px solid #2a2a30; border-radius:12px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.8); transform:translateY(120%); opacity:0; transition:transform 0.4s cubic-bezier(0.33,1,0.68,1),opacity 0.3s; }
+#floatingPlayer.show { transform:translateY(0); opacity:1; }
+#floatingPlayer .fp-header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:#18181c; border-bottom:1px solid #2a2a30; }
+#floatingPlayer .fp-title { font-size:12px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+#floatingPlayer .fp-controls { display:flex; gap:6px; }
+#floatingPlayer .fp-btn { background:none; border:none; color:#a0a0a8; font-size:16px; cursor:pointer; padding:2px 6px; border-radius:4px; transition:all .2s; line-height:1; }
+#floatingPlayer .fp-btn:hover { color:#fff; background:rgba(255,255,255,0.1); }
+#floatingPlayer .fp-video { position:relative; aspect-ratio:16/9; background:#000; }
+#floatingPlayer .fp-video video { width:100%; height:100%; object-fit:contain; }
+#floatingPlayer .fp-close { color:#ff4d4d; }
+#floatingPlayer .fp-close:hover { color:#ff6b6b; background:rgba(255,77,77,0.15); }
+@media (max-width:640px) { #floatingPlayer { width:280px; bottom:12px; right:12px; } }
+</style>
+<div id="floatingPlayer">
+  <div class="fp-header">
+    <span class="fp-title" id="fpTitle">Now Playing</span>
+    <div class="fp-controls">
+      <button class="fp-btn" id="fpPlayPause" onclick="fpTogglePlay()" title="Play/Pause">⏸️</button>
+      <button class="fp-btn fp-close" onclick="fpClose()" title="Close">✕</button>
+    </div>
+  </div>
+  <div class="fp-video">
+    <video id="fpVideo" muted loop playsinline preload="auto"></video>
+  </div>
+</div>
+<script>
+(function(){
+  var mainVideo = document.getElementById('videoPlayer');
+  var fp = document.getElementById('floatingPlayer');
+  var fpVideo = document.getElementById('fpVideo');
+  var fpTitle = document.getElementById('fpTitle');
+  var fpPlayBtn = document.getElementById('fpPlayPause');
+  var mainContainer = document.getElementById('videoContainer');
+  if (!mainVideo || !fp || !mainContainer) return;
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting && mainVideo.src) {
+        fpVideo.src = mainVideo.src;
+        fpVideo.currentTime = mainVideo.currentTime;
+        fpTitle.textContent = document.title.replace(' | xMelayu', '');
+        fp.classList.add('show');
+        if (!mainVideo.paused) fpVideo.play().catch(function(){});
+      } else {
+        fp.classList.remove('show');
+        fpVideo.pause();
+      }
+    });
+  }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' });
+  observer.observe(mainContainer);
+
+  window.fpTogglePlay = function() {
+    if (fpVideo.paused) { fpVideo.play(); fpPlayBtn.textContent = '\u23F8\uFE0F'; }
+    else { fpVideo.pause(); fpPlayBtn.textContent = '\u25B6\uFE0F'; }
+  };
+  window.fpClose = function() {
+    fp.classList.remove('show');
+    fpVideo.pause();
+    fpVideo.src = '';
+  };
+  fpVideo.addEventListener('play', function(){ fpPlayBtn.textContent = '\u23F8\uFE0F'; });
+  fpVideo.addEventListener('pause', function(){ fpPlayBtn.textContent = '\u25B6\uFE0F'; });
+})();
+</script>
+
 <!-- JuicyAds v3.2P Start -->
 <script type="text/javascript">
 var juicy_tags = ['a', 'img'];
@@ -314,16 +379,6 @@ var juicy_tags = ['a', 'img'];
         </div>
       </aside>
     </div>
-  <!-- ═══════════════════════════════════════════════════════════════
-       PiP Skyscraper Ads (Desktop only, shown when floating player is active)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="pip-skyscraper pip-skyscraper--left" id="pipSkyscraperLeft">
-    <%- typeof adConfig !== 'undefined' && adConfig.pipAds ? adConfig.pipAds.left : '' %>
-  </div>
-  <div class="pip-skyscraper pip-skyscraper--right" id="pipSkyscraperRight">
-    <%- typeof adConfig !== 'undefined' && adConfig.pipAds ? adConfig.pipAds.right : '' %>
-  </div>
-
   </main>
 
   <!-- ═══════════════════════════════════════════════════════════════
@@ -394,35 +449,6 @@ var juicy_tags = ['a', 'img'];
   <%- include('player-footer') %>
 
   <style>
-    /* PiP Skyscraper Ads — fixed left/right when floating player is active */
-    .pip-skyscraper {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2147483646;
-      width: 160px;
-      min-height: 600px;
-      display: none;
-      pointer-events: auto;
-    }
-    .pip-skyscraper--left {
-      left: max(8px, calc(50vw - 720px));
-    }
-    .pip-skyscraper--right {
-      right: max(8px, calc(50vw - 720px));
-    }
-    .pip-skyscraper ins {
-      display: block;
-      width: 160px;
-      height: 600px;
-    }
-    @media (max-width: 1480px) {
-      .pip-skyscraper { display: none !important; }
-    }
-    .pip-skyscraper.pip-skyscraper--visible {
-      display: block;
-    }
-
     /* Carousel styles for player page */
     .player-carousels {
       max-width: 1400px;
@@ -621,96 +647,8 @@ var juicy_tags = ['a', 'img'];
   <script>
     function esc(s) { return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
 
-    let navAbort = new AbortController();
-    let navInProgress = false;
-    let lastVideoId = '<%= video.id %>';
-
     function navigateTo(id) {
-      if (navInProgress || id === lastVideoId) return;
-      navInProgress = true;
-      navAbort.abort();
-      navAbort = new AbortController();
-
-      fetch('/api/video/' + encodeURIComponent(id), { signal: navAbort.signal })
-        .then(r => r.json())
-        .then(data => {
-          if (!data.video) { navInProgress = false; location.href = '/' + id; return; }
-          const v = data.video;
-          lastVideoId = v.id;
-          const vp = document.getElementById('videoPlayer');
-          if (vp) {
-            vp.pause();
-            vp.removeAttribute('src');
-            vp.load();
-            vp.src = v.video;
-            vp.load();
-            vp.play().catch(() => {});
-          }
-          document.title = v.title + ' - Lucahman';
-          history.pushState({ id: v.id }, '', '/' + v.id);
-          const descEl = document.querySelector('.video-description p');
-          if (descEl) descEl.textContent = v.description || v.title;
-          // Update category + subTags
-          const tagsEl = document.getElementById('videoTags');
-          if (tagsEl) {
-            var h = '';
-            if (v.category && v.category !== 'Uncategorized') h += '<span class="tag-item category">' + esc(v.category) + '</span>';
-            (v.subTags || []).forEach(function(t){ h += '<span class="tag-item">#' + esc(t) + '</span>'; });
-            tagsEl.innerHTML = h;
-          }
-          // Update stats
-          const statsEl = document.getElementById('videoStats');
-          if (statsEl) statsEl.innerHTML = '<span class="stat">' + (v.views||0).toLocaleString() + ' views</span><span class="stat">' + (v.likes||0).toLocaleString() + ' likes</span>';
-          // Update keywords
-          const kwEl = document.getElementById('keywordsList');
-          if (kwEl) {
-            var desc = data.videoDescription;
-            var kws = (desc && desc.keywords) ? desc.keywords : (v.keywords || []);
-            kwEl.innerHTML = kws.slice(0,8).map(function(kw){ return '<span class="keyword-tag">' + esc(kw) + '</span>'; }).join('');
-          }
-          // Update related cards
-          if (data.related) {
-            const grid = document.getElementById('relatedGrid');
-            if (grid) {
-              grid.innerHTML = data.related.map(rv => `
-                <div class="related-card" data-preview="${rv.video}" data-id="${rv.id}" onclick="navigateTo('${rv.id}')">
-                  <div class="related-thumb">
-                    <img src="${rv.thumbnail}" alt="${rv.title}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                    <video class="related-preview" muted loop preload="none" playsinline></video>
-                    <span class="duration-badge">--:--</span>
-                  </div>
-                  <div class="related-info">
-                    <h4>${rv.title}</h4>
-                    <span class="meta-row">${(rv.views || 0).toLocaleString()} views</span>
-                  </div>
-                </div>
-              `).join('');
-            }
-          }
-          // Update carousels
-          ['track-related', 'track-explore'].forEach(trackId => {
-            const track = document.getElementById(trackId);
-            if (track && data.related) {
-              const shuffled = trackId === 'track-explore' ? [...data.related].sort(() => Math.random() - 0.5) : data.related;
-              track.innerHTML = shuffled.map(rv => `
-                <div class="carousel-card">
-                  <a href="/${rv.id}" class="video-card" data-id="${rv.id}" data-preview="${rv.video || ''}" onclick="event.preventDefault();navigateTo('${rv.id}')">
-                    <div class="video-thumb" style="position:relative">
-                      <img src="${rv.thumbnail}" alt="${rv.title}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                      <video muted loop preload="none" playsinline></video>
-                    </div>
-                    <div class="v-title">${rv.title}</div>
-                    <span class="v-meta">${rv.category || 'Video'}</span>
-                  </a>
-                </div>
-              `).join('');
-              if (trackId === 'track-related') requestAnimationFrame(function(){ carouselDotInit('related'); });
-              else requestAnimationFrame(function(){ carouselDotInit('explore'); });
-            }
-          });
-          navInProgress = false;
-        })
-        .catch(function(err) { if (err.name !== 'AbortError') { navInProgress = false; location.href = '/' + id; } });
+      location.href = '/' + id;
     }
 
     // Mobile nav
@@ -735,112 +673,9 @@ var juicy_tags = ['a', 'img'];
       if (btn && !btn.contains(e.target) && !e.target.closest('#mobileNavPanel') && !e.target.closest('.filter-overlay')) closeMobileNav();
     });
 
-    // Intercept carousel card clicks for soft navigation
-    document.addEventListener('click', function(e) {
-      var card = e.target.closest('.carousel-card a[href^="/"]');
-      if (card && card.getAttribute('href') !== '/super-x-melayu' && card.getAttribute('href') !== '/mega-x-melayu' && card.getAttribute('href') !== '/xmateur' && card.getAttribute('href') !== '/tudung-porn' && card.getAttribute('href') !== '/xamateur') {
-        e.preventDefault();
-        navigateTo(card.getAttribute('href').replace(/^\//, ''));
-      }
-    });
 
-    // Register Service Worker for caching
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
 
-    // Performance Observer for Core Web Vitals
-    if ('PerformanceObserver' in window) {
-      try {
-        const observer = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (entry.entryType === 'largest-contentful-paint') {
-              if (typeof gtag === 'function') gtag('event', 'LCP', { value: Math.round(entry.startTime), event_category: 'Performance' });
-            } else if (entry.entryType === 'first-input') {
-              if (typeof gtag === 'function') gtag('event', 'FID', { value: Math.round(entry.processingStart - entry.startTime), event_category: 'Performance' });
-            } else if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
-              if (typeof gtag === 'function') gtag('event', 'CLS', { value: entry.value, event_category: 'Performance' });
-            }
-          }
-        });
-        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
-      } catch (e) {}
-    }
 
-    function isMobile() {
-      return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-
-    // Mobile Auto-Fullscreen on Rotation
-    (function() {
-      const videoPlayer = document.getElementById('videoPlayer');
-      let rotationEnabled = sessionStorage.getItem('rotationFullscreen') !== 'false';
-      let lastOrientation = null;
-      let autoFullscreenShown = false;
-
-      function isLandscape() {
-        return window.innerWidth > window.innerHeight;
-      }
-
-      async function enterFullscreen() {
-        const player = document.querySelector('.video-player');
-        if (player && document.fullscreenEnabled && !document.fullscreenElement) {
-          try {
-            await player.requestFullscreen();
-            await videoPlayer.requestFullscreen();
-            return true;
-          } catch (e) {
-            try {
-              await player.requestFullscreen();
-              return true;
-            } catch (e2) {
-              return false;
-            }
-          }
-        }
-        return false;
-      }
-
-      function showRotationPrompt() {
-        if (autoFullscreenShown || !isMobile()) return;
-        autoFullscreenShown = true;
-        
-        const prompt = document.createElement('div');
-        prompt.id = 'rotationPrompt';
-        prompt.innerHTML = `
-          <span class="rotate-icon">📱↔️</span>
-          <span class="rotate-text">Rotate for fullscreen</span>
-          <button class="dismiss-btn" onclick="this.parentElement.remove(); sessionStorage.setItem('rotationFullscreen', 'false');">✕</button>
-        `;
-        prompt.style.cssText = `
-          position: fixed;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(0,0,0,0.9);
-          color: white;
-          padding: 16px 24px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 14px;
-          z-index: 9999;
-          animation: slideUp 0.3s ease;
-        `;
-        document.body.appendChild(prompt);
-        
-        setTimeout(() => {
-          if (prompt.parentElement) prompt.remove();
-        }, 5000);
-      }
-
-      if (isMobile()) {
-        if (!isLandscape() && window.innerHeight > 400) {
-          setTimeout(showRotationPrompt, 2000);
-        }
-      }
-    })();
 
     const videoPlayer = document.getElementById('videoPlayer');
 
@@ -979,282 +814,7 @@ var juicy_tags = ['a', 'img'];
 
 
 
-    // Unified rotation: landscape=enter fullscreen, portrait=exit
-    (function() {
-      function handleOrientationChange() {
-        setTimeout(function() {
-          var isLandscape = window.innerWidth > window.innerHeight;
-          var player = document.querySelector('.video-player');
-          if (isLandscape && player && document.fullscreenEnabled && !document.fullscreenElement) {
-            player.requestFullscreen().catch(function(){});
-          } else if (!isLandscape && document.fullscreenElement) {
-            document.exitFullscreen();
-          }
-        }, 150);
-      }
 
-      if (isMobile()) {
-        window.addEventListener('orientationchange', handleOrientationChange);
-        var lastResizeOrientation = null;
-        window.addEventListener('resize', function() {
-          var current = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-          if (current !== lastResizeOrientation) {
-            lastResizeOrientation = current;
-            handleOrientationChange();
-          }
-        });
-      }
-    })();
-  // Related video hover preview with concurrency + #t=10
-  (function() {
-    const previewCache = new Map();
-    const MAX_CONCURRENT = 4;
-    const PREVIEW_START = 10;
-    let activePlayers = [];
-    let previewTimer = null;
-
-    document.addEventListener('mouseover', function(e) {
-      var card = e.target.closest('.related-card');
-      if (!card || !card.dataset.preview) return;
-      if (previewTimer) clearTimeout(previewTimer);
-      previewTimer = setTimeout(function() {
-        var video = card.querySelector('.related-preview');
-        var img = card.querySelector('img');
-        if (!video || !img) return;
-
-        if (activePlayers.length >= MAX_CONCURRENT) {
-          var oldest = activePlayers.shift();
-          if (oldest && !oldest.paused) oldest.pause();
-        }
-
-        if (!previewCache.has(card.dataset.preview)) {
-          previewCache.set(card.dataset.preview, card.dataset.preview + '#t=' + PREVIEW_START);
-        }
-        video.src = previewCache.get(card.dataset.preview);
-        video.muted = true;
-        video.play().then(function() {
-          img.style.opacity = '0';
-          video.style.opacity = '1';
-          if (activePlayers.indexOf(video) === -1) activePlayers.push(video);
-        }).catch(function(){});
-      }, 200);
-    });
-
-    document.addEventListener('mouseout', function(e) {
-      var card = e.target.closest('.related-card');
-      if (!card) return;
-      if (previewTimer) clearTimeout(previewTimer);
-      var video = card.querySelector('.related-preview');
-      var img = card.querySelector('img');
-      if (video && img) {
-        video.pause();
-        video.style.opacity = '0';
-        img.style.opacity = '1';
-        activePlayers = activePlayers.filter(function(p) { return p !== video; });
-      }
-    });
-  })();
-
-  document.getElementById('exitFullscreenBtn')?.addEventListener('click', function() {
-    if (document.fullscreenElement) document.exitFullscreen();
-  });
-
-  // Floating PiP on scroll — layout never shifts, drag-supported
-  (function() {
-    var vc = document.getElementById('videoContainer');
-    var vp = document.getElementById('videoPlayer');
-    if (!vc || !vp) return;
-    var pipActive = false;
-    var enteringPiP = false;
-    var pipEl = null;
-    var pipClose = null;
-    var pipIcon = null;
-    var pipHint = null;
-    var scrollCheckTimer = null;
-    var dragData = null;
-    function syncPipState() {
-      if (!pipEl || !vp) return;
-      pipEl.classList.toggle('playing', !vp.paused);
-      pipEl.classList.toggle('paused', vp.paused);
-    }
-
-    /* ---- drag logic ---- */
-    function initDrag(e) {
-      if (!pipEl) return;
-      var rect = pipEl.getBoundingClientRect();
-      var pt = e.touches ? e.touches[0] : e;
-      dragData = {
-        offsetX: pt.clientX - rect.left,
-        offsetY: pt.clientY - rect.top,
-        startX: rect.left,
-        startY: rect.top
-      };
-      pipEl.classList.add('dragging');
-      document.addEventListener('mousemove', onDrag);
-      document.addEventListener('mouseup', endDrag);
-      document.addEventListener('touchmove', onDrag, { passive: false });
-      document.addEventListener('touchend', endDrag);
-      e.preventDefault();
-    }
-
-    function onDrag(e) {
-      if (!dragData || !pipEl) return;
-      var pt = e.touches ? e.touches[0] : e;
-      var x = pt.clientX - dragData.offsetX;
-      var y = pt.clientY - dragData.offsetY;
-      var w = pipEl.offsetWidth;
-      var h = pipEl.offsetHeight;
-      var vw = window.innerWidth;
-      var vh = window.innerHeight;
-      x = Math.max(8, Math.min(x, vw - w - 8));
-      y = Math.max(8, Math.min(y, vh - h - 8));
-      pipEl.style.left = x + 'px';
-      pipEl.style.top = y + 'px';
-      pipEl.style.bottom = 'auto';
-      pipEl.style.right = 'auto';
-      if (e.touches) e.preventDefault();
-    }
-
-    function endDrag() {
-      dragData = null;
-      if (pipEl) pipEl.classList.remove('dragging');
-      document.removeEventListener('mousemove', onDrag);
-      document.removeEventListener('mouseup', endDrag);
-      document.removeEventListener('touchmove', onDrag);
-      document.removeEventListener('touchend', endDrag);
-    }
-
-    /* ---- create / destroy pip shell ---- */
-    function buildPipEl() {
-      pipEl = document.createElement('div');
-      pipEl.className = 'pip-container';
-
-      pipClose = document.createElement('button');
-      pipClose.className = 'pip-close-btn';
-      pipClose.innerHTML = '✕';
-      pipClose.setAttribute('aria-label', 'Close');
-      pipClose.addEventListener('click', function(e) {
-        e.stopPropagation();
-        exitPip();
-      });
-
-      pipIcon = document.createElement('div');
-      pipIcon.className = 'pip-floating-icon';
-      pipIcon.innerHTML = '<div class="pip-floating-icon-inner"></div>';
-
-      pipHint = document.createElement('div');
-      pipHint.className = 'pip-drag-hint';
-      pipHint.textContent = '· · ·';
-
-      pipEl.appendChild(pipIcon);
-      pipEl.appendChild(pipHint);
-      pipEl.appendChild(pipClose);
-
-      pipEl.addEventListener('mousedown', initDrag);
-      pipEl.addEventListener('touchstart', initDrag, { passive: false });
-
-      vp.addEventListener('play', syncPipState);
-      vp.addEventListener('pause', syncPipState);
-
-      pipEl.addEventListener('click', function(e) {
-        if (e.target.closest('.pip-close-btn')) return;
-        if (vp.paused) vp.play(); else vp.pause();
-      });
-
-      document.body.appendChild(pipEl);
-    }
-
-    function destroyPipEl() {
-      if (!pipEl) return;
-      if (pipEl.parentNode) pipEl.parentNode.removeChild(pipEl);
-      if (vp) { vp.removeEventListener('play', syncPipState); vp.removeEventListener('pause', syncPipState); }
-      pipEl = null; pipClose = null; pipIcon = null; pipHint = null;
-    }
-
-    /* ---- skyscraper ad helpers ---- */
-    function showPipSkyscrapers() {
-      if (window.innerWidth < 1480) return;
-      var l = document.getElementById('pipSkyscraperLeft');
-      var r = document.getElementById('pipSkyscraperRight');
-      if (l) l.classList.add('pip-skyscraper--visible');
-      if (r) r.classList.add('pip-skyscraper--visible');
-    }
-    function hidePipSkyscrapers() {
-      var l = document.getElementById('pipSkyscraperLeft');
-      var r = document.getElementById('pipSkyscraperRight');
-      if (l) l.classList.remove('pip-skyscraper--visible');
-      if (r) r.classList.remove('pip-skyscraper--visible');
-    }
-
-    /* ---- enter / exit ---- */
-    function enterPip() {
-      if (pipActive || enteringPiP || !vp) return;
-      enteringPiP = true;
-      buildPipEl();
-      pipEl.classList.add('show');
-      pipEl.style.right = '28px';
-      pipEl.style.bottom = '28px';
-      /* move the video element into the floating container */
-      pipEl.insertBefore(vp, pipIcon);
-      syncPipState();
-      pipActive = true;
-      enteringPiP = false;
-      showPipSkyscrapers();
-    }
-
-    function exitPip() {
-      if (!pipActive || !vp) return;
-      hidePipSkyscrapers();
-      pipActive = false;
-      /* move video back to its original container */
-      vc.insertBefore(vp, vc.firstChild);
-      /* animate out then destroy */
-      pipEl.style.animation = 'pipExit 0.2s ease forwards';
-      setTimeout(function() {
-        destroyPipEl();
-        endDrag();
-      }, 200);
-    }
-
-    /* ---- scroll detection ---- */
-    function checkScroll() {
-      if (!vc || !vp) return;
-      var rect = vc.getBoundingClientRect();
-      var scrolledPast = rect.bottom < 0;
-      var mostlyHidden = rect.top < -rect.height * 0.6;
-
-      if (!pipActive && !enteringPiP && (scrolledPast || mostlyHidden)) {
-        enterPip();
-      }
-
-      if (pipActive) {
-        var backInView = rect.top > -rect.height * 0.15 && rect.top < window.innerHeight * 0.5;
-        if (backInView) exitPip();
-      }
-    }
-
-    window.addEventListener('scroll', function() {
-      if (scrollCheckTimer) clearTimeout(scrollCheckTimer);
-      scrollCheckTimer = setTimeout(checkScroll, 100);
-    }, { passive: true });
-
-    window.addEventListener('resize', function() {
-      if (!pipActive) { hidePipSkyscrapers(); return; }
-      if (window.innerWidth < 768) exitPip();
-      if (window.innerWidth < 1480) hidePipSkyscrapers();
-      else showPipSkyscrapers();
-      /* clamp position on resize */
-      if (pipEl) {
-        var r = pipEl.getBoundingClientRect();
-        if (r.right > window.innerWidth - 8 || r.bottom > window.innerHeight - 8) {
-          pipEl.style.right = '28px';
-          pipEl.style.bottom = '28px';
-          pipEl.style.left = 'auto';
-          pipEl.style.top = 'auto';
-        }
-      }
-    });
-  })();
 
 </script>
 

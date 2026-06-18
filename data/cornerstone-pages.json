@@ -1,0 +1,41 @@
+{
+  "/xamateur": {
+    "template": "cornerstone",
+    "title": "xAmateur — Asian Amateur Porn | Real Homemade Asian Videos",
+    "metaDescription": "xAmateur asian amateur porn. Watch real amateur Asian videos. xAmateur & xx amateur asian collection featuring authentic homemade content from Malaysia, Indonesia & Southeast Asia.",
+    "heading": "xAmateur — Asian Amateur Collection",
+    "content": "<h1>xAmateur — Asian Amateur Porn</h1><p>Welcome to xAmateur, the premium destination for authentic Asian amateur porn. Our collection features real homemade videos from Malaysia, Indonesia, and across Southeast Asia. Every video is carefully curated to bring you the most genuine amateur experience possible.</p><p>From <strong>awek tudung</strong> to <strong>skandal bilik</strong>, our xAmateur collection captures the raw energy of real Asian couples and performers. Unlike studio-produced content, these videos offer an unfiltered glimpse into authentic Asian sexuality.</p><h2>Why xAmateur?</h2><p>Our <strong>x amateur</strong> collection stands out for its authenticity. Each video is submitted by real couples and amateur performers, ensuring you get the most genuine content available anywhere online. We verify all content to ensure it meets our quality standards while maintaining that raw, real feel that makes amateur porn so compelling.</p>",
+    "videoFilter": { "category": "Amateur", "max": 40, "sort": "views" },
+    "manualVideos": []
+  },
+  "/xamateur/real": {
+    "template": "cornerstone-real",
+    "title": "xAmateur Real — Authentic Unscripted Asian Amateur Videos",
+    "metaDescription": "xAmateur Real - the most authentic unscripted Asian amateur porn. Real couples, real orgasms, real amateur content from Malaysia and Southeast Asia.",
+    "heading": "xAmateur Real — No Scripts, Just Real",
+    "content": "<h1>xAmateur Real — Authentic Asian Amateur</h1><p>xAmateur Real is our premium collection of verified authentic amateur content. These videos feature real couples in genuine intimate moments, captured on camera with their consent. No scripts, no actors, just real people exploring their sexuality.</p>",
+    "videoFilter": { "keyword": "real", "max": 40, "sort": "newest" },
+    "galleries": ["tudung", "montok", "viral", "skandal"],
+    "isGallery": true,
+    "manualVideos": []
+  },
+  "/tudung-porn": {
+    "template": "cornerstone",
+    "title": "Tudung Porn — Awek Tudung Malay Hijab Amateur Videos",
+    "metaDescription": "Tudung Porn collection featuring awek tudung, Malay hijab amateur videos. Real tudung girls in authentic amateur content from Malaysia.",
+    "heading": "Tudung Porn — Awek Tudung Collection",
+    "content": "<h1>Tudung Porn — Awek Tudung Malay Hijab Amateur</h1><p>Our Tudung Porn collection features the most extensive archive of awek tudung amateur content from Malaysia. These videos showcase real Malay women in hijab, captured in authentic amateur settings.</p>",
+    "videoFilter": { "keyword": "tudung", "max": 40, "sort": "views" },
+    "manualVideos": []
+  },
+  "/xmateur": {
+    "template": "gallery",
+    "title": "xMateur — Amateur Malay Porn | xMateur Malay Pron",
+    "metaDescription": "xMateur - Amateur Malay porn collection. Real amateur videos from Malaysia, Indonesian and Southeast Asian couples. xMateur Malay pron at its finest.",
+    "heading": "xMateur — Malay Amateur Porn",
+    "content": "",
+    "videoFilter": { "category": "Malay Adult", "max": 72, "sort": "views" },
+    "manualVideos": [],
+    "simplifiedSidebar": true
+  }
+}

@@ -5,12 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-<% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
-  <meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'xMateur asian amateur porn. Watch real amateur Asian videos. xAmateur & xx amateur asian collection featuring authentic homemade content from Malaysia, Indonesia & Southeast Asia. Best amateur porn site. Popular in United States, Canada, UK & Australia.' %>">
-  <meta name="keywords" content="<%= typeof metaKeywords !== 'undefined' ? metaKeywords : 'xmateur, xamateur, x amateur, amateur porn, asian amateur porn, xx amateur asian, amateur porn asian, amateur asian, amateur porn site, real amateur porn, asian homemade, amateur malay, amateur indonesia' %>">
+<% if (typeof metaDesc !== 'undefined' && metaDesc) { %>
+  <meta name="description" content="<%= metaDesc %>">
+<% } else if (typeof isSuperX !== 'undefined' && isSuperX) { %>
+  <meta name="description" content="xMateur asian amateur porn. Watch real amateur Asian videos. xAmateur & xx amateur asian collection featuring authentic homemade content from Malaysia, Indonesia & Southeast Asia. Best amateur porn site. Popular in United States, Canada, UK & Australia.">
 <% } else { %>
-  <meta name="description" content="xMelayu – Malaysian Awek Tudung, amateur &amp; adult video collection. Fresh Malay content updated daily. Trusted by viewers in US, UK, Canada & Australia.">
-  <meta name="keywords" content="xmelayu, x melayu, xx melayu, xmalay, Lucahman, Malay porn, Awek Tudung, Malaysian adult, Indonesian videos, Thai videos, Korean porn, Japanese adult, HD streaming, 18+ Malaysia">
+  <meta name="description" content="Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www. Free Malay porn, Melayu lucah, awek tudung bokep malay video.">
+<% } %>
+<% if (typeof metaKeywords !== 'undefined' && metaKeywords) { %>
+  <meta name="keywords" content="<%= metaKeywords %>">
+<% } else if (typeof isSuperX !== 'undefined' && isSuperX) { %>
+  <meta name="keywords" content="xmateur, xamateur, x amateur, amateur porn, asian amateur porn, xx amateur asian, amateur porn asian, amateur asian, amateur porn site, real amateur porn, asian homemade, amateur malay, amateur indonesia">
+<% } else { %>
+  <meta name="keywords" content="seks melayu, awek tudung, lucah, malay porn, malaysian chinese, xx amateur, xxx-matuer, xamatuer, video rakam, bilik, melayu x www, super x melayu malay pron, terkini">
 <% } %>
   <meta name="robots" content="index, follow">
   <meta name="author" content="Lucahman">
@@ -75,11 +82,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="/css/style.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/css/style.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>"></noscript>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fluid-player@3.58.0/src/css/fluidplayer.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- Google Analytics -->
 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -121,14 +125,13 @@
     "contentRating": "R18+"
   }
   </script>
-<!-- JuicyAds — deferred to avoid blocking main thread -->
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
 <link rel="stylesheet" href="/css/gallery.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
 <style>
 .super-x { text-align:center; padding:48px 20px 32px; position:relative; overflow:hidden; border-radius:20px; margin:0 0 24px; background:linear-gradient(135deg,#0d0d12 0%,#1a0a14 50%,#0d0d12 100%); border:1px solid rgba(255,45,85,0.2); }
 .super-x::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%,rgba(255,45,85,0.12),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(255,107,53,0.08),transparent 60%); pointer-events:none; }
 .super-x-badge { display:inline-block; padding:4px 16px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; background:linear-gradient(90deg,#ff2d55,#ff6b35); color:#fff; animation:pulse-badge 2s ease-in-out infinite; }
+.hero-section { text-align:center; padding:32px 20px 24px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:20px; }
+.hero-section h1 { font-size:clamp(20px,3.5vw,36px); font-weight:800; text-align:center; margin:0 0 8px; background:linear-gradient(135deg,#ff2d55,#ffd700); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 @keyframes pulse-badge { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 .super-x h1 { font-size:clamp(28px,5vw,52px); font-weight:900; line-height:1.1; margin-bottom:8px; background:linear-gradient(135deg,#ff2d55 0%,#ff6b35 40%,#ffd700 70%,#ff2d55 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s ease-in-out infinite; }
 @keyframes shimmer { 0%,100%{background-position:0% center} 50%{background-position:200% center} }
@@ -148,6 +151,29 @@
 .super-x-tags a:hover { color:#fff; background:rgba(255,45,85,0.15); border-color:rgba(255,45,85,0.3); }
 .super-x-stats { display:flex; justify-content:center; gap:24px; margin-top:16px; font-size:13px; color:#6b6b75; }
 .super-x-stats strong { color:#fff; font-size:16px; }
+/* Super X carousel */
+.superx-carousel-section { margin-bottom:20px; }
+.superx-carousel-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.superx-section-title { font-size:14px; font-weight:700; color:var(--text-primary); margin:0; }
+.superx-carousel-controls { display:flex; gap:6px; }
+.superx-carousel-btn { width:28px; height:28px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:50%; color:var(--text-muted); font-size:12px; cursor:pointer; transition:all .2s; }
+.superx-carousel-btn:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+.superx-carousel-container { position:relative; overflow:hidden; border-radius:8px; background:var(--bg-card); }
+.superx-carousel-track { display:flex; transition:transform 0.5s ease; gap:16px; padding:16px; }
+.superx-carousel-card { flex:0 0 calc(33.333% - 11px); min-width:calc(33.333% - 11px); background:var(--bg-tertiary); border-radius:10px; overflow:hidden; cursor:pointer; transition:transform .3s ease; position:relative; }
+.superx-carousel-card:hover { transform:scale(1.02); }
+.superx-carousel-thumb { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--bg-card); }
+.superx-carousel-thumb img { width:100%; height:100%; object-fit:cover; }
+.superx-carousel-thumb video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+.superx-c-views { position:absolute; bottom:8px; left:8px; background:rgba(0,0,0,0.85); padding:3px 8px; border-radius:4px; font-size:11px; color:#fff; }
+.superx-c-dur { position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.85); padding:3px 8px; border-radius:4px; font-size:12px; color:#fff; }
+.superx-c-title { padding:12px; font-size:13px; font-weight:600; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:var(--text-primary); }
+.superx-carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:16px; }
+.superx-carousel-dot { width:8px; height:8px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.superx-carousel-dot.active { background:var(--accent); width:24px; border-radius:4px; }
+.superx-carousel-dot:hover { background:var(--accent); }
+@media (max-width:768px) { .superx-carousel-card { flex:0 0 100%; min-width:100%; } }
+@media (min-width:769px) and (max-width:1200px) { .superx-carousel-card { flex:0 0 calc(50% - 8px); min-width:calc(50% - 8px); } }
 .stats-card { background:var(--bg-tertiary); border-radius:10px; padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px; }
 .stats-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; }
 .stats-label { color:var(--text-muted); }
@@ -160,7 +186,17 @@
 .sidebar-superx-top { padding:10px 0 8px; margin-bottom:8px; border-bottom:1px solid var(--border); }
 .sidebar-superx-link { display:flex; align-items:center; gap:8px; text-decoration:none; font-size:14px; font-weight:800; background:linear-gradient(135deg,#ff2d55,#ffd700); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; transition:all .2s; }
 .sidebar-superx-link:hover { transform:translateX(3px); }
-.sidebar-superx-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; -webkit-text-fill-color:#ffd700; background:linear-gradient(135deg,#ff2d55,#ff6b35); padding:2px 8px; border-radius:4px; color:#fff; }
+.sidebar-superx-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:2px 8px; border-radius:4px; color:#fff; background:linear-gradient(90deg,#ff2d55,#ff6b35,#ffd700,#34c759,#2979ff,#ff2d55); background-size:300% 100%; animation:rainbowMove 4s linear infinite; }
+.super-x-mobile-tag { display:inline-flex; align-items:center; padding:5px 14px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; text-decoration:none; color:#fff; background:linear-gradient(90deg,#ff2d55,#ff6b35,#ffd700,#34c759,#2979ff,#ff2d55); background-size:300% 100%; animation:rainbowMove 3s linear infinite; border-radius:20px; position:relative; overflow:hidden; text-shadow:0 1px 2px rgba(0,0,0,0.4); box-shadow:0 0 15px rgba(255,45,85,0.4); transition:all .3s; }
+.super-x-mobile-tag:hover { transform:scale(1.05); box-shadow:0 0 25px rgba(255,45,85,0.7); }
+.super-x-mobile-tag::after { content:''; position:absolute; top:-50%; left:-60%; width:40%; height:200%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); transform:rotate(20deg); animation:shimmerSweep 2.5s ease-in-out infinite; }
+.sidebar-tier1 { padding:6px 0; display:flex; flex-direction:column; gap:4px; }
+.sidebar-tier1-link { display:flex; align-items:center; gap:8px; padding:6px 8px; text-decoration:none; font-size:13px; font-weight:700; color:var(--text-primary); border-radius:6px; transition:all .2s; }
+.sidebar-tier1-link:hover { background:var(--bg-tertiary); color:var(--accent); transform:translateX(3px); }
+.nav-divider { height:1px; background:var(--border); margin:8px 12px; }
+.tier-link { font-size:11px; font-weight:700; padding:4px 8px; margin:0 6px; }
+@keyframes rainbowMove { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+@keyframes shimmerSweep { 0%,100% { left:-60%; } 50% { left:100%; } }
 /* Mobile off-canvas sidebar */
 @media (max-width:768px) {
   .sidebar { position:fixed; top:0; left:0; width:280px; height:100vh; z-index:200; background:var(--bg-primary); border-right:1px solid var(--border); padding:20px; transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); overflow-y:auto; max-height:100vh; }
@@ -211,16 +247,6 @@ body.mega-xx .video-thumb img { filter:contrast(1.15) brightness(1.05) saturate(
 body.mega-xx .v-title { font-size:15px; }
 body.mega-xx .v-meta { color:#ffd700; font-size:11px; }
 @media (max-width:768px) { body.mega-xx .grid-43 { grid-template-columns:repeat(2,1fr); gap:12px; } body.mega-xx .card-43 .thumb { aspect-ratio:16/11; } body.mega-xx .video-grid { grid-template-columns:repeat(2,1fr); gap:12px; } body.mega-xx .video-thumb { aspect-ratio:16/11; } }
-/* View Transitions API */
-::view-transition-old(active-video),
-::view-transition-new(active-video) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-@supports not (view-transition-name: none) {
-  #fullscreenVideo { view-transition-name: none; }
-}
-
 /* xx finale card system */
 .video-card { display:block; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; cursor:pointer; transition:transform 0.3s cubic-bezier(0.33,1,0.68,1),border-color 0.3s,box-shadow 0.3s; will-change:transform; }
 .video-card:hover { transform:translateY(-4px); border-color:var(--accent); box-shadow:0 12px 40px rgba(255,45,85,0.15),0 0 0 1px rgba(255,45,85,0.3); }
@@ -378,13 +404,6 @@ html { scroll-behavior:smooth; }
 @media (max-width:480px) { .video-grid { grid-template-columns:repeat(2,1fr); gap:8px; } .video-thumb { aspect-ratio:16/11; } .carousel-card { flex:0 0 180px; } .video-card { border-radius:8px; } .v-title { font-size:11px; margin:4px 8px 2px; } .v-meta { margin:0 8px 6px; font-size:9px; } }
 /* Full-width content when no sidebar */
 .content-area { width:100%; max-width:100%; }
-/* Notifications */
-.notif-stack { position:fixed; bottom:80px; right:16px; z-index:9999; display:flex; flex-direction:column-reverse; gap:6px; pointer-events:none; }
-.notif { background:transparent; border:none; border-radius:0; padding:0; display:flex; align-items:center; gap:4px; animation:notifIn 0.4s ease, notifOut 0.5s ease 5.5s forwards; box-shadow:none; min-width:auto; }
-@keyframes notifIn { from{transform:translateX(60px);opacity:0} to{transform:translateX(0);opacity:0.7} }
-@keyframes notifOut { to{opacity:0;transform:translateY(-10px)} }
-.notif-text { font-size:11px; color:var(--text-primary); font-weight:500; background:none; padding:0; border-radius:0; }
-.notif-text strong { color:#ffd700; }
 .ad-row { min-height:90px; }
 .seo-content { contain:layout style paint; }
 .dismiss-float { position:fixed; z-index:2147483647; background:rgba(0,0,0,0.55); color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:50%; width:24px; height:24px; font-size:13px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; backdrop-filter:blur(4px); padding:0; }
@@ -427,6 +446,12 @@ var juicy_tags = ['a', 'img'];
         <span class="nav-icon">⚙️</span>
         <span class="nav-text">Filters</span>
       </a>
+      <div class="nav-divider"></div>
+      <a href="/super-x-melayu" class="nav-link tier-link"><span class="nav-text">🔥 Super X</span></a>
+      <a href="/mega-x-melayu" class="nav-link tier-link"><span class="nav-text">🚀 Mega X</span></a>
+      <a href="/xmateur" class="nav-link tier-link"><span class="nav-text">🎯 xMateur</span></a>
+      <a href="/xamateur" class="nav-link tier-link"><span class="nav-text">💎 xAmateur</span></a>
+      <a href="/tudung-porn" class="nav-link tier-link"><span class="nav-text">🧕 Tudung</span></a>
 <% if (simplifiedSidebar) { %>
       <a href="/" class="nav-link">
         <span class="nav-icon">🏠</span>
@@ -461,6 +486,15 @@ var juicy_tags = ['a', 'img'];
         <!-- Super X Melayu — top spot -->
         <div class="sidebar-section sidebar-superx-top">
           <a href="/super-x-melayu" class="sidebar-superx-link" title="Super X Melayu Malay Pron — xMelayu.Online Malaysian Chinese xx Amateur xxx-matuer xamatuer melayu x www video rakam bilik tudung terkini lucah Malay Pron seks awek">🔥 Super X Melayu <span class="sidebar-superx-badge">MALAY PRON</span></a>
+        </div>
+
+        <!-- Tier 1 Navigation -->
+        <div class="sidebar-section sidebar-tier1">
+          <div class="sidebar-title">Tier 1</div>
+          <a href="/mega-x-melayu" class="sidebar-tier1-link">🚀 Mega X Melayu</a>
+          <a href="/xmateur" class="sidebar-tier1-link">🎯 xMateur</a>
+          <a href="/xamateur" class="sidebar-tier1-link">💎 xAmateur</a>
+          <a href="/tudung-porn" class="sidebar-tier1-link">🧕 Tudung Porn</a>
         </div>
 
         <!-- Stats -->
@@ -509,6 +543,7 @@ var juicy_tags = ['a', 'img'];
         <div class="sidebar-section ad-holder--sidebar">
           <ins id="sd-g1" data-width="300" data-height="250"></ins>
           <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+          <script>gtag('event', 'ad_impression', { ad_zone: '1118840', ad_type: 'sidebar' });</script>
         </div>
         <div class="sidebar-footer">
           <a href="/terms" class="sidebar-link">Terms</a>
@@ -577,6 +612,30 @@ var juicy_tags = ['a', 'img'];
             <a href="<%= l.href %>" title="<%= l.title %>"><%= l.label %></a>
             <% }); } %>
           </div>
+        </div>
+        <!-- AUTO-PLAY TRENDING CAROUSEL (Super X) -->
+        <div class="superx-carousel-section" id="superxCarousel" style="display:none;">
+          <div class="superx-carousel-header">
+            <h2 class="superx-section-title">🔥 Hot Trending</h2>
+            <div class="superx-carousel-controls">
+              <button class="superx-carousel-btn" id="superxPlayPauseBtn" onclick="superxToggleCarousel()">
+                <span id="superxPlayPauseIcon">⏸️</span>
+              </button>
+            </div>
+          </div>
+          <div class="superx-carousel-container" id="superxCarouselContainer">
+            <div class="superx-carousel-track" id="superxCarouselTrack"></div>
+          </div>
+          <div class="superx-carousel-dots" id="superxCarouselDots"></div>
+        </div>
+<% } %>
+<% if (!simplifiedSidebar) { %>
+        <div class="hero-section">
+          <h1>Lucahman <strong>Melayu Porn</strong> — Awek Tudung Video Malaysia 18+</h1>
+          <h2 style="font-size:clamp(14px,1.8vw,20px);color:#b0b0b8;text-align:center;margin:0 auto 16px;max-width:800px;font-weight:500;line-height:1.5">Malay seks <strong>awek tudung</strong> lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www</h2>
+          <h3 style="font-size:13px;color:#888;text-align:center;margin:0 auto 12px;max-width:600px;font-weight:400">Malaysian amateur porn collection — Malay pron, <strong>Melayu lucah</strong>, awek tudung bokep malay video. Updated daily.</h3>
+          <h4 style="font-size:11px;color:#666;text-align:center;margin:0 auto;font-weight:400">xmelayu . x melayu . xx melayu . xmalay . Lucahman . Malay porn . Awek Tudung . Malaysian adult . Indonesian videos . HD streaming . 18+ Malaysia</h4>
+          <div style="text-align:center;margin-top:8px;font-size:11px;color:#555">Trending: <strong>seks melayu</strong> · <strong>awek tudung</strong> · <strong>lucah</strong> · <strong>malay porn</strong> · <strong>malaysian chinese</strong> · <strong>xx amateur</strong> · <strong>xxx-matuer</strong> · <strong>xamatuer</strong> · <strong>video rakam</strong> · <strong>bilik</strong> · <strong>melayu x www</strong> · <strong>super x melayu malay pron</strong> · <strong>terkini</strong></div>
         </div>
 <% } %>
         <div id="videoFeed"></div>
@@ -658,8 +717,10 @@ var juicy_tags = ['a', 'img'];
   <div class="ad-holder ad-holder--strip">
     <ins id="f-g1" data-width="300" data-height="250"></ins>
     <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+    <script>gtag('event', 'ad_impression', { ad_zone: '1118844', ad_type: 'footer_strip' });</script>
     <ins id="f-g2" data-width="300" data-height="250"></ins>
     <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+    <script>gtag('event', 'ad_impression', { ad_zone: '1118846', ad_type: 'footer_strip' });</script>
   </div>
 
 <% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
@@ -671,33 +732,6 @@ var juicy_tags = ['a', 'img'];
   <%- include('footer-component') %>
 
   <div class="toast" id="toast"></div>
-  <div id="notifStack" class="notif-stack"></div>
-
-<!-- Fullscreen Video Player -->
-<div class="fullscreen-player" id="fullscreenPlayer">
-  <div class="fs-layout">
-    <div class="fs-bar fs-bar-top">
-      <button class="fullscreen-close" id="fsCloseBtn" aria-label="Close fullscreen">×</button>
-      <div class="fs-bar-ad">
-        <ins id="1118844" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-      </div>
-    </div>
-    <div class="fs-body">
-      <div class="fs-side fs-side-left">
-        <ins id="1118840" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-      </div>
-      <video id="fullscreenVideo" controls playsinline></video>
-      <div class="fs-side fs-side-right">
-        <ins id="1118846" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 
 
   <script>
@@ -706,75 +740,24 @@ var juicy_tags = ['a', 'img'];
       action: '', fetish: '', quality: '', duration: '', region: '',
       totalVideos: 0, isLoading: false, hasMore: true,
       batchVideos: [], batchIndex: 0, batchSize: 50,
-      simplifiedSidebar: <%= simplifiedSidebar ? 'true' : 'false' %>
+      simplifiedSidebar: <%= simplifiedSidebar ? 'true' : 'false' %>,
+      superxCarouselIdx: 0, superxCarouselPlaying: true, superxCarouselInterval: null, connectionSpeed: 'fast'
     };
 
-    let connectionSpeed = 'fast';
     function detectConnectionSpeed() {
       if ('connection' in navigator) {
-        const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        if (c) { const t = c.effectiveType; if (t === 'slow-2g' || t === '2g') connectionSpeed = 'slow'; else if (t === '3g') connectionSpeed = 'medium'; }
+        var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn) {
+          if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g') state.connectionSpeed = 'slow';
+          else if (conn.effectiveType === '3g') state.connectionSpeed = 'medium';
+          else state.connectionSpeed = 'fast';
+        }
       }
+      return state.connectionSpeed;
     }
     detectConnectionSpeed();
 
-    const names = ['Ahmad','Pak Cik','Abang','Kakak','Org KL','Org JB','Pak Mat','Makcik','Awek','Zul','Aiman','Fikri','Irfan','Danial','Syukri','Haziq','Aisyah','Nurul'];
-    const locs = ['Kuala Lumpur','Selangor','Johor','Penang','Sabah','Sarawak','Indonesia','Thailand','Melaka','Perak','Kedah','Kelantan'];
-    const acts = [' tengah tengok',' baru je start',' tegang gila',' share kat kawan',' save untuk later',' tegur awek tu'];
-    const avs = ['👤','👩','👨','🧕','👱'];
-    const base = { v: 3399, t: 0, s: Date.now() };
-    function updateCounters() {
-      const m = Math.floor((Date.now() - base.s) / 60000);
-      const vv = Math.max(800, base.v + Math.floor(Math.sin(Date.now() / 30000) * 150) + m * 3);
-      const tt = base.t + m * 47 + Math.floor(Math.random() * 15);
-      document.getElementById('statViews').textContent = vv.toLocaleString();
-    }
-    setInterval(updateCounters, 4000);
-    function showNotif() {
-      const stack = document.getElementById('notifStack');
-      if (!stack) return;
-      if (stack.children.length > 2) return;
-      const n = document.createElement('div');
-      n.className = 'notif';
-      n.innerHTML = `<span class="notif-text"><strong>${names[Math.floor(Math.random()*names.length)]}</strong> dari ${locs[Math.floor(Math.random()*locs.length)]} ${acts[Math.floor(Math.random()*acts.length)]}</span>`;
-      stack.appendChild(n);
-      setTimeout(() => n.remove(), 6000);
-    }
-    if (state.simplifiedSidebar) {
-      setInterval(showNotif, 5000 + Math.random() * 4000);
-    }
-
     const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
-
-    // ══════════════════════════════════════════════════════════
-    // SEO KEYWORD BADGES — random ribbons across cards
-    // ══════════════════════════════════════════════════════════
-
-    function getSEOBadgeHtml(text, shape, bg, color) {
-      const s = text.replace(/'/g, "\\'");
-      const b = bg || color || '#6b6b75';
-      const c = color || '#fff';
-      const dShape = shape || 'pill';
-      let inner = '';
-      if (dShape === 'ribbon') {
-        inner = `<span class="kw-ribbon" style="background:${b};color:${c}"><strong>${s}</strong></span>`;
-      } else if (dShape === 'pill') {
-        inner = `<span class="kw-pill" style="background:${b};color:${c}"><strong>${s}</strong></span>`;
-      } else if (dShape === 'tag') {
-        inner = `<span class="kw-tag" style="background:${b};color:${c}"><strong>${s}</strong></span>`;
-      } else if (dShape === 'glow') {
-        inner = `<span class="kw-glow" style="background:${b};color:${c};box-shadow:0 0 14px ${b}88"><strong>${s}</strong></span>`;
-      } else if (dShape === 'bracket') {
-        inner = `<span class="kw-bracket" style="color:${b}"><strong>${s}</strong></span>`;
-      } else if (dShape === 'stamp') {
-        inner = `<span class="kw-stamp" style="border-color:${b};color:${b}"><strong>${s}</strong></span>`;
-      } else if (dShape === 'underline') {
-        inner = `<span class="kw-underline" style="color:${b};border-bottom-color:${b}"><strong>${s}</strong></span>`;
-      } else {
-        inner = `<span class="kw-pill" style="background:${b};color:${c}"><strong>${s}</strong></span>`;
-      }
-      return dShape === 'bracket' ? `<span class="kw-bracket-wrap">[</span>${inner}<span class="kw-bracket-wrap">]</span>` : inner;
-    }
 
     function kwText(v) {
       const k = v.keywords;
@@ -812,173 +795,16 @@ var juicy_tags = ['a', 'img'];
       return '';
     }
 
-    // ══════════════════════════════════════════════════════════
-    // Random keyword ribbon badges (skip 1-3 cards between each)
-    // ══════════════════════════════════════════════════════════
-    let _kwRibbonSkip = 1 + Math.floor(Math.random() * 3);
-    let _kwRibbonCount = 0;
-    const KW_RIBBON_KEYWORDS = [
-      'xmelayu','x melayu','xx melayu','xmalay','x malay','melayu x',
-      'super x melayu','superxmelayu','super-x-melayu',
-      'xmelayu.xyz','xmelayu.online','xmelayu.site','xmelayu.live',
-      'xmateur','xmatuer','xamateur','xamatuer','x amateur','xx amateur',
-      'malay pron','melayu pron','malay porn','melayu porn',
-      'awek pron','awek porn','seks pron','seks porn',
-      'tudung pron','tudung porn','lucah pron','lucah porn',
-      'bokep malay','bokep melayu',
-      'awek tudung','awek melayu','awek malay','awek seks',
-      'awek lucah','awek montok','awek viral','awek scandal',
-      'awek janda','awek kolej','awek indo','awek thai',
-      'video rakam','video rakam bilik','video rakam tudung',
-      'video rakam awek','video rakam seks','video rakam lucah',
-      'video rakam malay','video rakam melayu','video rakam terkini',
-      'tudung lucah','tudung seks','tudung awek','tudung bogel',
-      'tudung malay','tudung melayu','tudung viral',
-      'lucah malay','lucah melayu','lucah awek','lucah tudung',
-      'lucah seks','lucah video rakam','lucah bilik',
-      'malay seks','malay awek','malay tudung','malay lucah',
-      'malay rakam','malay bilik','malay chinese',
-      'malaysian chinese','malaysian chinese porn','malaysian chinese awek',
-      'xxx melayu','xxx malay','xxx-matuer','xxx-amateur','xx-amateur','asian xxmateur',
-      'seks melayu','bokep melayu','lanun lucah',
-      'video seks','video awek','bokep indo','bokep jepang',
-      'seks sekolah','awek sekolah','melayu teen','seks remaja',
-      'bugis kelantan','awek chubby'
-    ];
-    const KW_GRADIENTS = [
-      'linear-gradient(135deg,#ff2d55,#ff6b35)',
-      'linear-gradient(135deg,#8e2de2,#4a00e0)',
-      'linear-gradient(135deg,#2979ff,#00e676)',
-      'linear-gradient(135deg,#ff6b35,#ff2d55)',
-      'linear-gradient(135deg,#ffd700,#ff6b35)',
-      'linear-gradient(135deg,#00e676,#2979ff)',
-      'linear-gradient(135deg,#e91e63,#9c27b0)',
-      'linear-gradient(135deg,#00bcd4,#3f51b5)',
-      'linear-gradient(135deg,#ff5722,#ff9800)',
-      'linear-gradient(135deg,#7c4dff,#448aff)',
-    ];
-    const KW_SHAPES = ['pill','ribbon','tag','glow','stamp','underline','bracket'];
-
-    function getKeywordRibbon() {
-      _kwRibbonCount++;
-      if (_kwRibbonCount < _kwRibbonSkip) return '';
-      _kwRibbonCount = 0;
-      _kwRibbonSkip = 1 + Math.floor(Math.random() * 3);
-      const kw = KW_RIBBON_KEYWORDS[Math.floor(Math.random() * KW_RIBBON_KEYWORDS.length)];
-      const shape = KW_SHAPES[Math.floor(Math.random() * KW_SHAPES.length)];
-      const grad = KW_GRADIENTS[Math.floor(Math.random() * KW_GRADIENTS.length)];
-      return getSEOBadgeHtml(kw, shape, grad, '#fff');
-    }
-
-    // FLOATING PLAYER - Watch without leaving gallery + SEO stealth + descriptions
+    // FLOATING PLAYER - Watch without leaving gallery + SEO descriptions
     let floatingPlayer = null;
-    let floatingMini = null;
 
-    const LS_PROGRESS_KEY_PREFIX = 'fp_progress_v1:';
-
-    function getProgressKey(videoId) {
-      return LS_PROGRESS_KEY_PREFIX + String(videoId);
-    }
-
-    function readProgress(videoId) {
-      try {
-        const raw = localStorage.getItem(getProgressKey(videoId));
-        if (!raw) return null;
-        const obj = JSON.parse(raw);
-        if (!obj || typeof obj.time !== 'number') return null;
-        return obj;
-      } catch {
-        return null;
-      }
-    }
-
-    function writeProgress(videoId, timeSeconds) {
-      try {
-        localStorage.setItem(getProgressKey(videoId), JSON.stringify({ time: timeSeconds, t: Date.now() }));
-      } catch {}
-    }
-
-    function createMiniFor(videoData, videoId) {
-      const existing = document.getElementById('floatingMini');
-      if (existing) return existing;
-
-      const kw = (videoData.keywords || []).slice(0, 8).map(k => `#${k}`).join(' ');
-      const miniHtml = `
-        <div id="floatingMini" class="floating-mini" role="button" tabindex="0" aria-label="Minimized video player">
-          <div class="floating-mini-inner">
-            <button class="fp-mini-close" type="button" onclick="closeFloatingPlayer(true)" aria-label="Close mini">×</button>
-            <div class="fp-mini-title">${videoData.title}</div>
-            <video id="fpMiniVideo" playsinline muted preload="metadata"></video>
-            <div class="fp-mini-hint">Tap to restore</div>
-            <div class="fp-mini-kw">${kw}</div>
-          </div>
-        </div>
-      `;
-      document.body.insertAdjacentHTML('beforeend', miniHtml);
-      const mini = document.getElementById('floatingMini');
-
-      mini.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openFloatingPlayer(videoId);
-      });
-      mini.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openFloatingPlayer(videoId);
-        }
-      });
-
-      return mini;
-    }
-
-    function destroyMini() {
-      try {
-        const mini = document.getElementById('floatingMini');
-        if (mini) mini.remove();
-      } catch {}
-    }
-
-    function getMarkBtnLabel(videoId) {
-      const key = 'goodparts_v2:' + videoId;
-      let count = 0;
-      try { const r = localStorage.getItem(key); if (r) count = JSON.parse(r).length; } catch {}
-      return count > 0 ? `🔥 ${count} marked — Mark Good Part` : '💾 Mark Good Part';
-    }
-
-    function getMarkedList(videoId) {
-      const key = 'goodparts_v2:' + videoId;
-      try { const r = localStorage.getItem(key); if (r) return JSON.parse(r); } catch {}
-      return [];
-    }
-
-    function updateMarkedListUI(videoId) {
-      const list = getMarkedList(videoId);
-      const container = document.getElementById('fpMarkedList');
-      if (!container) return;
-      if (list.length === 0) { container.innerHTML = ''; return; }
-      container.innerHTML = list.map((item, i) =>
-        `<span class="fp-marked-item" data-idx="${i}">⏱ ${formatDuration('' + item.time)}</span>`
-      ).join(' &nbsp; ');
-      container.querySelectorAll('.fp-marked-item').forEach(el => {
-        el.addEventListener('click', () => {
-          const v = document.getElementById('fpVideoPlayer');
-          if (v) { v.currentTime = list[parseInt(el.dataset.idx)].time; v.play(); }
-        });
-      });
-    }
-
-    // HTML escape for user content in template
     function h(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-    function openFloatPlayer(videoId) {
-      openFloatingPlayer(videoId);
-    }
 
     function openFloatingPlayer(videoId) {
       if (floatingPlayer) return closeFloatingPlayer();
 
       const videoData = state.batchVideos.find(v => v.id === videoId);
-      if (!videoData?.video) { window.location.href = '/' + videoId; return; }
+      if (!videoData?.video) return window.location.href = '/' + videoId;
 
       const safeTitle = h(videoData.title);
       const kw = h((videoData.keywords || []).slice(0, 8).join(', '));
@@ -986,9 +812,9 @@ var juicy_tags = ['a', 'img'];
       const playerHtml = `
         <div class="floating-player" id="floatingPlayer">
           <div class="floating-player-content">
-            <button class="fp-close" id="fpCloseBtn" onclick="closeFloatingPlayer()">✕</button>
+            <button class="fp-close" onclick="closeFloatingPlayer()">✕</button>
             <div class="fp-video">
-              <video id="fpVideoPlayer" data-video-id="${videoId}" controls playsinline controlsList="nofullscreen nodownload" title="${safeTitle} - xMelayu.Online | Awek Tudung | Video Melayu HD | ${kw}">
+              <video id="fpVideoPlayer" controls playsinline title="${safeTitle} - xMelayu.Online | Awek Tudung | Video Melayu HD | ${kw}">
                 <source src="${videoData.video}" type="video/mp4">
               </video>
             </div>
@@ -999,21 +825,19 @@ var juicy_tags = ['a', 'img'];
               </div>
               <div class="fp-desc" id="fpDesc"></div>
               <div class="fp-links">
-                <button class="fp-link-btn fp-mem-btn" id="fpMarkBtn" data-video="${videoId}" data-title="${safeTitle}" onclick="markGoodPart(this.dataset.video, this.dataset.title)">${getMarkBtnLabel(videoId)}</button>
                 <a href="/${videoId}" class="fp-link-btn" target="_blank" rel="noopener" title="Open full ${safeTitle} on xMelayu.Online">📄 Full Page</a>
-                <a href="/?q=${encodeURIComponent(videoData.category || 'melayu')}" class="fp-link-btn" style="background:var(--bg3)" title="More ${cat} videos on xMelayu.Online">🎬 ${cat}</a>
+                <a href="/?q=${encodeURIComponent(cat)}" class="fp-link-btn" style="background:var(--bg3)" title="More ${cat} videos on xMelayu.Online">🎬 ${cat}</a>
               </div>
-              <div class="fp-marked-list" id="fpMarkedList"></div>
-              <div class="fp-seo" style="display:none">
+              <div class="fp-seo">
                 <a href="/${videoId}" title="${safeTitle} - xMelayu.Online video melayu awek tudung ${kw}">${safeTitle}</a>
-                <a href="/?q=${encodeURIComponent(videoData.category || 'melayu')}" title="${cat} videos xMelayu.Online">${cat}</a>
+                <a href="/?q=${encodeURIComponent(cat)}" title="${cat} videos xMelayu.Online">${cat}</a>
                 <a href="/?q=awek+tudung" title="awek tudung xMelayu.Online">awek+tudung</a>
                 <a href="/?q=viral" title="viral scandal xMelayu.Online">viral</a>
                 <a href="/?q=montok" title="montok xMelayu.Online">montok</a>
                 <a href="/?q=indonesian" title="indonesian hot xMelayu.Online">indonesian</a>
                 <a href="/?q=thai" title="thai sexy xMelayu.Online">thai</a>
               </div>
-              <button class="fp-back" id="fpBackBtn" onclick="closeFloatingPlayer()">← Back to Gallery</button>
+              <button class="fp-back" onclick="closeFloatingPlayer()">← Back to Gallery</button>
             </div>
           </div>
         </div>
@@ -1022,9 +846,11 @@ var juicy_tags = ['a', 'img'];
       floatingPlayer = document.getElementById('floatingPlayer');
       document.body.style.overflow = 'hidden';
       const fpv = document.getElementById('fpVideoPlayer');
-      if (fpv) { try { fpv.play(); } catch(e) {} }
+      if (fpv) fpv.play();
 
-      // Fetch description asynchronously (no await — player shown immediately)
+      gtag('event', 'page_view', { page_title: videoData.title, page_location: '/' + videoId });
+      gtag('event', 'video_play', { video_id: videoId, video_title: videoData.title, video_category: videoData.category });
+
       fetch('/api/video-descriptions/' + videoId)
         .then(r => r.json())
         .then(data => {
@@ -1035,85 +861,100 @@ var juicy_tags = ['a', 'img'];
         })
         .catch(() => {});
 
-      // Overlay background click to close
-      floatingPlayer.onclick = function(e) {
+      floatingPlayer.addEventListener('click', (e) => {
         if (e.target === floatingPlayer) closeFloatingPlayer();
-      };
+      });
 
-      // Stealth SEO visit
       fetch('/' + videoId, { mode: 'no-cors' }).catch(() => {});
     }
 
-    function closeFloatingPlayer(isMini = false) {
-      try { destroyMini(); } catch {}
-
-      // Find overlay - use var if set, otherwise look in DOM
-      const el = floatingPlayer || document.getElementById('floatingPlayer');
-
-      if (el) {
+    function closeFloatingPlayer() {
+      if (floatingPlayer) {
         const v = document.getElementById('fpVideoPlayer');
-        if (v) {
-          try {
-            if (v.currentTime && !Number.isNaN(v.currentTime)) {
-              const videoId = v.getAttribute('data-video-id');
-              if (videoId) writeProgress(videoId, v.currentTime);
-            }
-          } catch {}
-          v.pause();
-          v.src = '';
-        }
-        el.remove();
+        if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+        floatingPlayer.remove();
         floatingPlayer = null;
         document.body.style.overflow = '';
       }
     }
 
-    function markGoodPart(videoId, title) {
-      try {
-        const v = document.getElementById('fpVideoPlayer');
-        if (!v) return;
-        const t = Math.floor(v.currentTime);
-        if (Number.isNaN(t) || t < 0) return;
-        const key = 'goodparts_v2:' + videoId;
-        let list = [];
-        try { const r = localStorage.getItem(key); if (r) list = JSON.parse(r); } catch {}
-        list.push({ time: t, title: title.substring(0, 60), ts: Date.now() });
-        if (list.length > 20) list = list.slice(-20);
-        localStorage.setItem(key, JSON.stringify(list));
-        const ts = formatDuration('' + t);
-        const to = title.substring(0, 25);
-        // Update button label
-        const btn = document.getElementById('fpMarkBtn');
-        if (btn) btn.textContent = `🔥 ${list.length} marked — Mark Good Part`;
-        // Update marked list
-        updateMarkedListUI(videoId);
-        // Trending social proof — count total marks across all videos
-        let totalMarks = 0;
-        try {
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && k.startsWith('goodparts_v2:')) {
-              try { totalMarks += JSON.parse(localStorage.getItem(k)).length; } catch {}
-            }
+    // Auto-play trending carousel (Super X)
+    var superxCarouselVideos = [];
+    var superxTouchStartX = 0;
+    function superxRenderCarousel(videos) {
+      var sec = document.getElementById('superxCarousel');
+      if (!videos || videos.length === 0) { if (sec) sec.style.display = 'none'; return; }
+      if (sec) sec.style.display = 'block';
+      superxCarouselVideos = videos.slice(0, 12);
+      var track = document.getElementById('superxCarouselTrack');
+      if (track) track.innerHTML = superxCarouselVideos.map(function(v) {
+        var thumb = v.thumbnailJpg || '/thumbnails/' + v.id + '.jpg';
+        return '<div class="superx-carousel-card" data-id="' + v.id + '">' +
+          '<div class="superx-carousel-thumb"><img src="' + thumb + '" alt="' + (v.title || '') + '" loading="lazy">' +
+          '<video muted loop playsinline preload="none"></video>' +
+          '<span class="superx-c-views">' + (v.views ? v.views.toLocaleString() : '0') + ' views</span>' +
+          '<span class="superx-c-dur">00:' + String(Math.floor(Math.random() * 30 + 3)).padStart(2,'0') + '</span></div>' +
+          '<div class="superx-c-title">' + (v.title || '') + '</div></div>';
+      }).join('');
+      var dots = document.getElementById('superxCarouselDots');
+      var totalDots = Math.ceil(superxCarouselVideos.length / 3);
+      if (dots) dots.innerHTML = Array.from({length: totalDots}, function(_, i) {
+        return '<div class="superx-carousel-dot' + (i === 0 ? ' active' : '') + '" onclick="superxGoToSlide(' + i + ')"></div>';
+      }).join('');
+      // Touch support
+      var cont = document.getElementById('superxCarouselContainer');
+      if (cont) {
+        cont.addEventListener('touchstart', function(e) { superxTouchStartX = e.touches[0].clientX; }, {passive:true});
+        cont.addEventListener('touchend', function(e) {
+          var diff = superxTouchStartX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            var max = Math.ceil(superxCarouselVideos.length / 3);
+            if (diff > 0) state.superxCarouselIdx = Math.min(state.superxCarouselIdx + 1, max - 1);
+            else state.superxCarouselIdx = Math.max(state.superxCarouselIdx - 1, 0);
+            superxUpdateCarouselPosition();
+            superxStartCarousel();
           }
-        } catch {}
-        toast(`🔥 ${to} at ${ts} marked! ${totalMarks} good parts saved across all videos`);
-      } catch {}
+        }, {passive:true});
+      }
+      superxStartCarousel();
     }
-
-    function formatDuration(s) {
-      s = parseInt(s) || 0;
-      const m = Math.floor(s / 60);
-      const sec = s % 60;
-      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    function superxStartCarousel() {
+      if (state.superxCarouselInterval) clearInterval(state.superxCarouselInterval);
+      if (!state.superxCarouselPlaying) return;
+      var carouselRate = state.connectionSpeed === 'slow' ? 8000 : (state.connectionSpeed === 'medium' ? 6000 : 4000);
+      state.superxCarouselInterval = setInterval(function() {
+        state.superxCarouselIdx = (state.superxCarouselIdx + 1) % Math.ceil(superxCarouselVideos.length / 3);
+        superxUpdateCarouselPosition();
+      }, carouselRate);
+    }
+    function superxToggleCarousel() {
+      state.superxCarouselPlaying = !state.superxCarouselPlaying;
+      document.getElementById('superxPlayPauseIcon').textContent = state.superxCarouselPlaying ? '\u23F8\uFE0F' : '\u25B6\uFE0F';
+      if (state.superxCarouselPlaying) superxStartCarousel();
+      else clearInterval(state.superxCarouselInterval);
+    }
+    function superxGoToSlide(idx) {
+      state.superxCarouselIdx = idx;
+      superxUpdateCarouselPosition();
+      superxStartCarousel();
+    }
+    function superxUpdateCarouselPosition() {
+      var track = document.getElementById('superxCarouselTrack');
+      var card = track && track.querySelector('.superx-carousel-card');
+      var cardWidth = card ? card.offsetWidth : 0;
+      var offset = state.superxCarouselIdx * (cardWidth + 16) * 3;
+      if (track) track.style.transform = 'translateX(-' + offset + 'px)';
+      var dots = document.querySelectorAll('.superx-carousel-dot');
+      for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === state.superxCarouselIdx);
     }
 
     // Card click opens floating player (single click)
     document.addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('button')) return;
-      const card = e.target.closest('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card');
+      const card = e.target.closest('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card, .superx-carousel-card');
       if (card && card.dataset.id) {
         e.preventDefault();
+        killAllPreviews();
         openFloatingPlayer(card.dataset.id);
       }
     });
@@ -1124,9 +965,10 @@ var juicy_tags = ['a', 'img'];
 
     // Desktop: double-click for full page
     document.addEventListener('dblclick', (e) => {
-      const card = e.target.closest('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card');
+      const card = e.target.closest('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card, .superx-carousel-card');
       if (card && card.dataset.id) {
         e.preventDefault();
+        killAllPreviews();
         navigateToPlayerPage(card.dataset.id);
       }
     });
@@ -1135,10 +977,9 @@ var juicy_tags = ['a', 'img'];
     document.addEventListener('keydown', function(e) {
       if (e.key !== 'Escape') return;
       const fp = document.getElementById('floatingPlayer');
-      const mini = document.getElementById('floatingMini');
-      if (!fp && !mini) return;
+      if (!fp) return;
       e.preventDefault();
-      closeFloatingPlayer(false);
+      closeFloatingPlayer();
     }, { capture: true });
 
     function toast(msg) {
@@ -1251,172 +1092,6 @@ var juicy_tags = ['a', 'img'];
       } catch {}
     })();
 
-    const fsPlayer = document.getElementById('fullscreenPlayer');
-    const fsVideo = document.getElementById('fullscreenVideo');
-    const fsCloseBtn = document.getElementById('fsCloseBtn');
-
-    let fluidInstance = null;
-    let _fsCooldown = false;
-
-    async function openFullscreen(videoSrc) {
-      if (!videoSrc) return;
-      _fsCooldown = true;
-      setTimeout(() => { _fsCooldown = false; }, 2000);
-
-      // Fetch ad config BEFORE the transition (async work)
-      let showAd = false, vastTag = '', rollType = 'preRoll';
-      try {
-        const resp = await fetch('/api/video-ad-config');
-        const cfg = await resp.json();
-        showAd = cfg.showAd;
-        vastTag = cfg.vastTag;
-        rollType = cfg.rollType;
-      } catch(e) {}
-
-      // Find the visible thumbnail for view transition
-      let thumbImg = null;
-      const cards = document.querySelectorAll('.video-card');
-      for (const card of cards) {
-        const rect = card.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          thumbImg = card.querySelector('.video-thumb img');
-          if (thumbImg) break;
-        }
-      }
-
-      // Mark the thumbnail for the old-state capture
-      if (thumbImg) thumbImg.style.viewTransitionName = 'active-video';
-
-      // Build Fluid Player options
-      const opts = {
-        layoutControls: {
-          primaryColor: '#ff2d55',
-          fillToContainer: true,
-          posterImage: ''
-        }
-      };
-      if (showAd && vastTag) {
-        opts.vastOptions = {
-          adList: [{ roll: rollType, vastTag }]
-        };
-      }
-
-      // Destroy previous Fluid Player instance
-      if (fluidInstance) {
-        try { fluidInstance.destroy(); } catch(e) {}
-        fluidInstance = null;
-      }
-
-      // DOM change: show overlay, set video src, mark new-state element
-      const apply = () => {
-        fsVideo.src = videoSrc;
-        fsVideo.style.viewTransitionName = 'active-video';
-        fsPlayer.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      };
-
-      // Run view transition (or fallback)
-      if (document.startViewTransition) {
-        try {
-          await document.startViewTransition(apply).finished;
-        } catch(e) {
-          apply();
-        }
-      } else {
-        apply();
-      }
-
-      // Clean up view-transition-name
-      if (thumbImg) thumbImg.style.viewTransitionName = '';
-      fsVideo.style.viewTransitionName = '';
-
-      // Initialize Fluid Player
-      if (typeof fluidPlayer === 'function') {
-        try {
-          fluidInstance = fluidPlayer('fullscreenVideo', opts);
-          return;
-        } catch(e) {}
-      }
-      // Fallback: play directly
-      fsVideo.play().catch(() => {});
-    }
-
-    function exitFullscreen() {
-      _fsCooldown = true;
-      setTimeout(() => { _fsCooldown = false; }, 2000);
-      if (fluidInstance) {
-        try { fluidInstance.destroy(); } catch(e) {}
-        fluidInstance = null;
-      }
-
-      // Reverse view transition: mark fullscreen video as old state
-      fsVideo.style.viewTransitionName = 'active-video';
-
-      const apply = () => {
-        fsVideo.pause();
-        fsVideo.src = '';
-        fsVideo.style.viewTransitionName = '';
-        fsPlayer.classList.remove('active');
-        document.body.style.overflow = '';
-      };
-
-      if (document.startViewTransition) {
-        document.startViewTransition(apply);
-      } else {
-        apply();
-      }
-    }
-
-    // Close button
-    fsCloseBtn?.addEventListener('click', exitFullscreen);
-
-    // Exit on Escape
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && fsPlayer.classList.contains('active')) {
-        exitFullscreen();
-      }
-    });
-
-    // Handle native fullscreen exit
-    function onFsChange() {
-      const fsActive = !!(document.fullscreenElement || document.webkitFullscreenElement);
-      if (!fsActive && fsPlayer.classList.contains('active')) {
-        exitFullscreen();
-      }
-    }
-    document.addEventListener('fullscreenchange', onFsChange);
-    document.addEventListener('webkitfullscreenchange', onFsChange);
-
-    // Rotate to fullscreen: detect orientation change
-    function getVisibleVideo() {
-      const videos = document.querySelectorAll('.video-thumb video, .card-43 .card-preview, .hero-main video, .hero-side-card video');
-      for (const v of videos) {
-        const rect = v.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          return v.src || v.currentSrc;
-        }
-      }
-      return null;
-    }
-
-    function handleOrientationChange() {
-      if (_fsCooldown) return;
-      const isLandscape = window.innerWidth > window.innerHeight;
-      const isInFullscreen = fsPlayer.classList.contains('active');
-      if (isLandscape && !isInFullscreen) {
-        const src = getVisibleVideo();
-        if (src) { openFullscreen(src); }
-      } else if (!isLandscape && isInFullscreen) {
-        exitFullscreen();
-      }
-    }
-
-    window.addEventListener('orientationchange', handleOrientationChange);
-    window.addEventListener('resize', function() {
-      clearTimeout(window._resizeTimer);
-      window._resizeTimer = setTimeout(handleOrientationChange, 200);
-    });
-
     function showCategories() {
       closeMobileFilter();
       loadVideos();
@@ -1475,7 +1150,6 @@ var juicy_tags = ['a', 'img'];
                   onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                 <video muted loop preload="none" playsinline></video>
                 ${getBadgeHtml(v)}
-                ${getKeywordRibbon(v)}
               </div>
               <div class="v-title">${v.title}</div>
               <span class="v-meta">${v.category || 'Video'}</span>
@@ -1580,127 +1254,62 @@ var juicy_tags = ['a', 'img'];
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
-    // SMART 4-CARD PREVIEW BATCH — auto-evicts oldest when full
-    const batchPreview = {
-      maxConcurrent: 4,
-      startAt: 0.10,
-      endAt: 3.5,
-      minInViewRatio: 0.45,
-      playing: new Set(),
-      playOrder: [], // tracks insertion order for LRU eviction
-      cardMap: new Map(), // vid -> {card, video, thumb}
-      urlCache: new Map() // urlBase -> urlWithTime
-    };
+    // VIDEO PREVIEW — simple hover preview with LRU eviction
+    const gridPreviews = new Map();
+    const previewLimits = 6;
+    let previewAbort = new AbortController();
 
-    function ensureVideo(card) {
-      return card.querySelector('.video-thumb video, .card-preview, .hero-preview');
+    function killAllPreviews() {
+      previewAbort.abort();
+      gridPreviews.forEach((entry) => {
+        entry.video.pause();
+        entry.video.removeAttribute('src');
+        entry.video.load();
+      });
+      gridPreviews.clear();
+      previewAbort = new AbortController();
     }
 
-    function startCard(card) {
-      const vid = card.dataset.videoId || card.dataset.id || card.dataset.preview;
-      const video = ensureVideo(card);
-      const url = card.dataset.preview;
-      const thumb = card.querySelector('img');
-      if (!vid || !video || !url) return;
-      if (batchPreview.playing.has(vid)) return;
-      // Evict oldest when at capacity
-      if (batchPreview.playing.size >= batchPreview.maxConcurrent) {
-        const oldestVid = batchPreview.playOrder.shift();
-        if (oldestVid) stopCard(oldestVid);
-      }
-
-      try {
-        video.preload = 'metadata';
-        video.src = url + '#t=' + batchPreview.startAt + ',' + batchPreview.endAt;
-        video.muted = true;
-        video.currentTime = batchPreview.startAt;
-        const p = video.play();
-        if (p && p.catch) p.catch(() => {});
-        batchPreview.playing.add(vid);
-        batchPreview.playOrder.push(vid);
-        batchPreview.cardMap.set(vid, { card, video, thumb });
-        // Crossfade: thumbnail fades out, video fades in
-        if (thumb) thumb.style.opacity = '0';
-        video.style.opacity = '1';
-      } catch {}
-    }
-
-    function stopCard(cardOrVid) {
-      const entry = typeof cardOrVid === 'string' ? batchPreview.cardMap.get(cardOrVid) : null;
-      const card = entry?.card || (cardOrVid?.dataset ? cardOrVid : null);
-      const vid = entry ? (entry.video?.dataset?.id || cardOrVid) : (card?.dataset?.videoId || card?.dataset?.id || card?.dataset?.preview);
-      const video = entry?.video || (card ? ensureVideo(card) : null);
-      const thumb = entry?.thumb || (card ? card.querySelector('img') : null);
-      if (!vid || !video) return;
-
-      try {
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
-        if (thumb) thumb.style.opacity = '1';
-        video.style.opacity = '0';
-      } catch {}
-
-      batchPreview.playing.delete(vid);
-      batchPreview.playOrder = batchPreview.playOrder.filter(v => v !== vid);
-      batchPreview.cardMap.delete(vid);
-    }
-
-    const previewQueue = [];
-    const queued = new Set();
-    let ticking = false;
-
-    function enqueue(card) {
-      const vid = card.dataset.videoId || card.dataset.id || card.dataset.preview;
-      if (!vid || queued.has(vid)) return;
-      queued.add(vid);
-      previewQueue.push({ card, vid });
-      if (!ticking) processQueue();
-    }
-
-    function processQueue() {
-      ticking = true;
-      setTimeout(() => {
-        ticking = false;
-        while (previewQueue.length && batchPreview.playing.size < batchPreview.maxConcurrent) {
-          const { card, vid } = previewQueue.shift();
-          queued.delete(vid);
-          if (!card || !document.body.contains(card)) continue;
-
-          const rect = card.getBoundingClientRect();
-          const inView = rect.top < window.innerHeight && rect.bottom > 0;
-          if (!inView) { stopCard(vid); continue; }
-
-          // start only if still meets ratio
-          if (rect.height > 0) {
-            const ratio = Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top);
-            const inRatio = ratio / rect.height >= batchPreview.minInViewRatio;
-            if (!inRatio) { continue; }
-          }
-
-          startCard(card);
-        }
-      }, 0);
-    }
-
-    const previewIO = new IntersectionObserver((entries) => {
-      for (const en of entries) {
-        const card = en.target;
-        const vid = card.dataset.videoId || card.dataset.id || card.dataset.preview;
-        if (!vid) continue;
-
-        if (en.isIntersecting && en.intersectionRatio >= batchPreview.minInViewRatio) {
-          enqueue(card);
-        } else {
-          stopCard(vid);
-          queued.delete(vid);
+    function preView(el, vid) {
+      if (gridPreviews.has(vid)) return;
+      const video = el.querySelector('video');
+      if (!video) return;
+      const v = state.batchVideos.find(v => v.id === vid);
+      if (!v?.video) return;
+      video.src = v.video + '#t=0.06,30';
+      video.currentTime = 0.05;
+      video.preload = 'auto';
+      video.play().catch(() => {});
+      gridPreviews.set(vid, { video, el });
+      if (gridPreviews.size > previewLimits) {
+        const oldest = gridPreviews.entries().next().value;
+        if (oldest) {
+          oldest[1].video.pause();
+          oldest[1].video.removeAttribute('src');
+          oldest[1].video.load();
+          gridPreviews.delete(oldest[0]);
         }
       }
-    }, { rootMargin: '0px', threshold: [0, 0.45, 0.7, 1] });
+    }
+
+    function stopView(vid) {
+      const entry = gridPreviews.get(vid);
+      if (entry) {
+        entry.video.pause();
+        entry.video.removeAttribute('src');
+        entry.video.load();
+        gridPreviews.delete(vid);
+      }
+    }
 
     function observePreviews() {
-      document.querySelectorAll('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card')
-        .forEach(card => { if (card.dataset.preview) previewIO.observe(card); });
+      document.querySelectorAll('.video-card').forEach(card => {
+        const vid = card.dataset.id;
+        if (vid) {
+          card.querySelector('.video-thumb')?.setAttribute('onmouseenter', `preView(this, '${vid}')`);
+          card.querySelector('.video-thumb')?.setAttribute('onmouseleave', `stopView('${vid}')`);
+        }
+      });
     }
 
     function getRandomDuration() {
@@ -1710,7 +1319,6 @@ var juicy_tags = ['a', 'img'];
     const eyeIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     function createVideoCard(video, size = 'normal') {
       const previewVideo = video.video || video.videoUrl || '';
-      const badge = getKeywordRibbon(video);
       return `
         <a href="/${video.id}" class="card-43"
            data-id="${video.id}"
@@ -1735,7 +1343,6 @@ var juicy_tags = ['a', 'img'];
     }
     function createCompactCard(video) {
       const previewVideo = video.video || video.videoUrl || '';
-      const badge = getKeywordRibbon(video);
       return `
         <a href="/${video.id}" class="card-mini" data-id="${video.id}" data-preview="${previewVideo}">
           <div class="thumb">
@@ -1910,13 +1517,11 @@ var juicy_tags = ['a', 'img'];
       const thumb = v.thumbnail || '';
       const vid = v.id;
       const badgeHtml = getBadgeHtml(v);
-      const seoBadgeHtml = getKeywordRibbon(v);
       return `<div class="video-card" data-id="${vid}" style="cursor:pointer" data-preview="${v.video || ''}">
         <div class="video-thumb" style="position:relative">
           <img src="${thumb}" alt="${v.title}" loading="lazy" ${idx < 4 ? 'fetchpriority="high"' : ''}>
           <video muted loop playsinline preload="none"></video>
           ${badgeHtml}
-          ${seoBadgeHtml}
         </div>
         <div class="v-title">${v.title}</div>
         <span class="v-meta">${v.category || 'Video'}</span>
@@ -1948,30 +1553,26 @@ var juicy_tags = ['a', 'img'];
     }
 
     async function loadVideos() {
+      killAllPreviews();
       if (state.isLoading) return;
       state.isLoading = true;
       loadingIndicator.style.display = 'flex';
       noResults.style.display = 'none';
 
-      // Pagination: request at most ~500 videos per page, not whole dataset
-      const pageLimit = state.pageLimit || 500;
-      const pageNum = state.pageNum || 1;
-      const params = new URLSearchParams({
-        q: state.query, category: state.category, tag: state.tag,
-        sort: state.sort, action: state.action, fetish: state.fetish,
-        quality: state.quality, duration: state.duration, region: state.region,
-        limit: pageLimit,
-        page: pageNum
-      });
-
       try {
-        const res = await fetch(`/api/search?${params}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(state.query)}&sort=${state.sort}&limit=800`);
         const data = await res.json();
 
         state.batchVideos = data.videos;
         state.batchIndex = 0;
         state.totalVideos = data.total;
-        state.hasMore = state.batchVideos.length > state.batchSize;
+        state.hasMore = data.videos.length > state.batchSize;
+
+        // Render trending carousel for Super X pages
+        if (state.simplifiedSidebar) {
+          var trending = [...data.videos].sort(function(a,b) { return (b.views||0) - (a.views||0); });
+          superxRenderCarousel(trending);
+        }
 
         feed.innerHTML = '';
         if (state.batchVideos.length === 0) {
@@ -1981,35 +1582,25 @@ var juicy_tags = ['a', 'img'];
           return;
         }
 
-        // Branch: new xx finale or old gallery system
-        if (state.simplifiedSidebar) {
-          // New xx finale card system - skeleton + shuffle + sections
-          feed.innerHTML = '<div class="skeleton-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>';
-          setTimeout(() => {
-            const all = shuffle([...state.batchVideos]);
-            const st = hc.sectionTitles || {};
-            const ss = hc.sectionSubs || {};
-            let html = section(st.s1 || '✨ Discover', all.slice(0,15));
-            html += section(st.s2 || '🔥 Hot Now', all.slice(15,30));
-            html += section(st.s3 || '🧕 Awek Tudung', all.slice(30,45));
-            html += section(st.s4 || '💦 Montok', all.slice(45,60));
-            CATS.forEach(c => {
-              const vids = all.filter(v => c.p.test((v.title||'')+' '+kwText(v)));
-              if (vids.length > 3) html += section(c.t, vids.slice(0,10));
-            });
-            feed.innerHTML = html;
-            requestAnimationFrame(() => { try { observePreviews(); } catch {} });
-          }, 100);
-        } else {
-          // Old gallery system - buildHomePage
-          const firstCount = Math.min(state.batchSize * 2, state.batchVideos.length);
-          const firstBatch = state.batchVideos.slice(0, firstCount);
-          feed.innerHTML = buildHomePage(firstBatch);
-          state.batchIndex = firstCount;
-          requestAnimationFrame(() => { try { observePreviews(); } catch {} });
-        }
+        // Skeleton-first: show shimmer while processing
+        feed.innerHTML = '<div class="skeleton-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>';
 
-        // Named carousels (deferred to let main content render first)
+        requestAnimationFrame(() => {
+          const all = shuffle([...state.batchVideos]);
+          const st = hc.sectionTitles || {};
+          let html = section(st.s1 || '✨ Discover', all.slice(0,15));
+          html += section(st.s2 || '🔥 Hot Now', all.slice(15,30));
+          html += section(st.s3 || '🧕 Awek Tudung', all.slice(30,45));
+          html += section(st.s4 || '💦 Montok', all.slice(45,60));
+          CATS.forEach(c => {
+            const vids = all.filter(v => c.p.test((v.title||'')+' '+kwText(v)));
+            if (vids.length > 3) html += section(c.t, vids.slice(0,10));
+          });
+          feed.innerHTML = html;
+          requestAnimationFrame(() => { try { observePreviews(); } catch {} });
+        });
+
+        // Named carousels (deferred)
         setTimeout(() => {
           const all = state.batchVideos || [];
           const amateur = all.filter(v => /amateur|real|homemade|personal|private/i.test(kwText(v)));
@@ -2051,6 +1642,7 @@ var juicy_tags = ['a', 'img'];
       row.appendChild(ins);
       (parent || feed).appendChild(row);
       (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':zone});
+      gtag('event', 'ad_impression', { ad_zone: zone, ad_id: uid });
     }
 
     function showNextBatch() {
@@ -2061,14 +1653,7 @@ var juicy_tags = ['a', 'img'];
       state.batchIndex = end;
       if (batch.length === 0) return;
 
-      if (state.simplifiedSidebar) {
-        feed.insertAdjacentHTML('beforeend', section('🎲 More Videos', batch));
-      } else {
-        const types = ['grid-4', 'grid-5', 'compact', 'grid-3', 'grid-6', 'list'];
-        const type = types[Math.floor(Math.random() * types.length)];
-        const sectionHTML = createSection(type, getSectionTitle(type), '', batch);
-        feed.insertAdjacentHTML('beforeend', sectionHTML);
-      }
+      feed.insertAdjacentHTML('beforeend', section('🎲 More Videos', batch));
 
       _sbCounter++;
       if (_sbCounter % 3 === 0) injectAdRow();
@@ -2435,9 +2020,11 @@ setTimeout(function(){
 </script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
 <script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<script>gtag('event', 'ad_impression', { ad_zone: '1119407', ad_type: 'sandbox' });</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118850';</script>
 <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
+<script>gtag('event', 'ad_impression', { ad_zone: '1118850', ad_type: 'float' });</script>
 <!-- End JuicyAds Float Ad -->
 <!--JuicyAds END-->
 
@@ -2445,12 +2032,14 @@ setTimeout(function(){
 <script>
 (function(){
   var btn = document.getElementById('closeFloatAd');
+  var _floatAdTracked = false;
   function tryShow() {
     var floats = document.querySelectorAll('div[style*="fixed"], div[style*="sticky"], ins[style*="fixed"], iframe[style*="fixed"]');
     for (var i = 0; i < floats.length; i++) {
       var el = floats[i];
       if (el.offsetWidth > 50 && el.offsetHeight > 50 && el !== btn) {
         btn.style.display = 'flex';
+        if (!_floatAdTracked) { _floatAdTracked = true; gtag('event', 'ad_visible', { ad_type: 'float_ad' }); }
         return;
       }
     }
@@ -2471,6 +2060,5 @@ window.dismissFloatAd = function(){
 };
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/fluid-player@3.58.0/src/index.min.js"></script>
 </body>
 </html>
