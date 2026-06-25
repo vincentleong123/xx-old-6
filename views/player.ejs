@@ -367,17 +367,44 @@
                 <% }) %>
               <% } %>
             </div>
-            </div>
             <div class="ad-holder" style="margin:12px 0">
-              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto 8px">
-                <ins id="pd-ad" data-width="300" data-height="250"></ins>
+              <!-- Leaderboard -->
+              <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
+                <ins id="1120025" data-width="728" data-height="90"></ins>
+              </div>
+              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
+              <!-- Two-column banners -->
+              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
+                <div class="ad-slot-placeholder" style="max-width:300px">
+                  <ins id="pd-ad" data-width="300" data-height="250"></ins>
+                </div>
+                <div class="ad-slot-placeholder" style="max-width:300px">
+                  <ins id="1118846" data-width="300" data-height="250"></ins>
+                </div>
               </div>
               <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto 8px">
-                <ins id="1118845" data-width="300" data-height="100"></ins>
+              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+              <!-- Small banners row -->
+              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
+                <div class="ad-slot-placeholder" style="max-width:300px">
+                  <ins id="1118845" data-width="300" data-height="100"></ins>
+                </div>
+                <div class="ad-slot-placeholder" style="max-width:300px">
+                  <ins id="1118847" data-width="300" data-height="100"></ins>
+                </div>
               </div>
               <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
-              <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="margin:8px 0"></div>
+              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
+              <!-- Native ads row -->
+              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
+                <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
+                <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
+              </div>
+              <!-- Extra banner -->
+              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:8px auto">
+                <ins id="1118841" data-width="300" data-height="100"></ins>
+              </div>
+              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118841});</script>
             </div>
           </div>
 
@@ -620,7 +647,10 @@
       object-fit: cover;
       pointer-events: none;
       z-index: 2;
+      opacity: 0;
+      transition: opacity 0.35s ease;
     }
+    .player-carousels .video-card:hover .video-thumb video { opacity: 1; }
     .player-carousels .v-title {
       font-size: 13px;
       font-weight: 600;
@@ -638,6 +668,8 @@
       margin: 0 12px 10px;
       display: block;
     }
+    .related-thumb video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; z-index:2; pointer-events:none; }
+    .related-card:hover .related-thumb video { opacity:1; }
     .like-btn { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-muted); padding:4px 8px; border-radius:6px; transition:all .2s; display:inline-flex; align-items:center; gap:4px; }
     .like-btn:hover { color:var(--accent); background:rgba(255,45,85,0.1); }
     .like-btn.liked { color:var(--accent); }
@@ -697,6 +729,82 @@
   <script>
     function esc(s) { return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
     function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
+
+    // Video hover previews (shared LRU)
+    const playerPreviews = new Map();
+    const playerMaxPreviews = 6;
+
+    function stopPlayerPreview(vid) {
+      const entry = playerPreviews.get(vid);
+      if (entry) {
+        entry.video.pause();
+        entry.video.removeAttribute('src');
+        entry.video.load();
+        playerPreviews.delete(vid);
+      }
+    }
+
+    function playPlayerPreview(el, vid) {
+      if (playerPreviews.has(vid)) return;
+      const video = el.querySelector('video');
+      if (!video) return;
+      const url = el.closest('[data-preview]')?.dataset.preview || el.closest('a')?.dataset.preview;
+      if (!url) return;
+      video.src = url + '#t=0.06,30';
+      video.currentTime = 0.05;
+      video.preload = 'auto';
+      video.play().catch(function(){});
+      playerPreviews.set(vid, { video, el });
+      if (playerPreviews.size > playerMaxPreviews) {
+        const oldest = playerPreviews.entries().next().value;
+        if (oldest) {
+          oldest[1].video.pause();
+          oldest[1].video.removeAttribute('src');
+          oldest[1].video.load();
+          playerPreviews.delete(oldest[0]);
+        }
+      }
+    }
+
+    // Attach preview hover events
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.player-carousels .video-card, .related-card').forEach(function(card) {
+        const vid = card.dataset.id;
+        if (!vid) return;
+        const thumb = card.querySelector('.video-thumb, .related-thumb');
+        if (!thumb) return;
+        thumb.addEventListener('mouseenter', function() { playPlayerPreview(thumb, vid); });
+        thumb.addEventListener('mouseleave', function() { stopPlayerPreview(vid); });
+      });
+    });
+
+    // Mobile touch preview for player page
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      document.addEventListener('touchstart', function(e) {
+        const thumb = e.target.closest('.video-thumb, .related-thumb');
+        if (!thumb) return;
+        const card = thumb.closest('.video-card, .related-card');
+        if (!card) return;
+        const vid = card.dataset.id;
+        if (!vid || playerPreviews.has(vid)) return;
+        const video = thumb.querySelector('video');
+        const url = card.dataset.preview;
+        if (!video || !url) return;
+        video.src = url + '#t=0.15,5';
+        video.preload = 'auto';
+        video.play().catch(function(){});
+        playerPreviews.set(vid, { video, el: thumb });
+        if (playerPreviews.size > playerMaxPreviews) {
+          const oldest = playerPreviews.entries().next().value;
+          if (oldest) {
+            oldest[1].video.pause();
+            oldest[1].video.removeAttribute('src');
+            oldest[1].video.load();
+            playerPreviews.delete(oldest[0]);
+          }
+        }
+      }, { passive: true });
+    }
 
     function navigateTo(id) {
       location.href = '/' + id;
@@ -896,10 +1004,7 @@
 <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
 <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
-<!-- JuicyAds Float Ad -->
-<script type="text/javascript">juicy_adzone = '1118848';</script>
-<script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
-<!-- End JuicyAds Float Ad -->
+
 <!--JuicyAds END-->
 </body>
 </html>

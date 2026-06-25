@@ -43,6 +43,7 @@
   </script>
 <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
 <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
 <link rel="stylesheet" href="/css/gallery.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
 <style>
 /* Mega X Melayu — bigger, bolder, crunchier. In your face. */
@@ -79,6 +80,8 @@
 .card-43 .cmeta { font-size:12px; color:var(--mega-gold); }
 .card-43 .views { font-size:13px; padding:5px 12px; background:rgba(0,0,0,0.92); font-weight:700; }
 .card-43 .float-btn { width:36px; height:36px; font-size:16px; background:rgba(255,45,85,0.6); border-color:rgba(255,215,0,0.3); }
+.card-43 .thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.35s ease;z-index:2;pointer-events:none}
+.card-43:hover .thumb video{opacity:1}
 
 /* Keyword badges — bigger */
 .kw-pill, .kw-ribbon, .kw-tag, .kw-glow, .kw-stamp, .kw-underline { font-size:11px !important; }
@@ -190,8 +193,33 @@
       <!-- Ad row -->
       <div class="ad-row ad-holder" id="megaAdRow"></div>
 
+      <!-- Banner row -->
+      <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0">
+        <ins id="mg-a1" data-width="300" data-height="250"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+        <ins id="mg-a2" data-width="300" data-height="250"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+      </div>
+
       <!-- Native ad inserter -->
-      <div id="juicy-native-ads" style="min-height:90px;margin:12px 0"></div>
+      <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="min-height:60px;margin:8px 0"></div>
+      <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="min-height:60px;margin:8px 0"></div>
+
+      <!-- Footer strip -->
+      <div class="ad-holder ad-holder--strip" style="margin-top:12px">
+        <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
+          <ins id="mg-lb" data-width="728" data-height="90"></ins>
+        </div>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
+        <ins id="mg-f1" data-width="300" data-height="100"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
+        <ins id="mg-f2" data-width="300" data-height="100"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
+        <ins id="mg-f3" data-width="108" data-height="140"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+        <ins id="mg-f4" data-width="133" data-height="139"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
+      </div>
 
     </div>
   </div>
@@ -217,10 +245,11 @@ function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').
 function createVideoCard(v) {
   const kwHtml = getKeywordRibbon() || '';
   const b64 = btoa(v.id).slice(0, 8);
-  return `<a href="/${v.id}" class="card-43" data-id="${v.id}" style="animation-delay:${Math.random() * 0.3}s">
+  return `<a href="/${v.id}" class="card-43" data-id="${v.id}" data-preview="${v.video||''}" style="animation-delay:${Math.random() * 0.3}s">
     <div class="thumb">
       <div class="img-shimmer"></div>
       <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" decoding="async" width="320" height="240" onerror="this.parentElement.querySelector('.img-shimmer').style.display='none'">
+      <video muted loop preload="none" playsinline></video>
       <div class="overlay"></div>
       <span class="views">👁️ ${v.views}</span>
       <div class="float-btn" onclick="event.preventDefault();event.stopPropagation();toggleFloat('${v.id}')">▶</div>
@@ -370,6 +399,8 @@ function toggleMobileMenu() {
 document.addEventListener('DOMContentLoaded', () => {
   loadVideos();
 });
+// ─── Preview system ───
+(function(){var m=new Map(),mx=6;function s(v){var e=m.get(v);if(e){e.pause();e.removeAttribute('src');e.load();m.delete(v)}}function p(vid){if(m.has(vid))return;var c=document.querySelector('[data-id="'+vid+'"]');if(!c)return;var th=c.querySelector('.thumb'),u=c.dataset.preview,vd=th&&th.querySelector('video');if(!vd||!u)return;vd.src=u+'#t=0.06,30';vd.currentTime=0.05;vd.preload='auto';vd.play().catch(function(){});m.set(vid,vd);if(m.size>mx){var o=m.entries().next().value;if(o){o[1].pause();o[1].removeAttribute('src');o[1].load();m.delete(o[0])}}}document.addEventListener('mouseover',function(e){var t=e.target.closest('.card-43');if(!t)return;var id=t.dataset.id;if(id)p(id)});document.addEventListener('mouseout',function(e){var t=e.target.closest('.card-43');if(t&&t.dataset.id)s(t.dataset.id)})})();
 </script>
 </body>
 </html>

@@ -12,6 +12,9 @@
   <meta property="og:url" content="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
   <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
   <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
+<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
@@ -230,6 +233,8 @@
       .carousel-card { flex: 0 0 220px; }
       .carousel-arrow { display: none; }
     }
+    .card-43 .thumb video,.carousel-card .thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.35s ease;z-index:2;pointer-events:none}
+    .card-43:hover .thumb video,.carousel-card:hover .thumb video{opacity:1}
   </style>
 </head>
 <body>
@@ -258,10 +263,16 @@
       </div>
 
       <div class="ad-holder" style="gap:16px;flex-wrap:wrap;padding:16px 0">
+        <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
+          <ins id="r-lb" data-width="728" data-height="90"></ins>
+        </div>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
         <ins id="r-h-a1" data-width="300" data-height="250"></ins>
         <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
         <ins id="r-h-a2" data-width="300" data-height="250"></ins>
         <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+        <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="width:100%;min-height:60px"></div>
+        <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="width:100%;min-height:60px"></div>
       </div>
 
       <!-- Gallery Grid -->
@@ -296,9 +307,10 @@
         <button class="carousel-arrow left" onclick="document.querySelector('.carousel').scrollBy({left:-300,behavior:'smooth'})">&#10094;</button>
         <div class="carousel">
           <% latest.slice(0, 20).forEach(function(v) { %>
-            <a href="/xamateur/<%= v.id %>" class="carousel-card">
+            <a href="/xamateur/<%= v.id %>" class="carousel-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
               <div class="thumb">
                 <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+                <video muted loop preload="none" playsinline></video>
                 <div class="overlay"></div>
                 <span class="views"><%= (v.views || 0).toLocaleString() %></span>
               </div>
@@ -335,9 +347,10 @@
 
       <div class="grid-43">
         <% videos.forEach(function(v) { %>
-          <a href="/xamateur/<%= v.id %>" class="card-43">
+          <a href="/xamateur/<%= v.id %>" class="card-43" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
             <div class="thumb">
               <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
+              <video muted loop preload="none" playsinline></video>
               <div class="overlay"></div>
               <span class="views"><%= (v.views || 0).toLocaleString() %></span>
             </div>
@@ -353,6 +366,14 @@
         <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
         <ins id="r-g-f2" data-width="300" data-height="250"></ins>
         <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+        <ins id="r-g-f3" data-width="108" data-height="140"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+        <ins id="r-g-f4" data-width="133" data-height="139"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
+        <ins id="r-g-f5" data-width="300" data-height="100"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
+        <ins id="r-g-f6" data-width="300" data-height="100"></ins>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118841});</script>
       </div>
     <% } %>
 
@@ -363,10 +384,8 @@
   </div>
 <ins id="1119407" data-width="108" data-height="140"></ins>
 <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
-<!-- JuicyAds Float Ad -->
-<script type="text/javascript">juicy_adzone = '1118850';</script>
-<script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
-<!-- End JuicyAds Float Ad -->
+
 <!--JuicyAds END-->
+<script>(function(){var m=new Map(),mx=6;function s(v){var e=m.get(v);if(e){e.pause();e.removeAttribute('src');e.load();m.delete(v)}}function p(vid){if(m.has(vid))return;var c=document.querySelector('[data-id="'+vid+'"]');if(!c)return;var th=c.querySelector('.thumb'),u=c.dataset.preview,vd=th&&th.querySelector('video');if(!vd||!u)return;vd.src=u+'#t=0.06,30';vd.currentTime=0.05;vd.preload='auto';vd.play().catch(function(){});m.set(vid,vd);if(m.size>mx){var o=m.entries().next().value;if(o){o[1].pause();o[1].removeAttribute('src');o[1].load();m.delete(o[0])}}}document.addEventListener('mouseover',function(e){var t=e.target.closest('.carousel-card,.card-43');if(!t)return;var id=t.dataset.id;if(id)p(id)});document.addEventListener('mouseout',function(e){var t=e.target.closest('.carousel-card,.card-43');if(t&&t.dataset.id)s(t.dataset.id)})})();</script>
 </body>
 </html>

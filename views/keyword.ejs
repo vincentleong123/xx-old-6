@@ -8,6 +8,9 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="keywords" content="<%= keywords %>">
   <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
+<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
   <link rel="canonical" href="<%= canonicalUrl %>">
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= metaDescription %>">
@@ -44,6 +47,8 @@
     .card .thumb img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
     .card:hover .thumb img { transform:scale(1.08); }
     .card .overlay { position:absolute; inset:0; background:linear-gradient(transparent 50%,rgba(0,0,0,0.85)); }
+    .card .thumb video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; z-index:2; pointer-events:none; }
+    .card:hover .thumb video { opacity:1; }
     .card .views { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.8); color:var(--text); font-size:11px; padding:2px 7px; border-radius:4px; font-weight:600; }
     .card .card-body { padding:10px 12px; }
     .card .ctitle { font-size:13px; font-weight:600; color:var(--text); line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -79,21 +84,33 @@
       <% }); } %>
     </div>
 
-    <div class="ad-holder">
+    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
       <ins id="kw-a1" data-width="300" data-height="250"></ins>
       <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+      <ins id="kw-a2" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
     </div>
+    <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="margin:8px 0;min-height:60px"></div>
 
     <div class="seo-content"><%- content %></div>
+
+    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
+      <ins id="kw-m1" data-width="300" data-height="100"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
+      <ins id="kw-m2" data-width="300" data-height="100"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
+    </div>
+    <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="margin:8px 0;min-height:60px"></div>
 
     <div class="section-title">
       <%= heading %> Videos <span class="badge badge-hot"><%= videos.length %> VIDEOS</span>
     </div>
     <div class="grid">
       <% videos.forEach(function(v) { %>
-        <a href="/<%= v.id %>" class="card">
+        <a href="/<%= v.id %>" class="card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
           <div class="thumb">
             <img src="<%= typeof v.thumbnail !== 'undefined' ? v.thumbnail : '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
+            <video muted loop preload="none" playsinline></video>
             <div class="overlay"></div>
             <span class="views"><%= (v.views || 0).toLocaleString() %></span>
           </div>
@@ -105,10 +122,18 @@
     </div>
 
     <div class="ad-holder ad-holder--strip">
+      <div class="ad-slot-placeholder" style="max-width:728px;margin:0 auto">
+        <ins id="kw-lb" data-width="728" data-height="90"></ins>
+      </div>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
       <ins id="kw-f1" data-width="300" data-height="250"></ins>
       <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
       <ins id="kw-f2" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+      <ins id="kw-f3" data-width="108" data-height="140"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+      <ins id="kw-f4" data-width="133" data-height="139"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
     </div>
 
     <div class="footer">
@@ -116,5 +141,32 @@
     </div>
   </div>
 <!-- display ads only (no popunder) -->
+<script>
+(function() {
+  const kwPreviews = new Map(), kwMax = 6;
+  function stop(vid) { const e = kwPreviews.get(vid); if (e) { e.pause(); e.removeAttribute('src'); e.load(); kwPreviews.delete(vid); } }
+  function play(el, vid) {
+    if (kwPreviews.has(vid)) return;
+    const v = el.querySelector('video');
+    if (!v) return;
+    const u = el.closest('[data-preview]')?.dataset.preview;
+    if (!u) return;
+    v.src = u + '#t=0.06,30'; v.currentTime = 0.05; v.preload = 'auto'; v.play().catch(function(){});
+    kwPreviews.set(vid, v);
+    if (kwPreviews.size > kwMax) { const o = kwPreviews.entries().next().value; if (o) { o[1].pause(); o[1].removeAttribute('src'); o[1].load(); kwPreviews.delete(o[0]); } }
+  }
+  document.addEventListener('mouseover', function(e) {
+    var t = e.target.closest('.card');
+    if (!t) return;
+    var id = t.dataset.id;
+    if (!id) return;
+    t.dataset.preview && play(t.querySelector('.thumb'), id);
+  });
+  document.addEventListener('mouseout', function(e) {
+    var t = e.target.closest('.card');
+    if (t && t.dataset.id) stop(t.dataset.id);
+  });
+})();
+</script>
 </body>
 </html>

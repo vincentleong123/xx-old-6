@@ -16,6 +16,7 @@
   </script>
 <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
 <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
 <link rel="stylesheet" href="/css/gallery.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
 <style>
 :root{--card-min:230px;--gap:14px}
@@ -30,6 +31,8 @@
 .grid-43{grid-template-columns:repeat(auto-fill,minmax(var(--card-min),1fr));gap:var(--gap)}
 @media(max-width:768px){.grid-43{grid-template-columns:repeat(2,1fr);gap:10px}:root{--card-min:180px}}
 @media(max-width:480px){.grid-43{grid-template-columns:repeat(2,1fr);gap:8px}:root{--card-min:160px}}
+.card-43 .thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.35s ease;z-index:2;pointer-events:none}
+.card-43:hover .thumb video{opacity:1}
 </style>
 </head>
 <body>
@@ -60,6 +63,15 @@
       <div class="hero-stats"><strong id="count"><%= totalVideos %></strong> tudung videos — updated daily</div>
     </div>
 
+    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
+      <ins id="td-a1" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+      <ins id="td-a2" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
+      <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="width:100%;min-height:60px"></div>
+      <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="width:100%;min-height:60px"></div>
+    </div>
+
     <div class="section-header">
       <div class="section-title"><h3>Tudung Malay Hijab Videos</h3><span id="resultInfo">loading...</span></div>
     </div>
@@ -67,10 +79,11 @@
     <div class="grid-43" id="videoGrid">
       <% for (let i = 0; i < Math.min(videos.length, 72); i++) { %>
         <% const v = videos[i]; %>
-        <a href="/<%= v.id %>" class="card-43" style="animation-delay:<%= (i % 8) * 0.04 %>s">
+        <a href="/<%= v.id %>" class="card-43" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>" style="animation-delay:<%= (i % 8) * 0.04 %>s">
           <div class="thumb">
             <div class="img-shimmer"></div>
             <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %> - Tudung Porn Melayu" loading="<%= i < 6 ? 'eager' : 'lazy' %>" decoding="async" width="320" height="240">
+            <video muted loop preload="none" playsinline></video>
             <div class="overlay"></div>
             <span class="views">👁️ <%= v.views %></span>
           </div>
@@ -88,6 +101,21 @@
     </div>
     <div class="scroll-trigger" id="scrollTrigger"></div>
 
+    <div class="ad-holder ad-holder--strip" style="margin-top:16px">
+      <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
+        <ins id="td-lb" data-width="728" data-height="90"></ins>
+      </div>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
+      <ins id="td-f1" data-width="300" data-height="250"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+      <ins id="td-f2" data-width="300" data-height="100"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
+      <ins id="td-f3" data-width="108" data-height="140"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+      <ins id="td-f4" data-width="133" data-height="139"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
+    </div>
+
   </div></div>
 </main>
 
@@ -97,7 +125,7 @@ const TUDUNG = <%- JSON.stringify(videos) %>;
 const state = { page: 1, loading: false, hasMore: true, limit: 36, query: '' };
 function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
 function renderCard(v) {
-  return '<a href="/'+v.id+'" class="card-43"><div class="thumb"><div class="img-shimmer"></div><img src="'+v.thumbnail+'" alt="'+cleanAlt(v)+' - Tudung Porn" loading="lazy" decoding="async" width="320" height="240"><div class="overlay"></div><span class="views">👁️ '+v.views+'</span></div><div class="card-body"><div class="ctitle">'+v.title+'</div><div class="cmeta">'+v.category+'</div></div></a>';
+  return '<a href="/'+v.id+'" class="card-43" data-id="'+v.id+'" data-preview="'+(v.video||'')+'"><div class="thumb"><div class="img-shimmer"></div><img src="'+v.thumbnail+'" alt="'+cleanAlt(v)+' - Tudung Porn" loading="lazy" decoding="async" width="320" height="240"><video muted loop preload="none" playsinline></video><div class="overlay"></div><span class="views">👁️ '+v.views+'</span></div><div class="card-body"><div class="ctitle">'+v.title+'</div><div class="cmeta">'+v.category+'</div></div></a>';
 }
 function showBatch() {
   if (state.loading || !state.hasMore) return;
@@ -129,6 +157,7 @@ function toggleMobileMenu() {
   n.style.display = n.style.display === 'flex' ? 'none' : 'flex';
 }
 setTimeout(showBatch, 100);
+(function(){var m=new Map(),mx=6;function s(v){var e=m.get(v);if(e){e.pause();e.removeAttribute('src');e.load();m.delete(v)}}function p(vid){if(m.has(vid))return;var c=document.querySelector('.card-43[data-id="'+vid+'"]');if(!c)return;var th=c.querySelector('.thumb'),u=c.dataset.preview,vd=th&&th.querySelector('video');if(!vd||!u)return;vd.src=u+'#t=0.06,30';vd.currentTime=0.05;vd.preload='auto';vd.play().catch(function(){});m.set(vid,vd);if(m.size>mx){var o=m.entries().next().value;if(o){o[1].pause();o[1].removeAttribute('src');o[1].load();m.delete(o[0])}}}document.addEventListener('mouseover',function(e){var t=e.target.closest('.card-43');if(!t)return;var id=t.dataset.id;if(id)p(id)});document.addEventListener('mouseout',function(e){var t=e.target.closest('.card-43');if(t&&t.dataset.id)s(t.dataset.id)})})();
 </script>
 </body>
 </html>

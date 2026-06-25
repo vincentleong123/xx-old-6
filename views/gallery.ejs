@@ -186,6 +186,9 @@
 .sidebar-header { display:flex; align-items:center; justify-content:flex-end; padding:0 0 8px; }
 .sidebar-close { display:none; background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
 .sidebar-close:hover { color:#fff; }
+.sidebar-toggle { display:none; width:32px; height:32px; border-radius:8px; background:#141417; border:1px solid #2a2a30; cursor:pointer; color:#fff; font-size:18px; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+.sidebar-toggle:hover { background:#1c1c21; border-color:var(--accent); }
+.sidebar-toggle.gone { display:none !important; }
 .sidebar-superx-top { padding:2px 0 8px; margin-bottom:6px; border-bottom:1px solid var(--border); }
 .sidebar-superx-link { display:flex; align-items:center; gap:8px; text-decoration:none; font-size:14px; font-weight:800; background:linear-gradient(135deg,#ff2d55,#ffd700); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; transition:all .2s; }
 .sidebar-superx-link:hover { transform:translateX(3px); }
@@ -197,12 +200,15 @@
 .sidebar-tier1-link:hover { background:var(--bg-tertiary); color:var(--accent); transform:translateX(3px); }
 .nav-divider { height:1px; background:var(--border); margin:8px 12px; }
 .tier-link { font-size:11px; font-weight:700; padding:4px 8px; margin:0 6px; }
+/* Sidebar toggle button */
+.sidebar-toggle { display:inline-flex; }
 /* Mobile off-canvas sidebar */
 @media (max-width:768px) {
   .sidebar { position:fixed; top:0; left:0; width:280px; height:100vh; z-index:200; background:var(--bg-primary); border-right:1px solid var(--border); padding:16px; transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); overflow-y:auto; max-height:100vh; }
   .sidebar.show-mobile { transform:translateX(0); }
   .sidebar-close { display:flex; font-size:24px; padding:2px 6px; color:#fff; }
-  body.sidebar-open::after { content:''; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:199; }
+  .sidebar-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:199; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  .sidebar-overlay.show { opacity:1; pointer-events:auto; }
 }
 /* Desktop close — sidebar becomes visually hidden but stays in DOM */
 @media (min-width:769px) {
@@ -340,8 +346,8 @@ body.mega-xx .v-meta { color:#ffd700; font-size:11px; }
 .card-43 .card-body,.card-mini .card-body { padding:10px 12px; }
 .card-43 .ctitle,.card-mini .ctitle { font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .card-43 .cmeta { font-size:10px; color:var(--text-muted); margin-top:2px; }
-.card-43 .card-preview,.card-mini .card-preview { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; z-index:1; }
-.card-43:hover .card-preview,.card-mini:hover .card-preview { opacity:1; }
+.card-43 .card-preview,.card-mini .card-preview,.hero-preview { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; z-index:1; pointer-events:none; }
+.card-43:hover .card-preview,.card-mini:hover .card-preview,.hero-main:hover .hero-preview,.hero-side-card:hover .hero-preview { opacity:1; }
 .card-43 .diagonal-badge,.card-mini .diagonal-badge { position:absolute; top:6px; left:4px; z-index:3; pointer-events:none; padding:2px 8px 2px 12px; font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#fff; transform:skewX(-14deg); filter:drop-shadow(0 1px 4px rgba(0,0,0,0.5)); text-shadow:0 1px 1px rgba(0,0,0,0.4); white-space:nowrap; transform-origin:left center; }
 .card-43 .diagonal-badge span,.card-mini .diagonal-badge span { display:inline-block; transform:skewX(14deg); }
 .dg-hot { background:linear-gradient(90deg,#ff2d55,#ff6b35,#ffd700); }
@@ -505,6 +511,7 @@ html { scroll-behavior:smooth; }
 
     
   <header class="header">
+    <button class="sidebar-toggle gone" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Sidebar">☰</button>
     <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
       <span></span>
       <span></span>
@@ -538,6 +545,7 @@ html { scroll-behavior:smooth; }
 
   <!-- Mobile Menu Panel -->
   <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <div class="mobile-menu-panel" id="mobileMenuPanel">
     <div class="mobile-menu-header">
       <div class="mobile-menu-title">Navigate</div>
@@ -581,7 +589,7 @@ html { scroll-behavior:smooth; }
 <% if (!simplifiedSidebar) { %>
       <aside class="sidebar" id="sidebar" aria-hidden="false">
         <div class="sidebar-header">
-          <button class="sidebar-close" onclick="closeSidebar()" aria-label="Close navigation">×</button>
+          <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Close navigation">×</button>
         </div>
 
         <!-- Super X Melayu — featured -->
@@ -1359,11 +1367,20 @@ html { scroll-behavior:smooth; }
       if (e.key === 'Escape') closeMobileMenu();
     });
 
-    // Desktop sidebar toggle
-    function closeSidebar() {
+    // Sidebar toggle
+    function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
-      if (!sidebar || window.innerWidth <= 768) return;
-      sidebar.classList.toggle('closed');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar) return;
+      if (window.innerWidth <= 768) {
+        const so = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('show-mobile');
+        if (so) so.classList.toggle('show', sidebar.classList.contains('show-mobile'));
+        document.body.classList.toggle('sidebar-open', sidebar.classList.contains('show-mobile'));
+      } else {
+        sidebar.classList.toggle('closed');
+        if (toggle) toggle.classList.toggle('gone', !sidebar.classList.contains('closed'));
+      }
     }
 
     function toggleMegaMode(btn) {
@@ -1594,11 +1611,14 @@ html { scroll-behavior:smooth; }
     }
 
     function observePreviews() {
-      document.querySelectorAll('.video-card').forEach(card => {
+      document.querySelectorAll('.video-card, .card-43, .card-mini, .hero-main, .hero-side-card').forEach(card => {
         const vid = card.dataset.id;
         if (vid) {
-          card.querySelector('.video-thumb')?.setAttribute('onmouseenter', `preView(this, '${vid}')`);
-          card.querySelector('.video-thumb')?.setAttribute('onmouseleave', `stopView('${vid}')`);
+          const thumb = card.querySelector('.video-thumb, .thumb');
+          if (thumb) {
+            thumb.setAttribute('onmouseenter', `preView(this, '${vid}')`);
+            thumb.setAttribute('onmouseleave', `stopView('${vid}')`);
+          }
         }
       });
     }
@@ -2358,29 +2378,32 @@ html { scroll-behavior:smooth; }
       });
     });
 
-    // Mobile touch preview (event delegation for dynamically loaded cards)
+    // Mobile touch preview — uses shared gridPreviews LRU
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      const mobilePreviews = new Set();
-      function cleanupMobile() {
-        if (mobilePreviews.size >= 6) {
-          const p = Array.from(mobilePreviews).filter(el => !el.paused && !el.ended);
-          if (p.length >= 6) { p[0].pause(); p[0].currentTime = 0; mobilePreviews.delete(p[0]); }
-        }
-      }
       document.addEventListener('touchstart', function(e) {
         const thumb = e.target.closest('.video-thumb, .thumb');
         if (!thumb) return;
         const card = thumb.closest('.video-card, .card-43, .card-mini');
         if (!card) return;
+        const vid = card.dataset.id;
+        if (!vid || gridPreviews.has(vid)) return;
         const video = thumb.querySelector('video');
         const url = card.dataset.preview;
         if (!video || !url) return;
         video.src = url + '#t=0.15,5';
+        video.preload = 'auto';
         video.play().catch(function(){});
-        cleanupMobile();
-        mobilePreviews.add(video);
-      }, { passive: false });
-      document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+        gridPreviews.set(vid, { video, el: thumb });
+        if (gridPreviews.size > previewLimits) {
+          const oldest = gridPreviews.entries().next().value;
+          if (oldest) {
+            oldest[1].video.pause();
+            oldest[1].video.removeAttribute('src');
+            oldest[1].video.load();
+            gridPreviews.delete(oldest[0]);
+          }
+        }
+      }, { passive: true });
     }
     window.toggleLike = function(videoId, btnEl) {
       if (btnEl._liking) return;
@@ -2401,6 +2424,12 @@ html { scroll-behavior:smooth; }
           btn.querySelector('.like-count').textContent = d.likes;
         }).catch(function() {});
       });
+      // Sidebar toggle init — show on mobile or when sidebar is closed on desktop
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('sidebarToggle');
+      if (sb && tg && (window.innerWidth <= 768 || sb.classList.contains('closed'))) {
+        tg.classList.remove('gone');
+      }
     });
   </script>
 
@@ -2409,10 +2438,7 @@ html { scroll-behavior:smooth; }
 <ins id="1119407" data-width="108" data-height="140"></ins>
 <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <script>gtag('event', 'ad_impression', { ad_zone: '1119407', ad_type: 'sandbox' });</script>
-<!-- JuicyAds Float Ad -->
-<script type="text/javascript">juicy_adzone = '1118850';</script>
-<script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
-<script>gtag('event', 'ad_impression', { ad_zone: '1118850', ad_type: 'float' });</script>
+
 <!-- End JuicyAds Float Ad -->
 <!--JuicyAds END-->
 
