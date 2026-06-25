@@ -93,7 +93,7 @@
       <% videos.forEach(function(v) { %>
         <a href="/<%= v.id %>" class="card">
           <div class="thumb">
-            <img src="<%= typeof v.thumbnail !== 'undefined' ? v.thumbnail : '' %>" alt="<%= v.title %>" loading="lazy" onerror="this.style.display='none'">
+            <img src="<%= typeof v.thumbnail !== 'undefined' ? v.thumbnail : '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
             <div class="overlay"></div>
             <span class="views"><%= (v.views || 0).toLocaleString() %></span>
           </div>
@@ -115,8 +115,6 @@
       <p>&copy; 2026 xMelayu &middot; All models 18+</p>
     </div>
   </div>
-<!-- JuicyAds v3.2P -->
-<script>var juicy_tags=['a','img'];</script>
-<script src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- display ads only (no popunder) -->
 </body>
 </html>

@@ -49,7 +49,7 @@
   <meta property="og:url" content="<%= canonicalUrl %>">
   <meta property="og:site_name" content="Lucahman - Melayu Porn">
   <meta property="og:image" content="https://xmelayu.site/og-image.webp">
-  <meta property="og:image:width" content="1200">
+  <meta property="og:image:wtidth" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Melayu Porn seks awek tudung lucah malaysian chinese xx amateur">
 <% } %>
@@ -126,6 +126,9 @@
   }
   </script>
 <link rel="stylesheet" href="/css/gallery.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
+<!-- JuicyAds Native Interstitals (needed by floating player description ads) -->
+<script type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js" defer></script>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
 <style>
 .super-x { text-align:center; padding:48px 20px 32px; position:relative; overflow:hidden; border-radius:20px; margin:0 0 24px; background:linear-gradient(135deg,#0d0d12 0%,#1a0a14 50%,#0d0d12 100%); border:1px solid rgba(255,45,85,0.2); }
 .super-x::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%,rgba(255,45,85,0.12),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(255,107,53,0.08),transparent 60%); pointer-events:none; }
@@ -174,45 +177,40 @@
 .superx-carousel-dot:hover { background:var(--accent); }
 @media (max-width:768px) { .superx-carousel-card { flex:0 0 100%; min-width:100%; } }
 @media (min-width:769px) and (max-width:1200px) { .superx-carousel-card { flex:0 0 calc(50% - 8px); min-width:calc(50% - 8px); } }
-.stats-card { background:var(--bg-tertiary); border-radius:10px; padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px; }
-.stats-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; }
+.stats-card { background:var(--bg-tertiary); border-radius:10px; padding:8px 16px; margin-bottom:10px; display:flex; flex-direction:column; gap:4px; }
+.stats-row { display:flex; justify-content:center; align-items:center; gap:8px; font-size:11px; flex-wrap:wrap; }
 .stats-label { color:var(--text-muted); }
 .stats-value { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+.stats-sep { color:var(--border); }
 .sidebar { position:sticky; top:80px; align-self:flex-start; max-height:calc(100vh - 100px); overflow-y:auto; scrollbar-width:thin; }
-.sidebar-header { display:flex; align-items:center; justify-content:space-between; padding:0 0 12px; }
-.sidebar-header-title { font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+.sidebar-header { display:flex; align-items:center; justify-content:flex-end; padding:0 0 8px; }
 .sidebar-close { display:none; background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
 .sidebar-close:hover { color:#fff; }
-.sidebar-superx-top { padding:10px 0 8px; margin-bottom:8px; border-bottom:1px solid var(--border); }
+.sidebar-superx-top { padding:2px 0 8px; margin-bottom:6px; border-bottom:1px solid var(--border); }
 .sidebar-superx-link { display:flex; align-items:center; gap:8px; text-decoration:none; font-size:14px; font-weight:800; background:linear-gradient(135deg,#ff2d55,#ffd700); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; transition:all .2s; }
 .sidebar-superx-link:hover { transform:translateX(3px); }
-.sidebar-superx-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:2px 8px; border-radius:4px; color:#fff; background:linear-gradient(90deg,#ff2d55,#ff6b35,#ffd700,#34c759,#2979ff,#ff2d55); background-size:300% 100%; animation:rainbowMove 4s linear infinite; }
-.super-x-mobile-tag { display:inline-flex; align-items:center; padding:5px 14px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; text-decoration:none; color:#fff; background:linear-gradient(90deg,#ff2d55,#ff6b35,#ffd700,#34c759,#2979ff,#ff2d55); background-size:300% 100%; animation:rainbowMove 3s linear infinite; border-radius:20px; position:relative; overflow:hidden; text-shadow:0 1px 2px rgba(0,0,0,0.4); box-shadow:0 0 15px rgba(255,45,85,0.4); transition:all .3s; }
+.sidebar-superx-badge { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; padding:1px 6px; border-radius:4px; color:#fff; background:#ff2d55; }
+.super-x-mobile-tag { display:inline-flex; align-items:center; padding:5px 14px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:-0.3px; text-decoration:none; color:#fff; background:#ff2d55; border-radius:20px; text-shadow:0 0 12px rgba(255,45,85,0.5); box-shadow:0 0 15px rgba(255,45,85,0.4); transition:all .3s; white-space:nowrap; }
 .super-x-mobile-tag:hover { transform:scale(1.05); box-shadow:0 0 25px rgba(255,45,85,0.7); }
-.super-x-mobile-tag::after { content:''; position:absolute; top:-50%; left:-60%; width:40%; height:200%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); transform:rotate(20deg); animation:shimmerSweep 2.5s ease-in-out infinite; }
-.sidebar-tier1 { padding:6px 0; display:flex; flex-direction:column; gap:4px; }
-.sidebar-tier1-link { display:flex; align-items:center; gap:8px; padding:6px 8px; text-decoration:none; font-size:13px; font-weight:700; color:var(--text-primary); border-radius:6px; transition:all .2s; }
+.sidebar-tier1 { padding:4px 0; display:flex; flex-direction:column; gap:2px; }
+.sidebar-tier1-link { display:flex; align-items:center; gap:8px; padding:5px 8px; text-decoration:none; font-size:12px; font-weight:600; color:var(--text-primary); border-radius:6px; transition:all .2s; }
 .sidebar-tier1-link:hover { background:var(--bg-tertiary); color:var(--accent); transform:translateX(3px); }
 .nav-divider { height:1px; background:var(--border); margin:8px 12px; }
 .tier-link { font-size:11px; font-weight:700; padding:4px 8px; margin:0 6px; }
-@keyframes rainbowMove { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-@keyframes shimmerSweep { 0%,100% { left:-60%; } 50% { left:100%; } }
 /* Mobile off-canvas sidebar */
 @media (max-width:768px) {
-  .sidebar { position:fixed; top:0; left:0; width:280px; height:100vh; z-index:200; background:var(--bg-primary); border-right:1px solid var(--border); padding:20px; transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); overflow-y:auto; max-height:100vh; }
+  .sidebar { position:fixed; top:0; left:0; width:280px; height:100vh; z-index:200; background:var(--bg-primary); border-right:1px solid var(--border); padding:16px; transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); overflow-y:auto; max-height:100vh; }
   .sidebar.show-mobile { transform:translateX(0); }
-  .sidebar-close { display:flex; font-size:28px; padding:4px 8px; color:#fff; }
+  .sidebar-close { display:flex; font-size:24px; padding:2px 6px; color:#fff; }
   body.sidebar-open::after { content:''; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:199; }
-  .sidebar-header { padding-bottom:8px; }
-  .mobile-menu-btn { display:flex; align-items:center; justify-content:center; }
 }
 /* Desktop close — sidebar becomes visually hidden but stays in DOM */
 @media (min-width:769px) {
   .sidebar.closed { display:none; }
   .sidebar-close { display:flex; }
 }
-.sidebar-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:10px; }
-.sidebar-section { padding:12px 0; border-bottom:1px solid var(--border); }
+.sidebar-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:6px; }
+.sidebar-section { padding:10px 0; border-bottom:1px solid var(--border); }
 .sidebar-section:last-child { border-bottom:none; }
 .cat-icon { display:none; }
 /* Mega X X Melayu toggle */
@@ -223,6 +221,10 @@
 .mega-toggle-text { flex:1; }
 .mega-toggle-status { font-size:10px; padding:2px 8px; border-radius:4px; background:rgba(255,255,255,0.08); color:var(--text-muted); transition:all 0.3s; }
 .mega-toggle-btn.active .mega-toggle-status { background:#ffd700; color:#000; font-weight:800; }
+/* Sidebar footer */
+.sidebar-footer { display:flex; gap:8px; justify-content:center; padding:4px 0; font-size:11px; color:var(--text-muted); }
+.sidebar-link { color:var(--text-muted); text-decoration:none; transition:color .2s; }
+.sidebar-link:hover { color:var(--accent); }
 /* Backlink grid */
 .backlink-grid { display:flex; flex-wrap:wrap; gap:6px; }
 .backlink-link { padding:5px 10px; border-radius:6px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-muted); font-size:11px; font-weight:500; text-decoration:none; transition:all 0.2s; }
@@ -407,57 +409,117 @@ html { scroll-behavior:smooth; }
 .ad-row { min-height:90px; }
 .seo-content { contain:layout style paint; }
 .dismiss-float { position:fixed; z-index:2147483647; background:rgba(0,0,0,0.55); color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:50%; width:24px; height:24px; font-size:13px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; backdrop-filter:blur(4px); padding:0; }
+.like-btn { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-muted); padding:4px 8px; border-radius:6px; transition:all .2s; display:inline-flex; align-items:center; gap:4px; }
+.like-btn:hover { color:var(--accent); background:rgba(255,45,85,0.1); }
+.like-btn.liked { color:var(--accent); }
+.like-count { font-size:12px; font-weight:600; }
+.card .like-btn { position:absolute; bottom:6px; left:6px; font-size:12px; padding:2px 6px; background:rgba(0,0,0,0.75); border-radius:4px; z-index:2; }
 .dismiss-float:hover { background:rgba(255,45,85,0.7); transform:scale(1.1); }
+.floating-player{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:fpIn .25s}
+.floating-player-content{background:#111;border-radius:12px;width:92%;max-width:850px;max-height:94vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.fp-video{position:relative}.fp-video video{width:100%;max-height:62vh;display:block}
+.fp-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,0.15);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}.fp-nav:hover{background:var(--accent);border-color:var(--accent)}.fp-nav-prev{left:8px}.fp-nav-next{right:8px}
+.fp-close{position:absolute;top:8px;right:8px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}.fp-close:hover{background:var(--accent)}
+.fp-info{padding:16px 20px}
+.fp-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3;padding-right:40px}
+.fp-meta{font-size:12px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fp-meta-row{display:flex;align-items:center;gap:6px}
+.fp-counter{font-weight:600;color:var(--accent)}
+.fp-views{color:var(--text3);font-size:12px}
+.fp-like-btn{background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);padding:4px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;transition:all .2s}
+.fp-like-btn:hover{color:var(--accent);background:rgba(255,45,85,0.1)}
+.fp-like-btn.liked{color:var(--accent)}
+.fp-like-count{font-size:12px;font-weight:600}
+.fp-keywords{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.fp-kw{font-size:11px;color:#aaa;background:#222;padding:3px 8px;border-radius:4px}
+.fp-desc{font-size:13px;color:#999;line-height:1.6;margin-bottom:12px;max-height:400px;overflow-y:auto}
+.fp-desc .ad-slot-placeholder{border-radius:6px;border-color:rgba(255,255,255,0.06)}
+.fp-desc-text{font-size:13px;color:#bbb;line-height:1.5;margin-bottom:10px}
+.fp-desc-text strong{color:#fff}
+.fp-desc-text h3{font-size:14px;color:#ff2d55;margin:8px 0 4px}
+.fp-ad{display:flex;justify-content:center;margin:12px 0;min-height:90px}
+.fp-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.fp-link-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;color:#fff;transition:.2s}.fp-link-full{background:var(--accent);flex:1;justify-content:center}.fp-link-full:hover{background:#ff4d6f}
+.fp-related{margin:8px 0;overflow:hidden}
+.fp-related-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.fp-related-track{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.fp-related-track::-webkit-scrollbar{height:3px}
+.fp-related-track::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.fp-related-card{flex:0 0 140px;scroll-snap-align:start;border-radius:8px;overflow:hidden;background:#1a1a1e;cursor:pointer;transition:transform .15s;text-decoration:none;display:block}
+.fp-related-card:hover{transform:translateY(-2px)}
+.fp-related-card img{width:100%;aspect-ratio:16/11;object-fit:cover;display:block}
+.fp-related-card .r-title{font-size:11px;color:#ddd;padding:4px 6px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fp-native{margin:8px 0;min-height:50px}
+.fp-back{display:block;width:100%;margin-top:8px;padding:12px;border-radius:8px;font-size:13px;background:#222;color:#aaa;border:1px solid #333;cursor:pointer;text-align:center;transition:.2s}
+.fp-back:hover{background:#333;color:#fff}
+.fp-seo{display:none}
+@keyframes fpIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@media(max-width:640px){.floating-player{background:rgba(0,0,0,0.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.floating-player-content{width:100%;max-height:100vh;border-radius:0}.fp-info{padding:12px 14px}.fp-title{font-size:15px}.fp-nav{width:48px;height:48px;font-size:22px}.fp-nav-prev{left:4px}.fp-nav-next{right:4px}.fp-related-card{flex:0 0 120px}}
+
+/* Mobile hamburger button */
+.mobile-hamburger { display:none; width:32px; height:32px; border-radius:8px; background:#141417; border:1px solid #2a2a30; cursor:pointer; padding:0; position:relative; flex-shrink:0; align-items:center; justify-content:center; flex-direction:column; gap:3px; transition:all .2s; }
+.mobile-hamburger:hover { background:#1c1c21; border-color:#3a3a45; }
+.mobile-hamburger span { display:block; width:14px; height:2px; background:#fff; border-radius:2px; transition:all .2s; }
+@media (max-width:768px) { .mobile-hamburger { display:flex; } }
+
+/* Mobile menu panel */
+.mobile-menu-panel { position:fixed; bottom:0; left:0; right:0; z-index:300; background:#0a0a0b; border-top:1px solid #2a2a30; border-radius:16px 16px 0 0; max-height:80vh; overflow-y:auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); }
+.mobile-menu-panel.show { transform:translateY(0); }
+
+/* Mobile menu overlay */
+.mobile-menu-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:299; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.mobile-menu-overlay.show { opacity:1; pointer-events:auto; }
+
+/* Header */
+.mobile-menu-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid #2a2a30; position:sticky; top:0; background:#0a0a0b; z-index:1; }
+.mobile-menu-title { font-size:16px; font-weight:700; color:#fff; }
+.mobile-menu-close { background:none; border:none; color:#6b6b75; font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
+.mobile-menu-close:hover { color:#fff; }
+
+/* Content */
+.mobile-menu-content { padding:12px 20px 24px; }
+
+/* Sections */
+.mobile-section { margin-bottom:16px; }
+.mobile-section:last-child { margin-bottom:0; }
+.mobile-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6b6b75; margin-bottom:8px; padding:0 4px; }
+
+/* Links */
+.mobile-link { display:block; width:100%; padding:10px 14px; border-radius:8px; color:#e0e0e0; text-decoration:none; font-size:14px; font-weight:500; transition:all .15s; }
+.mobile-link:hover { background:#141417; color:#fff; }
+
+/* Hide sidebar-close on mobile */
+@media (max-width:768px) { .sidebar-close { display:none; } }
+
+/* Mobile header overrides */
+@media (max-width:768px) {
+  .header .nav-links { display:none; }
+  .header .header-actions { display:none; }
+  .header .logo-img { max-width:110px; height:auto; }
+}
 
 </style>
 </head>
 <body>
-<!-- JuicyAds v3.2P Start -->
-<script type="text/javascript">
-var juicy_tags = ['a', 'img'];
-</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
-<!-- JuicyAds v3.2P End -->
+<!-- display ads only (no popunder) -->
 
     
   <header class="header">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
-      <span class="menu-icon">☰</span>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
-    
     <a href="/" class="logo" aria-label="<%= typeof isSuperX !== 'undefined' && isSuperX ? 'Super X Melayu Malay Pron seks awek tudung lucah malaysian chinese xx amateur xxx-matuer xamatuer melayu x www video rakam bilik terkini' : 'Melayu Porn seks awek tudung lucah malaysian chinese xx amateur' %>">
-      <img src="<%= typeof isSuperX !== 'undefined' && isSuperX ? '/super-x-logo.svg' : '/logo.svg' %>" alt="<%= typeof isSuperX !== 'undefined' && isSuperX ? 'Super X Melayu Malay Pron seks awek tudung lucah malaysian chinese xx amateur xxx-matuer xamatuer melayu x www video rakam bilik terkini' : 'Melayu Porn seks awek tudung lucah malaysian chinese xx amateur' %>" class="logo-img" loading="lazy" width="<%= typeof isSuperX !== 'undefined' && isSuperX ? '180' : '120' %>" height="<%= typeof isSuperX !== 'undefined' && isSuperX ? '34' : '32' %>">
+      <img src="<%= typeof isSuperX !== 'undefined' && isSuperX ? '/super-x-logo.svg' : '/logo.svg' %>" alt="<%= typeof isSuperX !== 'undefined' && isSuperX ? 'Super X Melayu Malay Pron seks awek tudung lucah malaysian chinese xx amateur xxx-matuer xamatuer melayu x www video rakam bilik terkini' : 'Melayu Porn seks awek tudung lucah malaysian chinese xx amateur' %>" class="logo-img" loading="lazy" width="<%= typeof isSuperX !== 'undefined' && isSuperX ? '200' : '160' %>" height="<%= typeof isSuperX !== 'undefined' && isSuperX ? '38' : '36' %>">
     </a>
     
     <nav class="nav-links" id="navLinks">
-      <a href="/" class="nav-link active">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-text">Home</span>
-      </a>
-      <a href="#" class="nav-link" onclick="showCategories()">
-        <span class="nav-icon">📂</span>
-        <span class="nav-text">Categories</span>
-      </a>
-      <a href="#" class="nav-link" onclick="showTags()">
-        <span class="nav-icon">🏷️</span>
-        <span class="nav-text">Tags</span>
-      </a>
-      <a href="#" class="nav-link" onclick="showFilters()">
-        <span class="nav-icon">⚙️</span>
-        <span class="nav-text">Filters</span>
-      </a>
-      <div class="nav-divider"></div>
       <a href="/super-x-melayu" class="nav-link tier-link"><span class="nav-text">🔥 Super X</span></a>
       <a href="/mega-x-melayu" class="nav-link tier-link"><span class="nav-text">🚀 Mega X</span></a>
       <a href="/xmateur" class="nav-link tier-link"><span class="nav-text">🎯 xMateur</span></a>
       <a href="/xamateur" class="nav-link tier-link"><span class="nav-text">💎 xAmateur</span></a>
       <a href="/tudung-porn" class="nav-link tier-link"><span class="nav-text">🧕 Tudung</span></a>
-<% if (simplifiedSidebar) { %>
-      <a href="/" class="nav-link">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-text">Home</span>
-      </a>
-<% } %>
     </nav>
     
     <div class="search-wrapper">
@@ -470,27 +532,66 @@ var juicy_tags = ['a', 'img'];
     </div>
     
     <div class="header-actions">
-      <a href="/super-x-melayu" class="super-x-mobile-tag" title="Super X Melayu Malay Pron — xMelayu.Online Malaysian Chinese xx Amateur xxx-matuer xamatuer melayu x www video rakam bilik tudung terkini lucah Malay Pron seks awek" aria-label="Super X Melayu Malay Pron — Malaysian Chinese xx Amateur xxx-matuer xamatuer melayu x www video rakam bilik tudung terkini lucah Malay Pron seks awek">SUUUUPER XMELAYU</a>
+      <a href="/super-x-melayu" class="super-x-mobile-tag" title="Super X Melayu Malay Pron — xMelayu.Online Malaysian Chinese xx Amateur" aria-label="Super X Melayu">SUPER XMELAYU</a>
     </div>
   </header>
+
+  <!-- Mobile Menu Panel -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu-panel" id="mobileMenuPanel">
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-title">Navigate</div>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
+    </div>
+    <div class="mobile-menu-content">
+      <div class="mobile-section">
+        <div class="mobile-section-title">Brands</div>
+        <a href="/super-x-melayu" class="mobile-link">🔥 Super X Melayu</a>
+        <a href="/mega-x-melayu" class="mobile-link">🚀 Mega X Melayu</a>
+        <a href="/xmateur" class="mobile-link">✨ xMateur</a>
+        <a href="/xamateur" class="mobile-link">💎 xAmateur</a>
+        <a href="/tudung-porn" class="mobile-link">🧕 Tudung Porn</a>
+      </div>
+      <div class="mobile-section">
+        <div class="mobile-section-title">Browse</div>
+        <a href="#" class="mobile-link" onclick="showCategories();closeMobileMenu()">📂 Categories</a>
+        <a href="#" class="mobile-link" onclick="showTags();closeMobileMenu()">🏷️ Tags</a>
+      </div>
+      <div class="mobile-section">
+        <div class="mobile-section-title">Site</div>
+        <a href="/" class="mobile-link">🏠 Home</a>
+        <a href="/about" class="mobile-link">📄 About</a>
+        <a href="/terms" class="mobile-link">Terms</a>
+        <a href="/privacy" class="mobile-link">Privacy</a>
+        <a href="/dmca" class="mobile-link">DMCA</a>
+        <a href="/2257" class="mobile-link">2257</a>
+      </div>
+      <div class="mobile-section">
+        <button id="megaToggleMobile" class="mega-toggle-btn" onclick="toggleMegaMode(this);closeMobileMenu()">
+          <span class="mega-toggle-icon">🚀</span>
+          <span class="mega-toggle-text">Mega X X Melayu</span>
+          <span class="mega-toggle-status">OFF</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <main class="main-content">
     <div class="layout">
 <% if (!simplifiedSidebar) { %>
       <aside class="sidebar" id="sidebar" aria-hidden="false">
         <div class="sidebar-header">
-          <span class="sidebar-header-title">xMelayu</span>
-          <button class="sidebar-close" onclick="closeSidebar()" aria-label="Close navigation menu">×</button>
+          <button class="sidebar-close" onclick="closeSidebar()" aria-label="Close navigation">×</button>
         </div>
 
-        <!-- Super X Melayu — top spot -->
+        <!-- Super X Melayu — featured -->
         <div class="sidebar-section sidebar-superx-top">
-          <a href="/super-x-melayu" class="sidebar-superx-link" title="Super X Melayu Malay Pron — xMelayu.Online Malaysian Chinese xx Amateur xxx-matuer xamatuer melayu x www video rakam bilik tudung terkini lucah Malay Pron seks awek">🔥 Super X Melayu <span class="sidebar-superx-badge">MALAY PRON</span></a>
+          <a href="/super-x-melayu" class="sidebar-superx-link">🔥 Super X Melayu <span class="sidebar-superx-badge">MALAY PRON</span></a>
         </div>
 
-        <!-- Tier 1 Navigation -->
+        <!-- Site Navigation -->
         <div class="sidebar-section sidebar-tier1">
-          <div class="sidebar-title">Tier 1</div>
+          <div class="sidebar-title">Explore</div>
           <a href="/mega-x-melayu" class="sidebar-tier1-link">🚀 Mega X Melayu</a>
           <a href="/xmateur" class="sidebar-tier1-link">🎯 xMateur</a>
           <a href="/xamateur" class="sidebar-tier1-link">💎 xAmateur</a>
@@ -502,32 +603,13 @@ var juicy_tags = ['a', 'img'];
           <div class="stats-row">
             <span class="stats-label">Videos</span>
             <span class="stats-value" id="statVideos"><%= totalVideos %></span>
-          </div>
-          <div class="stats-row">
+            <span class="stats-sep">|</span>
             <span class="stats-label">Views</span>
             <span class="stats-value" id="statViews"><%= typeof totalViews !== 'undefined' ? totalViews.toLocaleString() : '—' %></span>
-          </div>
-          <div class="stats-row">
+            <span class="stats-sep">|</span>
             <span class="stats-label">Updated</span>
             <span class="stats-value" id="statUpdated">Today</span>
           </div>
-        </div>
-
-        <!-- Top Categories -->
-        <div class="sidebar-section">
-          <div class="sidebar-title">Categories</div>
-          <nav class="category-nav" id="categoryNav">
-            <a href="#" class="category-item active" data-category="all">
-              <span class="cat-name">All Videos</span>
-              <span class="cat-count"><%= totalVideos %></span>
-            </a>
-            <% categories.slice(0, 10).forEach(([name, count]) => { %>
-              <a href="#" class="category-item" data-category="<%= name.toLowerCase() %>">
-                <span class="cat-name"><%= name %></span>
-                <span class="cat-count"><%= count %></span>
-              </a>
-            <% }) %>
-          </nav>
         </div>
 
         <!-- Mega X X Melayu Toggle -->
@@ -539,11 +621,20 @@ var juicy_tags = ['a', 'img'];
           </button>
         </div>
 
-        <!-- Ad -->
-        <div class="sidebar-section ad-holder--sidebar">
-          <ins id="sd-g1" data-width="300" data-height="250"></ins>
-          <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-          <script>gtag('event', 'ad_impression', { ad_zone: '1118840', ad_type: 'sidebar' });</script>
+        <!-- Ad (stable slots to reduce CLS) -->
+        <div class="sidebar-section ad-holder--sidebar" aria-label="Sidebar ads">
+          <div style="width:100%; display:flex; justify-content:center; padding:10px 0;">
+            <ins id="1120025" data-width="728" data-height="90"></ins>
+            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
+          </div>
+          <div style="width:100%; display:flex; justify-content:center; padding:6px 0;">
+            <ins id="1120026" data-width="300" data-height="50"></ins>
+            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120026});</script>
+          </div>
+          <div style="width:100%; display:flex; justify-content:center; padding:10px 0;">
+            <ins id="1120027" data-width="728" data-height="90"></ins>
+            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120027});</script>
+          </div>
         </div>
         <div class="sidebar-footer">
           <a href="/terms" class="sidebar-link">Terms</a>
@@ -557,29 +648,10 @@ var juicy_tags = ['a', 'img'];
       </aside>
 <% } %>
 <% if (!simplifiedSidebar) { %>
-      <!-- Mobile Filter Panel -->
-      <div class="mobile-filter-panel" id="mobileFilterPanel">
-        <div class="filter-panel-header">
-          <div class="filter-title">Filters</div>
-          <button class="close-panel" onclick="closeMobileFilter()">×</button>
-        </div>
-        <div class="filter-panel-content">
-          <div class="mobile-section">
-            <h4>Categories</h4>
-            <div class="mobile-categories" id="mobileCategoryNav">
-              <a href="#" class="mobile-cat-btn active" data-category="all">All</a>
-              <% categories.forEach(([name, count]) => { %>
-                <a href="#" class="mobile-cat-btn" data-category="<%= name.toLowerCase() %>"><%= name %></a>
-              <% }) %>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="filter-overlay" id="filterOverlay" onclick="closeMobileFilter()"></div>
 <% } %>
       <div class="content-area" id="contentArea">
 <% if (simplifiedSidebar) { %>
-        <div class="super-x">
+        <div class="super-x" id="topHero">
           <span class="super-x-badge" style="background:linear-gradient(135deg,#ff2d55,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:clamp(16px,3vw,32px);letter-spacing:1px"><%= typeof heroConfig !== 'undefined' && heroConfig.badge ? heroConfig.badge : 'Super X Melayu' %></span>
           <h1 style="display:flex;flex-direction:column;align-items:center;gap:4px"><span><%= typeof heroConfig !== 'undefined' && heroConfig.h1 ? heroConfig.h1 : 'Super X Melayu Malay Pron — Seks Awek Tudung Lucah' %></span><span style="font-size:clamp(14px,2vw,22px);background:none;-webkit-background-clip:unset;-webkit-text-fill-color:#b0b0b8;background-clip:unset"><%= typeof heroConfig !== 'undefined' && heroConfig.h1Sub ? heroConfig.h1Sub : 'Malaysian Chinese xx amateur xxx-matuer xamatuer melayu x www video rakam bilik terkini' %></span></h1>
           <div class="super-x-sub"><%= typeof heroConfig !== 'undefined' && heroConfig.subtitle ? heroConfig.subtitle : 'Curated Asian Amateur Porn — xMateur xAmateur xx Amateur Asian Collection' %></div>
@@ -616,7 +688,7 @@ var juicy_tags = ['a', 'img'];
         <!-- AUTO-PLAY TRENDING CAROUSEL (Super X) -->
         <div class="superx-carousel-section" id="superxCarousel" style="display:none;">
           <div class="superx-carousel-header">
-            <h2 class="superx-section-title">🔥 Hot Trending</h2>
+            <h2 class="superx-section-title">Hot Trending Videos</h2>
             <div class="superx-carousel-controls">
               <button class="superx-carousel-btn" id="superxPlayPauseBtn" onclick="superxToggleCarousel()">
                 <span id="superxPlayPauseIcon">⏸️</span>
@@ -631,7 +703,11 @@ var juicy_tags = ['a', 'img'];
 <% } %>
 <% if (!simplifiedSidebar) { %>
         <div class="hero-section">
-          <h1>Lucahman <strong>Melayu Porn</strong> — Awek Tudung Video Malaysia 18+</h1>
+          <% if (typeof filterH1 !== 'undefined' && filterH1) { %>
+          <h1><%- filterH1 %></h1>
+          <% } else { %>
+          <h1>Lucahman <strong>Melayu Porn</strong> &mdash; Awek Tudung Video Malaysia 18+</h1>
+          <% } %>
           <h2 style="font-size:clamp(14px,1.8vw,20px);color:#b0b0b8;text-align:center;margin:0 auto 16px;max-width:800px;font-weight:500;line-height:1.5">Malay seks <strong>awek tudung</strong> lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www</h2>
           <h3 style="font-size:13px;color:#888;text-align:center;margin:0 auto 12px;max-width:600px;font-weight:400">Malaysian amateur porn collection — Malay pron, <strong>Melayu lucah</strong>, awek tudung bokep malay video. Updated daily.</h3>
           <h4 style="font-size:11px;color:#666;text-align:center;margin:0 auto;font-weight:400">xmelayu . x melayu . xx melayu . xmalay . Lucahman . Malay porn . Awek Tudung . Malaysian adult . Indonesian videos . HD streaming . 18+ Malaysia</h4>
@@ -644,7 +720,7 @@ var juicy_tags = ['a', 'img'];
         <div class="carousel-section" id="carousel-amateur" style="display:none;">
           <div class="carousel-header">
             <div class="carousel-header-left">
-              <h2 class="section-title">📹 xnateur Amateur Collection — Malay Amateur 18+</h2>
+              <h2 class="section-title">xnateur Amateur Collection — Malay Amateur Videos 18+</h2>
               <h3 class="section-subtitle">xnateur amateur malay videos — authentic local amateur collection</h3>
             </div>
             <div class="carousel-controls">
@@ -663,7 +739,7 @@ var juicy_tags = ['a', 'img'];
         <div class="carousel-section" id="carousel-tudung" style="display:none;">
           <div class="carousel-header">
             <div class="carousel-header-left">
-              <h2 class="section-title">🧕 xnateur Awek Tudung Amateur — asianleaks Hijab Malaysia 18+</h2>
+              <h2 class="section-title">xnateur Awek Tudung Amateur — Hijab Malaysia Videos 18+</h2>
               <h3 class="section-subtitle">xnateur awek tudung bogel asianleaks — hijab melayu koleksi eksklusif</h3>
             </div>
             <div class="carousel-controls">
@@ -682,7 +758,7 @@ var juicy_tags = ['a', 'img'];
         <div class="carousel-section" id="carousel-viral" style="display:none;">
           <div class="carousel-header">
             <div class="carousel-header-left">
-              <h2 class="section-title">📈 xnateur Viral Malaysia — asianleaks Scandal &amp; Bocor 18+</h2>
+              <h2 class="section-title">xnateur Viral Malaysia — Scandal &amp; Leaked Videos 18+</h2>
               <h3 class="section-subtitle">xnateur viral malaysia asianleaks scandal bocor trending 18+</h3>
             </div>
             <div class="carousel-controls">
@@ -714,14 +790,23 @@ var juicy_tags = ['a', 'img'];
     </div>
   </main>
 
-  <div class="ad-holder ad-holder--strip">
-    <ins id="f-g1" data-width="300" data-height="250"></ins>
+  <div class="ad-holder ad-holder--strip" style="min-height:540px">
+    <div style="height:250px"><ins id="f-g1" data-width="300" data-height="250"></ins></div>
     <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
     <script>gtag('event', 'ad_impression', { ad_zone: '1118844', ad_type: 'footer_strip' });</script>
-    <ins id="f-g2" data-width="300" data-height="250"></ins>
+    <div style="height:250px"><ins id="f-g2" data-width="300" data-height="250"></ins></div>
     <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
     <script>gtag('event', 'ad_impression', { ad_zone: '1118846', ad_type: 'footer_strip' });</script>
+    <div class="ad-row" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 0">
+      <div class="ad-slot-placeholder" style="width:108px;height:140px;margin:0"><ins id="1120028" data-width="108" data-height="140"></ins></div>
+      <div class="ad-slot-placeholder" style="width:133px;height:139px;margin:0"><ins id="1120029" data-width="133" data-height="139"></ins></div>
+    </div>
+    <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+    <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
+    <script>gtag('event', 'ad_impression', { ad_zone: '1120028', ad_type: 'footer_strip_extra' });</script>
+    <script>gtag('event', 'ad_impression', { ad_zone: '1120029', ad_type: 'footer_strip_extra' });</script>
   </div>
+
 
 <% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
   <%- include('_about-superx') %>
@@ -736,7 +821,7 @@ var juicy_tags = ['a', 'img'];
 
   <script>
     const state = {
-      query: '', category: '', tag: '', sort: 'newest',
+      query: '', category: '<%= typeof filterCategory !== 'undefined' ? filterCategory : '' %>', tag: '', sort: 'newest',
       action: '', fetish: '', quality: '', duration: '', region: '',
       totalVideos: 0, isLoading: false, hasMore: true,
       batchVideos: [], batchIndex: 0, batchSize: 50,
@@ -800,82 +885,308 @@ var juicy_tags = ['a', 'img'];
 
     function h(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-    function openFloatingPlayer(videoId) {
-      if (floatingPlayer) return closeFloatingPlayer();
+    function initBatchVideosFromDOM() {
+      document.querySelectorAll('.video-card[data-id]').forEach(function(el) {
+        var id = el.dataset.id;
+        if (id && !state.batchVideos.some(function(v) { return v.id === id; })) {
+          state.batchVideos.push({
+            id: id,
+            video: el.dataset.preview || '',
+            title: (el.querySelector('.v-title')?.textContent || '').trim(),
+            keywords: [],
+            category: (el.querySelector('.v-meta')?.textContent || '').trim()
+          });
+        }
+      });
+    }
 
-      const videoData = state.batchVideos.find(v => v.id === videoId);
+    function buildFloatingPlayerHtml(videoData, index, total) {
+      var safeTitle = h(videoData.title);
+      var cat = h(videoData.category || 'melayu');
+      var views = videoData.views ? videoData.views.toLocaleString() : '—';
+      var relatedHtml = buildRelatedStrip(videoData, index, total);
+      var likeState = window.likedVideos && window.likedVideos[videoData.id] ? ' liked' : '';
+      return '<div class="floating-player" id="floatingPlayer" data-current-id="' + videoData.id + '">' +
+        '<div class="floating-player-content">' +
+          '<button class="fp-close" onclick="closeFloatingPlayer()">✕</button>' +
+          '<div class="fp-video">' +
+            '<video id="fpVideoPlayer" controls playsinline title="' + safeTitle + ' - xMelayu.Online">' +
+              '<source src="' + videoData.video + '" type="video/mp4">' +
+            '</video>' +
+            (index > 0 ? '<button class="fp-nav fp-nav-prev" onclick="navigateFloatingPlayer(-1)">◀</button>' : '') +
+            (index < total - 1 ? '<button class="fp-nav fp-nav-next" onclick="navigateFloatingPlayer(1)">▶</button>' : '') +
+          '</div>' +
+          '<div class="fp-info">' +
+            '<div class="fp-title" title="' + safeTitle + '">' + safeTitle + '</div>' +
+            '<div class="fp-meta">' +
+              '<span class="fp-meta-row"><span class="fp-counter" id="fpCounter">' + (index + 1) + ' / ' + total + '</span></span>' +
+              '<span class="fp-meta-row"><span class="fp-views">' + views + ' views</span></span>' +
+              '<button class="fp-like-btn' + likeState + '" data-id="' + videoData.id + '" onclick="event.stopPropagation();fpToggleLike(this,\'' + videoData.id + '\')">♡ <span class="fp-like-count">' + (videoData.likes || 0) + '</span></button>' +
+            '</div>' +
+            '<div class="fp-keywords">' +
+              (videoData.keywords || []).slice(0, 8).map(function(k) { return '<span class="fp-kw">#' + h(k) + '</span>'; }).join('') +
+            '</div>' +
+            '<div class="fp-desc" id="fpDesc"></div>' +
+            '<div class="fp-ad"><ins id="fpAdBanner" data-width="300" data-height="250"></ins></div>' +
+            '<div class="fp-links">' +
+              '<a href="/' + videoData.id + '" class="fp-link-btn fp-link-full" title="Open full ' + safeTitle + ' on xMelayu.Online">Open Full Page →</a>' +
+              '<a href="/?q=' + encodeURIComponent(cat) + '" class="fp-link-btn" style="background:var(--bg3)" title="More ' + cat + ' videos">🎬 ' + cat + '</a>' +
+            '</div>' +
+            relatedHtml +
+            '<div class="fp-native" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a"></div>' +
+            '<button class="fp-back" onclick="closeFloatingPlayer()">← Back to Gallery</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function buildRelatedStrip(current, index, total) {
+      var others = state.batchVideos.filter(function(v, i) { return i !== index && v.id !== current.id; }).slice(0, 10);
+      if (others.length === 0) return '';
+      var cards = others.map(function(v) {
+        var t = h(v.title || '');
+        var thumb = v.thumbnail || '/thumbnails/' + v.id + '.jpg';
+        return '<a href="/' + v.id + '" class="fp-related-card" onclick="event.preventDefault();navigateFloatingPlayerTo(\'' + v.id + '\')">' +
+          '<img src="' + thumb + '" alt="' + t + '" loading="lazy" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg==\'">' +
+          '<div class="r-title">' + t + '</div></a>';
+      }).join('');
+      return '<div class="fp-related"><div class="fp-related-title">More Videos</div><div class="fp-related-track">' + cards + '</div></div>';
+    }
+
+    function renderAdZones(container, adHtml) {
+      if (!container) return;
+      if (!adHtml) return;
+      // Insert pre-built ad HTML (ins elements with zone-ID-as-element-id)
+      var temp = document.createElement('div');
+      temp.innerHTML = adHtml;
+      // Extract and re-insert children to avoid wrapper div
+      while (temp.firstChild) container.appendChild(temp.firstChild);
+      // Push each zone to adsbyjuicy so jads.js fills the ins elements
+      var insList = container.querySelectorAll('ins[id]');
+      insList.forEach(function(ins) {
+        var z = parseInt(ins.id, 10);
+        if (z) (adsbyjuicy = window.adsbyjuicy || []).push({'adzone': z});
+      });
+      // Native ad - script loaded in head with defer, it auto-scans for [data-id="juicyads-native-ads"]
+    }
+
+    function fetchFloatingPlayerDesc(videoId) {
+      fetch('/api/video-descriptions/' + videoId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var de = document.getElementById('fpDesc');
+          if (!de) return;
+          de.innerHTML = '';
+          if (data.text) {
+            var p = document.createElement('div');
+            p.className = 'fp-desc-text';
+            p.innerHTML = data.text.substring(0, 400);
+            de.appendChild(p);
+          }
+          // Render ad HTML directly in the description panel
+          if (data.adHtml) renderAdZones(de, data.adHtml);
+        })
+        .catch(function() {});
+    }
+
+    function updateFloatingPlayerNav(index, total) {
+      var fp = document.getElementById('floatingPlayer');
+      if (!fp) return;
+      var videoWrap = fp.querySelector('.fp-video');
+      if (!videoWrap) return;
+      var existing = videoWrap.querySelectorAll('.fp-nav');
+      existing.forEach(function(el) { el.remove(); });
+      if (index > 0) {
+        var prev = document.createElement('button');
+        prev.className = 'fp-nav fp-nav-prev';
+        prev.textContent = '◀';
+        prev.onclick = function() { navigateFloatingPlayer(-1); };
+        videoWrap.appendChild(prev);
+      }
+      if (index < total - 1) {
+        var next = document.createElement('button');
+        next.className = 'fp-nav fp-nav-next';
+        next.textContent = '▶';
+        next.onclick = function() { navigateFloatingPlayer(1); };
+        videoWrap.appendChild(next);
+      }
+    }
+
+    function navigateFloatingPlayer(dir) {
+      var fp = document.getElementById('floatingPlayer');
+      if (!fp) return;
+      var curId = fp.dataset.currentId;
+      if (!curId) return;
+      var idx = state.batchVideos.findIndex(function(v) { return v.id === curId; });
+      if (idx === -1) return;
+      var newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= state.batchVideos.length) return;
+      var next = state.batchVideos[newIdx];
+      if (!next || !next.video) return;
+
+      var fpv = document.getElementById('fpVideoPlayer');
+      if (fpv) {
+        var source = fpv.querySelector('source');
+        if (source) source.src = next.video;
+        fpv.load();
+        fpv.play();
+      }
+
+      var info = document.querySelector('.fp-info');
+      if (info) {
+        var safeTitle = h(next.title);
+        var cat = h(next.category || 'melayu');
+        var views = next.views ? next.views.toLocaleString() : '—';
+        var likeState = window.likedVideos && window.likedVideos[next.id] ? ' liked' : '';
+        var relatedHtml = buildRelatedStrip(next, newIdx, state.batchVideos.length);
+        info.innerHTML =
+          '<div class="fp-title" title="' + safeTitle + '">' + safeTitle + '</div>' +
+          '<div class="fp-meta">' +
+            '<span class="fp-meta-row"><span class="fp-counter" id="fpCounter">' + (newIdx + 1) + ' / ' + state.batchVideos.length + '</span></span>' +
+            '<span class="fp-meta-row"><span class="fp-views">' + views + ' views</span></span>' +
+            '<button class="fp-like-btn' + likeState + '" data-id="' + next.id + '" onclick="event.stopPropagation();fpToggleLike(this,\'' + next.id + '\')">♡ <span class="fp-like-count">' + (next.likes || 0) + '</span></button>' +
+          '</div>' +
+          '<div class="fp-keywords">' +
+            (next.keywords || []).slice(0, 8).map(function(k) { return '<span class="fp-kw">#' + h(k) + '</span>'; }).join('') +
+          '</div>' +
+          '<div class="fp-desc" id="fpDesc"></div>' +
+          '<div class="fp-ad"><ins id="fpAdBanner" data-width="300" data-height="250"></ins></div>' +
+          '<div class="fp-links">' +
+            '<a href="/' + next.id + '" class="fp-link-btn fp-link-full" title="Open full ' + safeTitle + '">Open Full Page →</a>' +
+            '<a href="/?q=' + encodeURIComponent(cat) + '" class="fp-link-btn" style="background:var(--bg3)" title="More ' + cat + ' videos">🎬 ' + cat + '</a>' +
+          '</div>' +
+          relatedHtml +
+          '<div class="fp-native" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a"></div>' +
+          '<button class="fp-back" onclick="closeFloatingPlayer()">← Back to Gallery</button>';
+      }
+
+      updateFloatingPlayerNav(newIdx, state.batchVideos.length);
+      fp.dataset.currentId = next.id;
+
+      (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});
+      fetchFloatingPlayerDesc(next.id);
+      gtag('event', 'video_play', { video_id: next.id, video_title: next.title, video_category: next.category });
+    }
+
+    function navigateFloatingPlayerTo(id) {
+      var fp = document.getElementById('floatingPlayer');
+      if (!fp) return;
+      var idx = state.batchVideos.findIndex(function(v) { return v.id === id; });
+      if (idx === -1) return;
+      var curId = fp.dataset.currentId;
+      var curIdx = state.batchVideos.findIndex(function(v) { return v.id === curId; });
+      if (curIdx === -1) return;
+      var dir = idx > curIdx ? 1 : -1;
+      while (fp.dataset.currentId !== id) navigateFloatingPlayer(dir);
+    }
+
+    function openFloatingPlayer(videoId, cardEl) {
+      if (floatingPlayer) closeFloatingPlayer();
+
+      var videoData = state.batchVideos.find(function(v) { return v.id === videoId; });
+      if (!videoData?.video && cardEl) {
+        videoData = {
+          id: videoId,
+          video: cardEl.dataset.preview || '',
+          title: (cardEl.querySelector('.v-title')?.textContent || videoId).trim(),
+          keywords: [],
+          category: (cardEl.querySelector('.v-meta')?.textContent || 'melayu').trim()
+        };
+      }
       if (!videoData?.video) return window.location.href = '/' + videoId;
 
-      const safeTitle = h(videoData.title);
-      const kw = h((videoData.keywords || []).slice(0, 8).join(', '));
-      const cat = h(videoData.category || 'melayu');
-      const playerHtml = `
-        <div class="floating-player" id="floatingPlayer">
-          <div class="floating-player-content">
-            <button class="fp-close" onclick="closeFloatingPlayer()">✕</button>
-            <div class="fp-video">
-              <video id="fpVideoPlayer" controls playsinline title="${safeTitle} - xMelayu.Online | Awek Tudung | Video Melayu HD | ${kw}">
-                <source src="${videoData.video}" type="video/mp4">
-              </video>
-            </div>
-            <div class="fp-info">
-              <div class="fp-title" title="${safeTitle}">${safeTitle}</div>
-              <div class="fp-keywords">
-                ${(videoData.keywords || []).slice(0, 8).map(k => `<span class="fp-kw">#${h(k)}</span>`).join('')}
-              </div>
-              <div class="fp-desc" id="fpDesc"></div>
-              <div class="fp-links">
-                <a href="/${videoId}" class="fp-link-btn" target="_blank" rel="noopener" title="Open full ${safeTitle} on xMelayu.Online">📄 Full Page</a>
-                <a href="/?q=${encodeURIComponent(cat)}" class="fp-link-btn" style="background:var(--bg3)" title="More ${cat} videos on xMelayu.Online">🎬 ${cat}</a>
-              </div>
-              <div class="fp-seo">
-                <a href="/${videoId}" title="${safeTitle} - xMelayu.Online video melayu awek tudung ${kw}">${safeTitle}</a>
-                <a href="/?q=${encodeURIComponent(cat)}" title="${cat} videos xMelayu.Online">${cat}</a>
-                <a href="/?q=awek+tudung" title="awek tudung xMelayu.Online">awek+tudung</a>
-                <a href="/?q=viral" title="viral scandal xMelayu.Online">viral</a>
-                <a href="/?q=montok" title="montok xMelayu.Online">montok</a>
-                <a href="/?q=indonesian" title="indonesian hot xMelayu.Online">indonesian</a>
-                <a href="/?q=thai" title="thai sexy xMelayu.Online">thai</a>
-              </div>
-              <button class="fp-back" onclick="closeFloatingPlayer()">← Back to Gallery</button>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.insertAdjacentHTML('beforeend', playerHtml);
+      var index = state.batchVideos.findIndex(function(v) { return v.id === videoId; });
+      if (index === -1) {
+        state.batchVideos.push(videoData);
+        index = state.batchVideos.length - 1;
+      }
+      var total = state.batchVideos.length;
+
+      document.body.insertAdjacentHTML('beforeend', buildFloatingPlayerHtml(videoData, index, total));
       floatingPlayer = document.getElementById('floatingPlayer');
       document.body.style.overflow = 'hidden';
-      const fpv = document.getElementById('fpVideoPlayer');
+      var fpv = document.getElementById('fpVideoPlayer');
       if (fpv) fpv.play();
 
       gtag('event', 'page_view', { page_title: videoData.title, page_location: '/' + videoId });
       gtag('event', 'video_play', { video_id: videoId, video_title: videoData.title, video_category: videoData.category });
 
-      fetch('/api/video-descriptions/' + videoId)
-        .then(r => r.json())
-        .then(data => {
-          if (data.text) {
-            const descEl = document.getElementById('fpDesc');
-            if (descEl) descEl.textContent = data.text.substring(0, 200);
-          }
-        })
-        .catch(() => {});
+      (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});
+      fetchFloatingPlayerDesc(videoId);
 
-      floatingPlayer.addEventListener('click', (e) => {
+      floatingPlayer.addEventListener('click', function(e) {
         if (e.target === floatingPlayer) closeFloatingPlayer();
       });
 
-      fetch('/' + videoId, { mode: 'no-cors' }).catch(() => {});
+      // Track time watched
+      var fpPlayStart = Date.now();
+      var fpvEl = document.getElementById('fpVideoPlayer');
+      if (fpvEl) {
+        fpvEl.addEventListener('pause', function onPause() {
+          var elapsed = Math.round((Date.now() - fpPlayStart) / 1000);
+          if (elapsed > 5) gtag('event', 'video_watch', { video_id: videoId, seconds: elapsed });
+          fpvEl.removeEventListener('pause', onPause);
+        });
+      }
+
+      // Swipe gestures
+      setupFpSwipe(floatingPlayer);
+
+      fetch('/' + videoId, { mode: 'no-cors' }).catch(function(){});
+    }
+
+    function fpToggleLike(btn, id) {
+      btn.classList.toggle('liked');
+      var countEl = btn.querySelector('.fp-like-count');
+      var count = parseInt(countEl.textContent) || 0;
+      countEl.textContent = btn.classList.contains('liked') ? count + 1 : Math.max(0, count - 1);
+      if (window.toggleLike) toggleLike(id, btn);
+      gtag('event', 'video_like', { video_id: id });
     }
 
     function closeFloatingPlayer() {
       if (floatingPlayer) {
         const v = document.getElementById('fpVideoPlayer');
         if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+        var lastId = floatingPlayer.dataset.currentId;
         floatingPlayer.remove();
         floatingPlayer = null;
         document.body.style.overflow = '';
+        if (lastId) gtag('event', 'video_close', { video_id: lastId });
       }
+    }
+
+    var fpSwipeState = { startX: 0, startY: 0, startTime: 0 };
+    function setupFpSwipe(container) {
+      if (!container) return;
+      container.addEventListener('touchstart', function(e) {
+        var t = e.changedTouches[0];
+        fpSwipeState.startX = t.clientX;
+        fpSwipeState.startY = t.clientY;
+        fpSwipeState.startTime = Date.now();
+      }, { passive: true });
+      container.addEventListener('touchend', function(e) {
+        var t = e.changedTouches[0];
+        var dx = t.clientX - fpSwipeState.startX;
+        var dy = t.clientY - fpSwipeState.startY;
+        var dt = Date.now() - fpSwipeState.startTime;
+        if (dt > 500) return;
+        var absDx = Math.abs(dx);
+        var absDy = Math.abs(dy);
+        // Swipe down to close
+        if (dy > 80 && absDx < absDy * 0.6) {
+          closeFloatingPlayer();
+          gtag('event', 'video_swipe_close', {});
+          return;
+        }
+        // Swipe left/right to navigate
+        if (absDx > 60 && absDx > absDy * 1.5) {
+          var fp = document.getElementById('floatingPlayer');
+          if (!fp) return;
+          if (dx < 0) navigateFloatingPlayer(1);
+          else navigateFloatingPlayer(-1);
+        }
+      }, { passive: true });
     }
 
     // Auto-play trending carousel (Super X)
@@ -890,7 +1201,7 @@ var juicy_tags = ['a', 'img'];
       if (track) track.innerHTML = superxCarouselVideos.map(function(v) {
         var thumb = v.thumbnailJpg || '/thumbnails/' + v.id + '.jpg';
         return '<div class="superx-carousel-card" data-id="' + v.id + '">' +
-          '<div class="superx-carousel-thumb"><img src="' + thumb + '" alt="' + (v.title || '') + '" loading="lazy">' +
+          '<div class="superx-carousel-thumb"><img src="' + thumb + '" alt="' + cleanAlt(v) + '" loading="lazy">' +
           '<video muted loop playsinline preload="none"></video>' +
           '<span class="superx-c-views">' + (v.views ? v.views.toLocaleString() : '0') + ' views</span>' +
           '<span class="superx-c-dur">00:' + String(Math.floor(Math.random() * 30 + 3)).padStart(2,'0') + '</span></div>' +
@@ -955,7 +1266,7 @@ var juicy_tags = ['a', 'img'];
       if (card && card.dataset.id) {
         e.preventDefault();
         killAllPreviews();
-        openFloatingPlayer(card.dataset.id);
+        openFloatingPlayer(card.dataset.id, card);
       }
     });
 
@@ -973,13 +1284,13 @@ var juicy_tags = ['a', 'img'];
       }
     });
 
-    // ESC closes floating overlay
+    // ESC closes floating overlay; ← → navigates
     document.addEventListener('keydown', function(e) {
-      if (e.key !== 'Escape') return;
-      const fp = document.getElementById('floatingPlayer');
+      var fp = document.getElementById('floatingPlayer');
       if (!fp) return;
-      e.preventDefault();
-      closeFloatingPlayer();
+      if (e.key === 'Escape') { e.preventDefault(); closeFloatingPlayer(); return; }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); navigateFloatingPlayer(-1); return; }
+      if (e.key === 'ArrowRight') { e.preventDefault(); navigateFloatingPlayer(1); return; }
     }, { capture: true });
 
     function toast(msg) {
@@ -1028,91 +1339,66 @@ var juicy_tags = ['a', 'img'];
       observer.observe(scrollTrigger);
     }
 
-    // Mobile menu toggle
+    // Mobile menu toggle (bottom sheet panel)
     function toggleMobileMenu() {
-      const sidebar = document.getElementById('sidebar');
-      if (!sidebar) return;
-      const btn = document.getElementById('mobileMenuBtn');
-      if (window.innerWidth > 768) {
-        // Desktop: toggle closed class
-        sidebar.classList.toggle('closed');
-        return;
-      }
-      const isOpen = sidebar.classList.toggle('show-mobile');
-      sidebar.setAttribute('aria-hidden', !isOpen);
-      btn.setAttribute('aria-expanded', isOpen);
-      document.body.classList.toggle('sidebar-open', isOpen);
+      const panel = document.getElementById('mobileMenuPanel');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      if (!panel || !overlay) return;
+      const isOpen = panel.classList.toggle('show');
+      overlay.classList.toggle('show', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     }
+    function closeMobileMenu() {
+      const panel = document.getElementById('mobileMenuPanel');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      if (panel) panel.classList.remove('show');
+      if (overlay) overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
 
+    // Desktop sidebar toggle
     function closeSidebar() {
       const sidebar = document.getElementById('sidebar');
-      if (!sidebar) return;
-      if (window.innerWidth > 768) {
-        sidebar.classList.add('closed');
-        return;
-      }
-      sidebar.classList.remove('show-mobile');
-      sidebar.setAttribute('aria-hidden', 'true');
-      const btn = document.getElementById('mobileMenuBtn');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('sidebar-open');
+      if (!sidebar || window.innerWidth <= 768) return;
+      sidebar.classList.toggle('closed');
     }
 
-    // Close sidebar on overlay click, escape
-    document.addEventListener('click', function(e) {
-      const sidebar = document.getElementById('sidebar');
-      if (!sidebar) return;
-      const btn = document.getElementById('mobileMenuBtn');
-      if (window.innerWidth <= 768 && document.body.classList.contains('sidebar-open') && !sidebar.contains(e.target) && !btn?.contains(e.target)) {
-        closeSidebar();
-      }
-    });
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeSidebar();
-    });
-
-    function toggleMegaMode() {
-      const btn = document.getElementById('megaToggle');
+    function toggleMegaMode(btn) {
+      btn = btn || document.querySelector('.mega-toggle-btn');
       if (!btn) return;
       const active = btn.classList.toggle('active');
+      document.querySelectorAll('.mega-toggle-btn').forEach(function(b) {
+        b.classList.toggle('active', active);
+        const st = b.querySelector('.mega-toggle-status');
+        if (st) st.textContent = active ? 'ON' : 'OFF';
+      });
       document.body.classList.toggle('mega-xx', active);
-      btn.querySelector('.mega-toggle-status').textContent = active ? 'ON' : 'OFF';
       try { localStorage.setItem('megaXX', active ? '1' : '0'); } catch {}
     }
     (function loadMegaPref() {
       try {
-        const btn = document.getElementById('megaToggle');
-        if (!btn) return;
-        if (localStorage.getItem('megaXX') === '1') {
-          btn.classList.add('active');
-          document.body.classList.add('mega-xx');
+        const btns = document.querySelectorAll('.mega-toggle-btn');
+        if (!btns.length) return;
+        const active = localStorage.getItem('megaXX') === '1';
+        btns.forEach(function(btn) {
+          btn.classList.toggle('active', active);
           const st = btn.querySelector('.mega-toggle-status');
-          if (st) st.textContent = 'ON';
-        }
+          if (st) st.textContent = active ? 'ON' : 'OFF';
+        });
+        if (active) document.body.classList.add('mega-xx');
       } catch {}
     })();
 
     function showCategories() {
       closeMobileFilter();
       loadVideos();
-      if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-        sidebar.classList.add('show-mobile');
-        sidebar.setAttribute('aria-hidden', 'false');
-        document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'true');
-      }
     }
 
     function showTags() {
       closeMobileFilter();
-      if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-        sidebar.classList.add('show-mobile');
-        sidebar.setAttribute('aria-hidden', 'false');
-        document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'true');
-      }
     }
 
     function showFilters() {
@@ -1146,10 +1432,11 @@ var juicy_tags = ['a', 'img'];
           <div class="carousel-card">
             <div class="video-card" data-id="${v.id}" data-preview="${v.video || ''}">
               <div class="video-thumb" style="position:relative">
-                <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" decoding="async"
+                <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" decoding="async"
                   onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                 <video muted loop preload="none" playsinline></video>
                 ${getBadgeHtml(v)}
+                <button class="like-btn" data-id="${v.id}" onclick="event.stopPropagation();event.preventDefault();toggleLike('${v.id}', this)">♡ <span class="like-count">${v.likes || 0}</span></button>
               </div>
               <div class="v-title">${v.title}</div>
               <span class="v-meta">${v.category || 'Video'}</span>
@@ -1248,6 +1535,10 @@ var juicy_tags = ['a', 'img'];
       return n;
     }
 
+    function cleanAlt(v) {
+      var txt = v.id || v.title || '';
+      return txt.replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
     function formatDuration(seconds) {
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
@@ -1326,7 +1617,7 @@ var juicy_tags = ['a', 'img'];
            data-thumb="${video.thumbnail}">
           <div class="thumb">
             <div class="img-shimmer"></div>
-            <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" decoding="async"
+            <img src="${video.thumbnail}" alt="${cleanAlt(video)}" loading="lazy" decoding="async"
  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
             <video class="card-preview" muted loop preload="none" playsinline></video>
             <div class="overlay"></div>
@@ -1347,7 +1638,7 @@ var juicy_tags = ['a', 'img'];
         <a href="/${video.id}" class="card-mini" data-id="${video.id}" data-preview="${previewVideo}">
           <div class="thumb">
             <div class="img-shimmer"></div>
-            <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" decoding="async"
+            <img src="${video.thumbnail}" alt="${cleanAlt(video)}" loading="lazy" decoding="async"
  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
             <video class="card-preview" muted loop preload="none" playsinline></video>
             <div class="overlay"></div>
@@ -1371,7 +1662,7 @@ var juicy_tags = ['a', 'img'];
           <a href="/${video.id}" class="hero-main"
            data-id="${video.id}"
            data-preview="${previewVideo}">
-            <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" class="hero-thumb" width="640" height="360"
+            <img src="${video.thumbnail}" alt="${cleanAlt(video)}" loading="lazy" class="hero-thumb" width="640" height="360"
  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMzYwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIvPjwvc3ZnPg=='">
             <video class="hero-preview" muted loop preload="none" playsinline></video>
             <span class="hero-badge">🔥 Hot</span>
@@ -1390,7 +1681,7 @@ var juicy_tags = ['a', 'img'];
           <a href="/${video.id}" class="hero-side-card"
            data-id="${video.id}"
            data-preview="${previewVideo}">
-            <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" class="hero-thumb" width="640" height="360"
+            <img src="${video.thumbnail}" alt="${cleanAlt(video)}" loading="lazy" class="hero-thumb" width="640" height="360"
  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMzYwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIvPjwvc3ZnPg=='">
             <video class="hero-preview" muted loop preload="none" playsinline></video>
             <div class="hero-side-overlay">
@@ -1428,7 +1719,7 @@ var juicy_tags = ['a', 'img'];
       const kw = ['super x melayu malay pron','melayu x www','seks','awek','video rakam','bilik','tudung','terkini','lucah','malay','malaysian chinese','xx','amateur','xxx-matuer','xamatuer'];
       function maybeKw(s){return Math.random()>0.55?s+' <span style="font-weight:300;font-size:0.7em;color:var(--text-muted)">— '+kw.sort(()=>Math.random()-0.5).slice(0,2).join(' / ')+'</span>':s;}
       var h2 = maybeKw(seoTitle.h2), h3 = seoTitle.h3 ? maybeKw(seoTitle.h3) : '';
-      return '<div class="feed-section '+extraClass+'"><div class="section-header"><div class="section-title"><h2>'+h2+'</h2>'+(h3?'<h3>'+h3+'</h3>':'')+(seoTitle.badge?'<span class="section-badge '+seoTitle.badgeClass+'">'+seoTitle.badge+'</span>':'')+'</div><a href="#" class="section-link" onclick="event.preventDefault(); loadMore(this.dataset.type);" data-type="'+type+'">View all →</a></div>'+content+'</div>';
+      return '<div class="feed-section '+extraClass+'"><div class="section-header"><div class="section-title"><h3>'+h2+'</h3>'+(h3?'<span class="section-sub">'+h3+'</span>':'')+(seoTitle.badge?'<span class="section-badge '+seoTitle.badgeClass+'">'+seoTitle.badge+'</span>':'')+'</div><a href="#" class="section-link" onclick="event.preventDefault(); loadMore(this.dataset.type);" data-type="'+type+'">View all →</a></div>'+content+'</div>';
     }
     const layoutPatterns = [
       ['carousel', 'grid-4', 'list', 'grid-5'],
@@ -1441,17 +1732,17 @@ var juicy_tags = ['a', 'img'];
     ];
     function getSectionTitle(pattern) {
       const titles = {
-        'carousel': ['🔥 Hot This Week', '👑 Most Viewed', '❤️ Trending'],
-        'grid-4': ['📺 Recent Uploads', '🎬 Fresh Content', '📺 New Arrivals'],
-        'grid-3': ['🎬 Editor\'s Choice', '✨ Featured', '🌟 Premium Picks'],
-        'grid-5': ['👀 Keep Watching', '🔄 More to Explore', '📺 Similar Videos'],
-        'grid-6': ['⚡ Quick Picks', '🔗 Related', '🌐 You May Like'],
-        'list': ['📋 Top 10', '🏆 Best of the Week', '📋 Editor\'s Picks'],
-        'compact': ['🔗 Quick Browse', '🔗 More Like This', '🔗 Related'],
-        'stagger': ['🎨 Visual Variety', '🌈 Mix It Up', '🎨 Curated Mix']
+        'carousel': ['Malay Amateur Videos Trending', 'Most Viewed Malay Porn', 'Trending Malay Videos'],
+        'grid-4': ['New Malay Amateur Uploads', 'Fresh Malay Adult Content', 'Latest Malay Porn Videos'],
+        'grid-3': ['Curated Malay Amateur Picks', 'Featured Malay Videos', 'Premium Malay Adult Videos'],
+        'grid-5': ['Keep Watching Malay Videos', 'More Malay Amateur Videos', 'Similar Malay Porn Content'],
+        'grid-6': ['Quick Malay Video Picks', 'Related Malay Videos', 'You May Also Like'],
+        'list': ['Top Malay Amateur Videos', 'Best Malay Porn This Week', 'Editor\'s Top Malay Picks'],
+        'compact': ['Browse More Malay Videos', 'More Videos Like This', 'Related Malay Content'],
+        'stagger': ['Diverse Malay Video Selection', 'Mixed Malay Amateur Videos', 'Curated Malay Porn Mix']
       };
-      const options = titles[pattern] || ['📺 Videos'];
-      return options[Math.floor(Math.random() * options.length)];
+      const options = titles[pattern] || ['Malay Videos'];
+        return options[Math.floor(Math.random() * options.length)] || 'Malay Videos';
     }
     function buildHomePage(videos) {
       const patterns = [
@@ -1517,28 +1808,29 @@ var juicy_tags = ['a', 'img'];
       const thumb = v.thumbnail || '';
       const vid = v.id;
       const badgeHtml = getBadgeHtml(v);
-      return `<div class="video-card" data-id="${vid}" style="cursor:pointer" data-preview="${v.video || ''}">
+      return `<a href="/${vid}" class="video-card" data-id="${vid}" data-preview="${v.video || ''}">
         <div class="video-thumb" style="position:relative">
-          <img src="${thumb}" alt="${v.title}" loading="lazy" ${idx < 4 ? 'fetchpriority="high"' : ''}>
+          <img src="${thumb}" alt="${cleanAlt(v)}" loading="lazy" ${idx < 4 ? 'fetchpriority="high"' : ''}>
           <video muted loop playsinline preload="none"></video>
           ${badgeHtml}
+          <button class="like-btn" data-id="${vid}" onclick="event.stopPropagation();event.preventDefault();toggleLike('${vid}', this)">♡ <span class="like-count">${v.likes || 0}</span></button>
         </div>
         <div class="v-title">${v.title}</div>
         <span class="v-meta">${v.category || 'Video'}</span>
-      </div>`;
+      </a>`;
     }
 
     const hc = <% if (typeof heroConfig !== 'undefined' && heroConfig) { %><%- JSON.stringify(heroConfig) %><% } else { %>{}<% } %>;
     const CATS = [
-      { t: (hc.cats && hc.cats.tudung) || '🧕 Awek Tudung', p: /tudung|hijab/i },
-      { t: (hc.cats && hc.cats.montok) || '💦 Montok Hot', p: /montok|thick|curvy/i },
-      { t: (hc.cats && hc.cats.indonesian) || '🇮🇩 Indonesian', p: /indon|indonesia|jakarta/i },
-      { t: (hc.cats && hc.cats.thai) || '🇹🇭 Thai Sexy', p: /thai|thailand|bangkok/i },
-      { t: (hc.cats && hc.cats.milf) || '🔥 MILF', p: /milf|mature|emak|bini/i },
-      { t: (hc.cats && hc.cats.chubby) || '🍑 Chubby', p: /chubby|gemuk|bbw/i },
-      { t: (hc.cats && hc.cats.viral) || '📈 Viral', p: /viral|scandal|bocor/i },
-      { t: (hc.cats && hc.cats.janda) || '💋 Janda', p: /janda|dara/i },
-      { t: (hc.cats && hc.cats.kolej) || '🎓 Kolej', p: /kolej|uitm|pelajar/i },
+      { t: 'Awek Tudung Malay Hijab', p: /tudung|hijab/i },
+      { t: 'Montok Malay Amateur', p: /montok|thick|curvy/i },
+      { t: 'Indonesian Amateur Videos', p: /indon|indonesia|jakarta/i },
+      { t: 'Thai Sexy Amateur', p: /thai|thailand|bangkok/i },
+      { t: 'MILF Malay Mature', p: /milf|mature|emak|bini/i },
+      { t: 'Chubby Malay Amateur', p: /chubby|gemuk|bbw/i },
+      { t: 'Viral Malay Scandal', p: /viral|scandal|bocor/i },
+      { t: 'Janda Malay Amateur', p: /janda|dara/i },
+      { t: 'Kolej Malay Amateur', p: /kolej|uitm|pelajar/i },
     ];
 
     function section(title, vids) {
@@ -1547,7 +1839,7 @@ var juicy_tags = ['a', 'img'];
       let gridHtml = '';
       slice.forEach((v, i) => { gridHtml += card(v, i); });
       return `<div class="video-section">
-        <h2 class="s-title">${title}</h2>
+        <h3 class="s-title">${title}</h3>
         <div class="video-grid">${gridHtml}</div>
       </div>`;
     }
@@ -1587,16 +1879,50 @@ var juicy_tags = ['a', 'img'];
 
         requestAnimationFrame(() => {
           const all = shuffle([...state.batchVideos]);
-          const st = hc.sectionTitles || {};
-          let html = section(st.s1 || '✨ Discover', all.slice(0,15));
-          html += section(st.s2 || '🔥 Hot Now', all.slice(15,30));
-          html += section(st.s3 || '🧕 Awek Tudung', all.slice(30,45));
-          html += section(st.s4 || '💦 Montok', all.slice(45,60));
+          let html = section('Discover Malay Amateur', all.slice(0,15));
+          html += section('Hot Malay Porn Now', all.slice(15,30));
+          html += section('Awek Tudung Malay Hijab', all.slice(30,45));
+          html += section('Montok Malay Amateur', all.slice(45,60));
           CATS.forEach(c => {
             const vids = all.filter(v => c.p.test((v.title||'')+' '+kwText(v)));
             if (vids.length > 3) html += section(c.t, vids.slice(0,10));
           });
           feed.innerHTML = html;
+          // Inject random in-feed ads between sections
+          requestAnimationFrame(function() {
+            var adTargets = feed.querySelectorAll('.feed-section');
+            var adCount = Math.min(adTargets.length - 1, 4);
+            var adPositions = [];
+            for (var ai = 0; ai < adCount; ai++) adPositions.push(ai);
+            for (var ai = adPositions.length - 1; ai > 0; ai--) {
+              var aj = Math.floor(Math.random() * (ai + 1));
+              var tmp = adPositions[ai]; adPositions[ai] = adPositions[aj]; adPositions[aj] = tmp;
+            }
+            adPositions.sort(function(a,b){return a-b;});
+            adPositions.forEach(function(pos) {
+              var refNode = adTargets[pos];
+              if (refNode && refNode.parentNode) {
+                var row = document.createElement('div');
+                row.className = 'ad-row';
+                refNode.parentNode.insertBefore(row, refNode.nextSibling);
+                (function(r) {
+                  var az = nextFeedAdZone();
+                  if (!az) return;
+                  var wrap = document.createElement('div');
+                  wrap.className = 'ad-slot-placeholder';
+                  wrap.style.cssText = 'width:100%;max-width:' + az.w + 'px;margin:8px auto';
+                  var ins = document.createElement('ins');
+                  ins.id = az.zone.toString();
+                  ins.setAttribute('data-width', az.w);
+                  ins.setAttribute('data-height', az.h);
+                  wrap.appendChild(ins);
+                  r.appendChild(wrap);
+                  (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':az.zone});
+                  gtag('event', 'ad_impression', { ad_zone: az.zone });
+                })(row);
+              }
+            });
+          });
           requestAnimationFrame(() => { try { observePreviews(); } catch {} });
         });
 
@@ -1626,23 +1952,54 @@ var juicy_tags = ['a', 'img'];
       }
     }
 
-    const _adZones = [1118840, 1118844, 1118846];
-    let _adIdx = 0;
+    // In-feed ad zones (not used elsewhere on gallery page)
+    const _FEED_AD_ZONES = [
+      { zone: 1119414, w: 308, h: 286 },
+      { zone: 1119415, w: 300, h: 100 },
+      { zone: 1118851, w: 300, h: 100 },
+      { zone: 1118849, w: 300, h: 100 },
+      { zone: 1118847, w: 300, h: 100 }
+    ];
+    // Description ad zones (used in floating player, removed on close — no ID conflict with in-feed)
+    const _DESC_AD_ZONES = [
+      { zone: 1118845, w: 300, h: 100 },
+      { zone: 1118841, w: 300, h: 100 },
+      { zone: 1120028, w: 108, h: 140 },
+      { zone: 1120029, w: 133, h: 139 }
+    ];
+    // Shuffle on first use
+    let _feedAdPool = [];
+    let _feedAdIdx = 0;
     let _sbCounter = 0;
+    function nextFeedAdZone() {
+      if (_feedAdPool.length === 0) {
+        _feedAdPool = _FEED_AD_ZONES.slice();
+        for (let i = _feedAdPool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [_feedAdPool[i], _feedAdPool[j]] = [_feedAdPool[j], _feedAdPool[i]];
+        }
+        _feedAdIdx = 0;
+      }
+      if (_feedAdIdx >= _feedAdPool.length) return null;
+      return _feedAdPool[_feedAdIdx++];
+    }
     function injectAdRow(parent) {
-      const zone = _adZones[_adIdx % _adZones.length];
-      _adIdx++;
-      const uid = 'jad-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+      const az = nextFeedAdZone();
+      if (!az) return;
       const row = document.createElement('div');
       row.className = 'ad-row';
+      const wrap = document.createElement('div');
+      wrap.className = 'ad-slot-placeholder';
+      wrap.style.cssText = 'width:100%;max-width:' + az.w + 'px;margin:8px auto';
       const ins = document.createElement('ins');
-      ins.id = uid;
-      ins.setAttribute('data-width', '300');
-      ins.setAttribute('data-height', '250');
-      row.appendChild(ins);
+      ins.id = az.zone.toString();
+      ins.setAttribute('data-width', az.w);
+      ins.setAttribute('data-height', az.h);
+      wrap.appendChild(ins);
+      row.appendChild(wrap);
       (parent || feed).appendChild(row);
-      (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':zone});
-      gtag('event', 'ad_impression', { ad_zone: zone, ad_id: uid });
+      (adsbyjuicy = window.adsbyjuicy || []).push({'adzone':az.zone});
+      gtag('event', 'ad_impression', { ad_zone: az.zone });
     }
 
     function showNextBatch() {
@@ -1870,6 +2227,15 @@ var juicy_tags = ['a', 'img'];
         document.querySelectorAll('.mobile-cat-btn').forEach(b => b.classList.remove('active'));
         item.classList.add('active');
         state.category = item.dataset.category === 'all' ? '' : item.dataset.category;
+        if (state.category) {
+          document.title = 'Lucahman - ' + state.category + ' Malay Porn Videos | Awek Tudung Malaysia 18+';
+          var h1 = document.querySelector('.hero-section h1');
+          if (h1) h1.innerHTML = 'Lucahman <strong>Melayu Porn</strong> &mdash; ' + state.category + ' Malay Videos 18+';
+        } else {
+          document.title = 'Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+';
+          var h1 = document.querySelector('.hero-section h1');
+          if (h1) h1.innerHTML = 'Lucahman <strong>Melayu Porn</strong> &mdash; Awek Tudung Video Malaysia 18+';
+        }
         loadVideos();
         closeMobileFilter();
         scrollToTop();
@@ -1923,6 +2289,15 @@ var juicy_tags = ['a', 'img'];
       const item = e.target.closest('.category-item');
       if (item) {
         state.category = item.dataset.category === 'all' ? '' : item.dataset.category;
+        if (state.category) {
+          document.title = 'Lucahman - ' + state.category + ' Malay Porn Videos | Awek Tudung Malaysia 18+';
+          var h1 = document.querySelector('.hero-section h1');
+          if (h1) h1.innerHTML = 'Lucahman <strong>Melayu Porn</strong> &mdash; ' + state.category + ' Malay Videos 18+';
+        } else {
+          document.title = 'Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+';
+          var h1 = document.querySelector('.hero-section h1');
+          if (h1) h1.innerHTML = 'Lucahman <strong>Melayu Porn</strong> &mdash; Awek Tudung Video Malaysia 18+';
+        }
         loadVideos(true);
       }
     });
@@ -1962,6 +2337,9 @@ var juicy_tags = ['a', 'img'];
 
     window.scrollToTop = scrollToTop;
     window.scrollToBottom = scrollToBottom;
+
+    // Populate batchVideos from server-rendered DOM cards (before API call replaces feed)
+    initBatchVideosFromDOM();
 
     // Initial load
     loadVideos();
@@ -2004,22 +2382,32 @@ var juicy_tags = ['a', 'img'];
       }, { passive: false });
       document.addEventListener('selectstart', function(e) { e.preventDefault(); });
     }
+    window.toggleLike = function(videoId, btnEl) {
+      if (btnEl._liking) return;
+      btnEl._liking = true;
+      fetch('/api/likes/' + videoId, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          btnEl.querySelector('.like-count').textContent = data.likes;
+          btnEl.classList.toggle('liked', data.liked);
+        })
+        .catch(function() {})
+        .finally(function() { btnEl._liking = false; });
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.like-btn').forEach(function(btn) {
+        var id = btn.dataset.id;
+        if (id) fetch('/api/likes/' + id).then(function(r) { return r.json(); }).then(function(d) {
+          btn.querySelector('.like-count').textContent = d.likes;
+        }).catch(function() {});
+      });
+    });
   </script>
 
 
 
-<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
-<script>
-setTimeout(function(){
-  var s=document.createElement(&apos;script&apos;);
-  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
-  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
-  s.async=true;
-  document.body.appendChild(s);
-},540000);
-</script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <script>gtag('event', 'ad_impression', { ad_zone: '1119407', ad_type: 'sandbox' });</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118850';</script>

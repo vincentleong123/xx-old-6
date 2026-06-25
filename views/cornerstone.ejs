@@ -241,6 +241,7 @@
     </div>
   </div>
   <div class="container">
+    <% var lp = (typeof isXmateur !== 'undefined' && isXmateur) ? '/xamateur/' : '/'; %>
     <h1><%= heading %></h1>
     <div class="subtitle"><%= videos.length %> videos — updated daily</div>
 
@@ -252,9 +253,9 @@
       <button class="carousel-arrow left" onclick="document.querySelector('.carousel').scrollBy({left:-300,behavior:'smooth'})">&#10094;</button>
       <div class="carousel">
         <% videos.slice(0, 20).forEach(function(v) { %>
-          <a href="/<%= v.id %>" class="carousel-card">
+          <a href="<%= lp %><%= v.id %>" class="carousel-card">
             <div class="thumb">
-              <img src="<%= v.thumbnail || '' %>" alt="<%= v.title %>" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+              <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
               <div class="overlay"></div>
               <span class="views"><%= (v.views || 0).toLocaleString() %></span>
             </div>
@@ -285,9 +286,9 @@
     </div>
     <div class="grid-43">
       <% videos.slice(0, 40).forEach(function(v) { %>
-        <a href="/<%= v.id %>" class="card-43">
+        <a href="<%= lp %><%= v.id %>" class="card-43">
           <div class="thumb">
-            <img src="<%= v.thumbnail || '' %>" alt="<%= v.title %>" loading="lazy" onerror="this.style.display='none'">
+            <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
             <div class="overlay"></div>
             <span class="views"><%= (v.views || 0).toLocaleString() %></span>
           </div>
@@ -304,9 +305,9 @@
     </div>
     <div class="grid-169">
       <% videos.forEach(function(v) { %>
-        <a href="/<%= v.id %>" class="card-169">
+        <a href="<%= lp %><%= v.id %>" class="card-169">
           <div class="thumb">
-            <img src="<%= v.thumbnail || '' %>" alt="<%= v.title %>" loading="lazy" onerror="this.style.display='none'">
+            <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
             <div class="overlay"></div>
             <span class="views"><%= (v.views || 0).toLocaleString() %></span>
           </div>
@@ -326,28 +327,12 @@
 
     <%- include('_about') %>
     <div class="footer">
-      <p>&copy; 2026 xMelayu &middot; Asian Amateur Content &middot; All models 18+</p>
+      <p>&copy; 2026 xMelayu &middot; <%= (typeof isXmateur !== 'undefined' && isXmateur) ? 'USA Amateur Content' : 'Asian Amateur Content' %> &middot; All models 18+</p>
     </div>
   </div>
-<!-- JuicyAds v3.0 -->
-<!-- JuicyAds v3.2P Start -->
-<script type="text/javascript">
-var juicy_tags = [&apos;a&apos;, &apos;img&apos;];
-</script>
-<script type="text/javascript" src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&amp;u=https%3A%2F%2Fwww.juicyads.rocks"></script>
-<!-- JuicyAds v3.2P End -->
-<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
-<script>
-setTimeout(function(){
-  var s=document.createElement(&apos;script&apos;);
-  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
-  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
-  s.async=true;
-  document.body.appendChild(s);
-},540000);
-</script>
+<!-- display ads only (no popunder) -->
 <ins id="1119407" data-width="108" data-height="140"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118850';</script>
 <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>

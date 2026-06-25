@@ -233,12 +233,7 @@
   </style>
 </head>
 <body>
-<!-- JuicyAds v3.2P Start -->
-<script type="text/javascript">
-var juicy_tags = ['a', 'img'];
-</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
-<!-- JuicyAds v3.2P End -->
+<!-- display ads only (no popunder) -->
   <div class="header">
     <div class="header-inner">
       <a href="/xamateur/real" class="logo">x<span>Amateur</span> <span style="color:var(--green);font-size:12px;font-weight:600;">REAL</span></a>
@@ -278,9 +273,9 @@ var juicy_tags = ['a', 'img'];
           <a href="/xamateur/real/<%= g.slug %>" class="gallery-card">
             <div class="preview">
               <% if (g.previews && g.previews.length >= 3) { %>
-                <img src="<%= g.previews[0] %>" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
-                <img src="<%= g.previews[1] %>" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
-                <img src="<%= g.previews[2] %>" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[0] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[1] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[2] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
               <% } else { %>
                 <div style="display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:24px;grid-column:1/-1;">&#x1F4F1;</div>
               <% } %>
@@ -301,9 +296,9 @@ var juicy_tags = ['a', 'img'];
         <button class="carousel-arrow left" onclick="document.querySelector('.carousel').scrollBy({left:-300,behavior:'smooth'})">&#10094;</button>
         <div class="carousel">
           <% latest.slice(0, 20).forEach(function(v) { %>
-            <a href="/xamateur/real/v/<%= v.id %>" class="carousel-card">
+            <a href="/xamateur/<%= v.id %>" class="carousel-card">
               <div class="thumb">
-                <img src="<%= v.thumbnail || '' %>" alt="<%= v.title %>" loading="lazy" decoding="async" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+                <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                 <div class="overlay"></div>
                 <span class="views"><%= (v.views || 0).toLocaleString() %></span>
               </div>
@@ -340,9 +335,9 @@ var juicy_tags = ['a', 'img'];
 
       <div class="grid-43">
         <% videos.forEach(function(v) { %>
-          <a href="/xamateur/real/v/<%= v.id %>" class="card-43">
+          <a href="/xamateur/<%= v.id %>" class="card-43">
             <div class="thumb">
-              <img src="<%= v.thumbnail || '' %>" alt="<%= v.title %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
+              <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
               <div class="overlay"></div>
               <span class="views"><%= (v.views || 0).toLocaleString() %></span>
             </div>
@@ -366,18 +361,8 @@ var juicy_tags = ['a', 'img'];
       <p>&copy; 2026 xAmateur &middot; <a href="/xamateur">American Amateur Videos</a> &middot; <a href="/xamateur/real">Real Phone Recordings</a> &middot; All models 18+</p>
     </div>
   </div>
-<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
-<script>
-setTimeout(function(){
-  var s=document.createElement(&apos;script&apos;);
-  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
-  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
-  s.async=true;
-  document.body.appendChild(s);
-},540000);
-</script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118850';</script>
 <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>

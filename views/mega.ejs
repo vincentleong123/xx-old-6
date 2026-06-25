@@ -102,10 +102,7 @@
 </style>
 </head>
 <body>
-<script type="text/javascript">
-var juicy_tags = ['a', 'img'];
-</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- display ads only (no popunder) -->
 
 <header class="header">
   <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menu" aria-expanded="false">
@@ -149,8 +146,8 @@ var juicy_tags = ['a', 'img'];
       <!-- Filter bar -->
       <div class="section-header" style="padding:0 0 12px">
         <div class="section-title">
-          <h2>🔥 Mega Feed</h2>
-          <h3 id="megaResultInfo">loading...</h3>
+          <h3>Mega Malay Video Feed</h3>
+          <span id="megaResultInfo">loading...</span>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <select id="sortSelect" onchange="handleSortChange()" style="padding:6px 12px;border-radius:8px;background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);font-size:12px">
@@ -216,13 +213,14 @@ const state = {
 };
 
 // ─── Render ───
+function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
 function createVideoCard(v) {
   const kwHtml = getKeywordRibbon() || '';
   const b64 = btoa(v.id).slice(0, 8);
   return `<a href="/${v.id}" class="card-43" data-id="${v.id}" style="animation-delay:${Math.random() * 0.3}s">
     <div class="thumb">
       <div class="img-shimmer"></div>
-      <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" decoding="async" width="320" height="240" onerror="this.parentElement.querySelector('.img-shimmer').style.display='none'">
+      <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" decoding="async" width="320" height="240" onerror="this.parentElement.querySelector('.img-shimmer').style.display='none'">
       <div class="overlay"></div>
       <span class="views">👁️ ${v.views}</span>
       <div class="float-btn" onclick="event.preventDefault();event.stopPropagation();toggleFloat('${v.id}')">▶</div>
@@ -239,7 +237,7 @@ function createCompactCard(v) {
   return `<a href="/${v.id}" class="card-mini" data-id="${v.id}">
     <div class="thumb">
       <div class="img-shimmer"></div>
-      <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" decoding="async" width="160" height="120" onerror="this.parentElement.querySelector('.img-shimmer').style.display='none'">
+      <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" decoding="async" width="160" height="120" onerror="this.parentElement.querySelector('.img-shimmer').style.display='none'">
       <div class="overlay"></div>
       <span class="views">👁️ ${v.views}</span>
     </div>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= video.title %> - xAmateur USA</title>
-  <meta name="description" content="<%= video.description || video.title %>">
+  <title><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %> - xAmateur USA</title>
+  <meta name="description" content="<%= video.description || (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %>">
   <meta name="robots" content="index, follow">
   <meta name="googlebot" content="index, follow">
   <link rel="canonical" href="https://xmelayu.site/xamateur/<%= video.id %>">
@@ -48,6 +48,7 @@
     .header {
       background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 0; overflow:hidden;
     }
+    @media (max-width:768px) { .header { padding: 8px 0; } }
     .header-inner {
       max-width: 1100px; margin: 0 auto; padding: 0 20px;
       display: flex; align-items: center; gap: 12px;
@@ -173,43 +174,47 @@
     .nav-links { display: flex; gap: 6px; }
     .nav-link { display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 8px; color: #a0a0a8; text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
     .nav-link:hover { background: #1c1c21; color: #fff; }
-    .mobile-menu-btn { display: none; width: 44px; height: 44px; border-radius: 10px; background: #141417; border: 1px solid #2a2a30; color: #fff; font-size: 20px; cursor: pointer; transition: all 0.2s; align-items: center; justify-content: center; }
-    .mobile-menu-btn:hover { background: #1c1c21; }
-    @media (max-width: 768px) { .nav-links { display: none; } .mobile-menu-btn { display: flex; } }
-    .mobile-filter-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 300; background: #0a0a0b; border-top: 1px solid #2a2a30; border-radius: 16px 16px 0 0; max-height: 70vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.33,1,0.68,1); padding: 0 0 24px; }
-    .mobile-filter-panel.show { transform: translateY(0); }
-    .filter-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid #2a2a30; }
-    .filter-title { font-size: 16px; font-weight: 700; color: #fff; }
-    .close-panel { background: none; border: none; color: #6b6b75; font-size: 24px; cursor: pointer; padding: 0 4px; }
-    .filter-panel-content { padding: 12px 20px; }
-    .mobile-section { margin-bottom: 16px; }
-    .mobile-section h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6b75; margin-bottom: 8px; }
-    .mobile-cat-btn { display: block; width: 100%; padding: 10px 14px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.2s; }
-    .mobile-cat-btn:hover { background: #141417; }
-    .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 299; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-    .filter-overlay.show { opacity: 1; pointer-events: auto; }
+    .mobile-hamburger { display:none; width:32px; height:32px; border-radius:8px; background:#141417; border:1px solid #2a2a30; cursor:pointer; padding:0; position:relative; flex-shrink:0; align-items:center; justify-content:center; flex-direction:column; gap:3px; transition:all .2s; }
+    .mobile-hamburger:hover { background:#1c1c21; border-color:#3a3a45; }
+    .mobile-hamburger span { display:block; width:14px; height:2px; background:#fff; border-radius:2px; transition:all .2s; }
+    @media (max-width: 768px) { .nav-links { display: none; } .mobile-hamburger { display:flex; } }
+    .mobile-menu-panel { position:fixed; bottom:0; left:0; right:0; z-index:300; background:#0a0a0b; border-top:1px solid #2a2a30; border-radius:16px 16px 0 0; max-height:80vh; overflow-y:auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); }
+    .mobile-menu-panel.show { transform:translateY(0); }
+    .mobile-menu-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:299; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+    .mobile-menu-overlay.show { opacity:1; pointer-events:auto; }
+    .mobile-menu-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid #2a2a30; position:sticky; top:0; background:#0a0a0b; z-index:1; }
+    .mobile-menu-title { font-size:16px; font-weight:700; color:#fff; }
+    .mobile-menu-close { background:none; border:none; color:#6b6b75; font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
+    .mobile-menu-close:hover { color:#fff; }
+    .mobile-menu-content { padding:12px 20px 24px; }
+    .mobile-section { margin-bottom:16px; }
+    .mobile-section:last-child { margin-bottom:0; }
+    .mobile-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6b6b75; margin-bottom:8px; padding:0 4px; }
+    .mobile-link { display:block; width:100%; padding:10px 14px; border-radius:8px; color:#e0e0e0; text-decoration:none; font-size:14px; font-weight:500; transition:all .15s; }
+    .mobile-link:hover { background:#141417; color:#fff; }
+    @media (max-width:768px) {
+      .header .header-actions { display:none; }
+      .header-inner { gap:8px; }
+    }
     @media (max-width: 640px) {
       .container { padding: 12px; }
       .video-info h1 { font-size: 18px; }
       .video-grid { grid-template-columns: repeat(2, 1fr); }
     }
-  </style>
+</style>
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
 </head>
 <body>
-<!-- JuicyAds v3.2P Start -->
-<script type="text/javascript">
-var juicy_tags = ['a', 'img'];
-</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
-<!-- JuicyAds v3.2P End -->
+<!-- display ads (no popunder) -->
   <header class="header">
     <div class="header-inner">
-      <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
-        <span class="menu-icon">☰</span>
+      <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
       <a href="/xamateur" class="logo">x<span>Amateur</span></a>
       <nav class="nav-links" id="navLinks">
-        <a href="/" class="nav-link">🏠 Home</a>
         <a href="/super-x-melayu" class="nav-link" style="color:#ffd700;font-weight:700;">🔥 Super X</a>
         <a href="/mega-x-melayu" class="nav-link">🚀 Mega</a>
         <a href="/xmateur" class="nav-link">💜 xMateur</a>
@@ -221,25 +226,33 @@ var juicy_tags = ['a', 'img'];
       </div>
     </div>
   </header>
-  <!-- Mobile Nav Panel -->
-  <div class="mobile-filter-panel" id="mobileNavPanel">
-    <div class="filter-panel-header">
-      <div class="filter-title">Navigate</div>
-      <button class="close-panel" onclick="closeMobileNav()">×</button>
+  <!-- Mobile Menu Panel -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu-panel" id="mobileMenuPanel">
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-title">Navigate</div>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
     </div>
-    <div class="filter-panel-content">
+    <div class="mobile-menu-content">
       <div class="mobile-section">
-        <h4>Brands</h4>
-        <a href="/" class="mobile-cat-btn">🏠 Home</a>
-        <a href="/super-x-melayu" class="mobile-cat-btn">🔥 Super X Melayu</a>
-        <a href="/mega-x-melayu" class="mobile-cat-btn">🚀 Mega X Melayu</a>
-        <a href="/xmateur" class="mobile-cat-btn">💜 xMateur</a>
-        <a href="/tudung-porn" class="mobile-cat-btn">🧕 Tudung Porn</a>
-        <a href="/xamateur" class="mobile-cat-btn">🇺🇸 xAmateur</a>
+        <div class="mobile-section-title">Brands</div>
+        <a href="/super-x-melayu" class="mobile-link">🔥 Super X Melayu</a>
+        <a href="/mega-x-melayu" class="mobile-link">🚀 Mega X Melayu</a>
+        <a href="/xmateur" class="mobile-link">💜 xMateur</a>
+        <a href="/xamateur" class="mobile-link">💎 xAmateur</a>
+        <a href="/tudung-porn" class="mobile-link">🧕 Tudung Porn</a>
+      </div>
+      <div class="mobile-section">
+        <div class="mobile-section-title">Site</div>
+        <a href="/" class="mobile-link">🏠 Home</a>
+        <a href="/about" class="mobile-link">📄 About</a>
+        <a href="/terms" class="mobile-link">Terms</a>
+        <a href="/privacy" class="mobile-link">Privacy</a>
+        <a href="/dmca" class="mobile-link">DMCA</a>
+        <a href="/2257" class="mobile-link">2257</a>
       </div>
     </div>
   </div>
-  <div class="filter-overlay" id="navOverlay" onclick="closeMobileNav()"></div>
   <div class="container">
     <div class="tag-bar">
       <a href="/xamateur" class="pill">xamateur</a>
@@ -258,7 +271,7 @@ var juicy_tags = ['a', 'img'];
     </div>
 
     <div class="video-info">
-      <h1><%= video.title %></h1>
+      <h1><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %></h1>
       <div class="meta">
         <span>👁 <%= (video.views || 0).toLocaleString() %> views</span>
         <span>👍 <%= (video.likes || 0).toLocaleString() %></span>
@@ -282,37 +295,43 @@ var juicy_tags = ['a', 'img'];
       </div>
     </div>
 
-    <div class="ad-holder" style="margin:16px 0">
-      <ins id="pde-ad" data-width="300" data-height="250"></ins>
+    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0">
+      <ins id="1118844" data-width="300" data-height="250"></ins>
       <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+      <ins id="1118851" data-width="300" data-height="100"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118851});</script>
+      <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="width:100%;min-height:60px;margin:4px 0"></div>
     </div>
 
     <h2>More Amateur Videos</h2>
     <div class="video-grid">
-      <% related.forEach(function(v, i) { %>
+<% var _rldZs2 = [1118847, 1118845, 1118841, 1120028, 1120029, 1119414]; %>
+<% related.forEach(function(v, i) { %>
         <a href="/xamateur/<%= v.id %>" class="video-card">
           <div class="thumb">
-            <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy">
+            <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
             <span class="views"><%= (v.views || 0).toLocaleString() %></span>
           </div>
           <div class="card-body">
             <div class="ctitle"><%= v.title %></div>
           </div>
         </a>
-        <% if ((i + 1) % 5 === 0 && i < related.length - 1) { %>
-          <div style="grid-column:1/-1" class="ad-holder">
-            <ins id="ad-per<%= i %>" data-width="300" data-height="250"></ins>
-            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-          </div>
-        <% } %>
-      <% }) %>
+<% if ((i + 1) % 5 === 0 && i < related.length - 1) { var zi = Math.floor(i / 5) - 1; if (zi < _rldZs2.length) { %>
+        <div style="grid-column:1/-1" class="ad-holder">
+          <ins id="<%= _rldZs2[zi] %>" data-width="300" data-height="250"></ins>
+          <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':<%= _rldZs2[zi] %>});</script>
+        </div>
+<% } } %>
+<% }); %>
     </div>
 
     <div class="ad-holder ad-holder--strip">
-      <ins id="pef1" data-width="300" data-height="250"></ins>
+      <ins id="1118846" data-width="300" data-height="250"></ins>
       <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-      <ins id="pef2" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+      <ins id="1120028" data-width="108" data-height="140"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
+      <ins id="1120029" data-width="133" data-height="139"></ins>
+      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
     </div>
 
     <%- include('_about') %>
@@ -322,23 +341,21 @@ var juicy_tags = ['a', 'img'];
   </div>
   <script>
     function toggleMobileMenu() {
-      const panel = document.getElementById('mobileNavPanel');
-      const overlay = document.getElementById('navOverlay');
-      const btn = document.getElementById('mobileMenuBtn');
-      panel.classList.toggle('show');
-      overlay.classList.toggle('show');
-      btn.setAttribute('aria-expanded', panel.classList.contains('show'));
-      document.body.style.overflow = panel.classList.contains('show') ? 'hidden' : '';
+      const panel = document.getElementById('mobileMenuPanel');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      if (!panel || !overlay) return;
+      const isOpen = panel.classList.toggle('show');
+      overlay.classList.toggle('show', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     }
-    function closeMobileNav() {
-      const panel = document.getElementById('mobileNavPanel');
-      const overlay = document.getElementById('navOverlay');
-      const btn = document.getElementById('mobileMenuBtn');
-      panel.classList.remove('show');
-      overlay.classList.remove('show');
-      btn.setAttribute('aria-expanded', 'false');
+    function closeMobileMenu() {
+      const panel = document.getElementById('mobileMenuPanel');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      if (panel) panel.classList.remove('show');
+      if (overlay) overlay.classList.remove('show');
       document.body.style.overflow = '';
     }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileMenu(); });
     function h(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     async function markGoodPart(videoId, title) {
@@ -411,18 +428,8 @@ var juicy_tags = ['a', 'img'];
       if (videoId) updateMarkedListUI(videoId);
     })();
   </script>
-<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
-<script>
-setTimeout(function(){
-  var s=document.createElement(&apos;script&apos;);
-  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
-  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
-  s.async=true;
-  document.body.appendChild(s);
-},540000);
-</script>
-<ins id="1119407" data-width="108" data-height="140"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+  <ins id="1119407" data-width="108" data-height="140"></ins>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118848';</script>
 <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>

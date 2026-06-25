@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : (video.title + ' - ' + video.category + ' video. HD streaming on Lucahman. 18+ only.'); %>
+  <title><%= typeof displayTitle !== 'undefined' ? displayTitle : title %></title>
+<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : ((typeof displayTitle !== 'undefined' ? displayTitle : video.title) + ' - ' + video.category + ' video. HD streaming on Lucahman. 18+ only.'); %>
   <meta name="description" content="<%= seoMetaDesc %>">
   <meta name="robots" content="max-video-preview:large, index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmateur, amateur, malay, HD streaming, 18+">
@@ -138,6 +138,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
   <link rel="stylesheet" href="/css/player.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
+<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+<script type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js" defer></script>
 </head>
 <body>
 <!-- Floating Player — sticky mini-player that follows scroll, ads stay visible -->
@@ -207,23 +209,18 @@
 })();
 </script>
 
-<!-- JuicyAds v3.2P Start -->
-<script type="text/javascript">
-var juicy_tags = ['a', 'img'];
-</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
-<!-- JuicyAds v3.2P End -->
+<!-- display ads (no popunder) -->
   <header class="header">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
-      <span class="menu-icon">☰</span>
-    </button>
-
+      <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <a href="/" class="logo">
-          <img src="/logo.svg" alt="Lucahman" class="logo-img" loading="lazy">
+          <img src="/logo.svg" alt="Lucahman" class="logo-img" loading="lazy" width="120" height="28">
         </a>
 
     <nav class="nav-links" id="navLinks">
-      <a href="/" class="nav-link">🏠 Home</a>
       <a href="/super-x-melayu" class="nav-link">🔥 Super X</a>
       <a href="/mega-x-melayu" class="nav-link">🚀 Mega</a>
       <a href="/xmateur" class="nav-link">xMateur</a>
@@ -246,29 +243,58 @@ var juicy_tags = ['a', 'img'];
     </div>
   </header>
 
-  <!-- Mobile Nav Panel -->
-  <div class="mobile-filter-panel" id="mobileNavPanel">
-    <div class="filter-panel-header">
-      <div class="filter-title">Navigate</div>
-      <button class="close-panel" onclick="closeMobileNav()">×</button>
+  <!-- Mobile Menu Panel -->
+  <style>
+    .mobile-hamburger { display:none; width:32px; height:32px; border-radius:8px; background:#141417; border:1px solid #2a2a30; cursor:pointer; padding:0; position:relative; flex-shrink:0; align-items:center; justify-content:center; flex-direction:column; gap:3px; transition:all .2s; }
+    .mobile-hamburger:hover { background:#1c1c21; border-color:#3a3a45; }
+    .mobile-hamburger span { display:block; width:14px; height:2px; background:#fff; border-radius:2px; transition:all .2s; }
+    @media (max-width:768px) { .mobile-hamburger { display:flex; } }
+    .mobile-menu-panel { position:fixed; bottom:0; left:0; right:0; z-index:300; background:#0a0a0b; border-top:1px solid #2a2a30; border-radius:16px 16px 0 0; max-height:80vh; overflow-y:auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); }
+    .mobile-menu-panel.show { transform:translateY(0); }
+    .mobile-menu-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:299; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+    .mobile-menu-overlay.show { opacity:1; pointer-events:auto; }
+    .mobile-menu-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid #2a2a30; position:sticky; top:0; background:#0a0a0b; z-index:1; }
+    .mobile-menu-title { font-size:16px; font-weight:700; color:#fff; }
+    .mobile-menu-close { background:none; border:none; color:#6b6b75; font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
+    .mobile-menu-close:hover { color:#fff; }
+    .mobile-menu-content { padding:12px 20px 24px; }
+    .mobile-section { margin-bottom:16px; }
+    .mobile-section:last-child { margin-bottom:0; }
+    .mobile-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6b6b75; margin-bottom:8px; padding:0 4px; }
+    .mobile-link { display:block; width:100%; padding:10px 14px; border-radius:8px; color:#e0e0e0; text-decoration:none; font-size:14px; font-weight:500; transition:all .15s; }
+    .mobile-link:hover { background:#141417; color:#fff; }
+    @media (max-width:768px) {
+      .header .nav-links { display:none; }
+      .header .header-actions { display:none; }
+      .header .logo-img { max-width:90px; height:auto; }
+    }
+  </style>
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu-panel" id="mobileMenuPanel">
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-title">Navigate</div>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
     </div>
-    <div class="filter-panel-content">
+    <div class="mobile-menu-content">
       <div class="mobile-section">
-        <h4>Brands</h4>
-        <a href="/" class="mobile-cat-btn">🏠 Home</a>
-        <a href="/super-x-melayu" class="mobile-cat-btn">🔥 Super X Melayu</a>
-        <a href="/mega-x-melayu" class="mobile-cat-btn">🚀 Mega X Melayu</a>
-        <a href="/xmateur" class="mobile-cat-btn">✨ xMateur</a>
-        <a href="/tudung-porn" class="mobile-cat-btn">🧕 Tudung Porn</a>
-        <a href="/xamateur" class="mobile-cat-btn">xAmateur</a>
+        <div class="mobile-section-title">Brands</div>
+        <a href="/super-x-melayu" class="mobile-link">🔥 Super X Melayu</a>
+        <a href="/mega-x-melayu" class="mobile-link">🚀 Mega X Melayu</a>
+        <a href="/xmateur" class="mobile-link">✨ xMateur</a>
+        <a href="/xamateur" class="mobile-link">💎 xAmateur</a>
+        <a href="/tudung-porn" class="mobile-link">🧕 Tudung Porn</a>
       </div>
       <div class="mobile-section">
-        <h4>More</h4>
-        <a href="/admin" class="mobile-cat-btn">⚙️ Admin</a>
+        <div class="mobile-section-title">Site</div>
+        <a href="/" class="mobile-link">🏠 Home</a>
+        <a href="/about" class="mobile-link">📄 About</a>
+        <a href="/terms" class="mobile-link">Terms</a>
+        <a href="/privacy" class="mobile-link">Privacy</a>
+        <a href="/dmca" class="mobile-link">DMCA</a>
+        <a href="/2257" class="mobile-link">2257</a>
       </div>
     </div>
   </div>
-  <div class="filter-overlay" id="navOverlay" onclick="closeMobileNav()"></div>
 
   <main class="main-content player-page">
     <div class="player-layout">
@@ -285,7 +311,7 @@ var juicy_tags = ['a', 'img'];
         </div>
 
         <div class="video-details">
-          <h1 class="video-title"><%= video.title %></h1>
+          <h1 class="video-title"><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %></h1>
           
           <div class="video-tags" id="videoTags">
             <% if (video.category && video.category !== 'Uncategorized') { %>
@@ -302,9 +328,8 @@ var juicy_tags = ['a', 'img'];
           </div>
 
           <div class="video-actions">
-            <button class="action-btn like-btn <%= Math.random() > 0.5 ? 'liked' : '' %>" id="likeBtn">
-              <span class="action-icon"><%= Math.random() > 0.5 ? '❤️' : '🤍' %></span>
-              <span class="action-label">Like</span>
+            <button class="action-btn like-btn" data-id="<%= video.id %>" onclick="toggleLike('<%= video.id %>', this)">
+              ♡ <span class="like-count"><%= video.likes || 0 %></span>
             </button>
             <button class="action-btn" onclick="shareVideo()">
               <span class="action-icon">📤</span>
@@ -344,8 +369,15 @@ var juicy_tags = ['a', 'img'];
             </div>
             </div>
             <div class="ad-holder" style="margin:12px 0">
-              <ins id="pd-ad" data-width="300" data-height="250"></ins>
+              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto 8px">
+                <ins id="pd-ad" data-width="300" data-height="250"></ins>
+              </div>
               <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
+              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto 8px">
+                <ins id="1118845" data-width="300" data-height="100"></ins>
+              </div>
+              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
+              <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="margin:8px 0"></div>
             </div>
           </div>
 
@@ -356,12 +388,17 @@ var juicy_tags = ['a', 'img'];
           <ins id="sd-p1" data-width="300" data-height="250"></ins>
           <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
         </div>
+        <div class="ad-holder" style="margin-bottom:12px">
+          <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto"><ins id="1118851" data-width="300" data-height="100"></ins></div>
+        </div>
+        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118851});</script>
         <div class="sidebar-title">Related Videos</div>
         <div class="related-grid" id="relatedGrid">
-          <% related.forEach(v => { %>
+<% var _rldZs = [1118847, 1118845, 1118841, 1120028, 1120029, 1119414]; %>
+<% related.forEach(function(v, i) { %>
             <div class="related-card" data-preview="<%= v.video %>" data-id="<%= v.id %>" onclick="navigateTo('<%= v.id %>')">
               <div class="related-thumb">
-                <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy"
+                <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy"
  onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                 <video class="related-preview" muted loop preload="none" playsinline></video>
                 <span class="duration-badge">--:--</span>
@@ -371,7 +408,16 @@ var juicy_tags = ['a', 'img'];
                 <span class="meta-row"><%= v.views.toLocaleString() %> views</span>
               </div>
             </div>
-          <% }) %>
+<% if ((i + 1) % 4 === 0 && i < related.length - 1) { var zi = Math.floor(i/4) - 1; if (zi < _rldZs.length) { %>
+            <div class="ad-row" style="grid-column:1/-1;margin:4px 0">
+              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto">
+                <ins id="<%= _rldZs[zi] %>" data-width="300" data-height="100"></ins>
+              </div>
+            </div>
+            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':<%= _rldZs[zi] %>});</script>
+            <script>gtag('event', 'ad_impression', { ad_zone: <%= _rldZs[zi] %>, ad_type: 'related_infeed' });</script>
+<% } } %>
+<% }); %>
         </div>
         
         <div id="loadMoreRelated" style="text-align: center; padding: 16px;">
@@ -390,8 +436,8 @@ var juicy_tags = ['a', 'img'];
     <div class="carousel-section" id="carousel-related">
       <div class="carousel-header">
         <div class="carousel-header-left">
-          <h2 class="section-title">🎬 Related Videos</h2>
-          <h3 class="section-subtitle">Keep watching — more recommendations</h3>
+          <h2 class="section-title">Related Malay Videos</h2>
+          <h3 class="section-subtitle">Keep watching — more Malay recommendations</h3>
         </div>
       </div>
       <div class="carousel-container">
@@ -400,7 +446,7 @@ var juicy_tags = ['a', 'img'];
             <div class="carousel-card">
               <a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
                 <div class="video-thumb" style="position:relative">
-                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" decoding="async"
+                  <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async"
                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                   <video muted loop preload="none" playsinline></video>
                 </div>
@@ -418,8 +464,8 @@ var juicy_tags = ['a', 'img'];
     <div class="carousel-section" id="carousel-explore">
       <div class="carousel-header">
         <div class="carousel-header-left">
-          <h2 class="section-title">🔥 More to Explore</h2>
-          <h3 class="section-subtitle">Browse similar content</h3>
+          <h2 class="section-title">More Malay Porn Videos</h2>
+          <h3 class="section-subtitle">Browse similar Malay content</h3>
         </div>
       </div>
       <div class="carousel-container">
@@ -431,7 +477,7 @@ var juicy_tags = ['a', 'img'];
             <div class="carousel-card">
               <a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
                 <div class="video-thumb" style="position:relative">
-                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" decoding="async"
+                  <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async"
                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                   <video muted loop preload="none" playsinline></video>
                 </div>
@@ -592,6 +638,10 @@ var juicy_tags = ['a', 'img'];
       margin: 0 12px 10px;
       display: block;
     }
+    .like-btn { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-muted); padding:4px 8px; border-radius:6px; transition:all .2s; display:inline-flex; align-items:center; gap:4px; }
+    .like-btn:hover { color:var(--accent); background:rgba(255,45,85,0.1); }
+    .like-btn.liked { color:var(--accent); }
+    .like-count { font-size:12px; font-weight:600; }
     @media (max-width: 768px) {
       .player-carousels {
         padding: 16px 12px 8px;
@@ -646,32 +696,29 @@ var juicy_tags = ['a', 'img'];
 
   <script>
     function esc(s) { return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+    function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
 
     function navigateTo(id) {
       location.href = '/' + id;
     }
 
-    // Mobile nav
+    // Mobile nav (bottom sheet)
     function toggleMobileMenu() {
-      var panel = document.getElementById('mobileNavPanel');
-      var overlay = document.getElementById('navOverlay');
+      var panel = document.getElementById('mobileMenuPanel');
+      var overlay = document.getElementById('mobileMenuOverlay');
       if (!panel || !overlay) return;
       var isOpen = panel.classList.toggle('show');
       overlay.classList.toggle('show', isOpen);
-      document.body.classList.toggle('sidebar-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     }
-    function closeMobileNav() {
-      var panel = document.getElementById('mobileNavPanel');
-      var overlay = document.getElementById('navOverlay');
+    function closeMobileMenu() {
+      var panel = document.getElementById('mobileMenuPanel');
+      var overlay = document.getElementById('mobileMenuOverlay');
       if (panel) panel.classList.remove('show');
       if (overlay) overlay.classList.remove('show');
-      document.body.classList.remove('sidebar-open');
+      document.body.style.overflow = '';
     }
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileNav(); });
-    document.addEventListener('click', function(e) {
-      var btn = document.getElementById('mobileMenuBtn');
-      if (btn && !btn.contains(e.target) && !e.target.closest('#mobileNavPanel') && !e.target.closest('.filter-overlay')) closeMobileNav();
-    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileMenu(); });
 
 
 
@@ -715,14 +762,18 @@ var juicy_tags = ['a', 'img'];
       });
     }
 
-    document.getElementById('likeBtn').addEventListener('click', function() {
-      this.classList.toggle('liked');
-      const icon = this.querySelector('.action-icon');
-      icon.textContent = this.classList.contains('liked') ? '❤️' : '🤍';
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'video_like', { content_id: '<%= video.id %>', liked: this.classList.contains('liked') });
-      }
-    });
+    window.toggleLike = function(videoId, btnEl) {
+      if (btnEl._liking) return;
+      btnEl._liking = true;
+      fetch('/api/likes/' + videoId, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          btnEl.querySelector('.like-count').textContent = data.likes;
+          btnEl.classList.toggle('liked', data.liked);
+        })
+        .catch(function() {})
+        .finally(function() { btnEl._liking = false; });
+    };
 
     document.getElementById('subscribeBtn').addEventListener('click', function() {
       this.classList.toggle('subscribed');
@@ -788,7 +839,7 @@ var juicy_tags = ['a', 'img'];
           container.insertAdjacentHTML('beforeend', `
             <div class="related-card" data-preview="${v.video}" data-id="${v.id}" onclick="navigateTo('${v.id}')">
               <div class="related-thumb">
-                <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
                 <video class="related-preview" muted loop preload="none" playsinline></video>
                 <span class="duration-badge">--:--</span>
               </div>
@@ -841,20 +892,10 @@ var juicy_tags = ['a', 'img'];
   tick();
 })();
 </script>
-<!-- JuicyAds v3.0 sandbox (delayed 9min) -->
-<script>
-setTimeout(function(){
-  var s=document.createElement(&apos;script&apos;);
-  s.src=&apos;https://poweredby.jads.co/js/jads.js&apos;;
-  s.setAttribute(&apos;data-cfasync&apos;,&apos;false&apos;);
-  s.async=true;
-  document.body.appendChild(s);
-},540000);
-</script>
 <ins id="1118840" data-width="300" data-height="250"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
 <ins id="1119407" data-width="108" data-height="140"></ins>
-<script type="text/javascript" data-cfasync="false" async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 <!-- JuicyAds Float Ad -->
 <script type="text/javascript">juicy_adzone = '1118848';</script>
 <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>

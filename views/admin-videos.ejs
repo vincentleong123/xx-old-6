@@ -349,7 +349,7 @@
         const schema = JSON.stringify(schemaFor(v), null, 2);
         return `<tr>
           <td><input type="checkbox" class="video-cb" value="${v.id}" onchange="updateBulkBar()"></td>
-          <td><img src="${v.thumbnail}" alt="" style="width:48px;height:27px;object-fit:cover;border-radius:4px;display:block" loading="lazy" onerror="this.style.display='none'"></td>
+          <td><img src="${v.thumbnail}" alt="${v.title || 'video thumbnail'}" style="width:48px;height:27px;object-fit:cover;border-radius:4px;display:block" loading="lazy" onerror="this.style.display='none'"></td>
           <td class="col-title">
             <input class="inline-edit title-input" value="${(v.title||'').replace(/"/g,'&quot;')}" data-id="${v.id}" data-field="title" onblur="saveField(this)" onkeydown="if(event.key==='Enter')this.blur()">
           </td>

@@ -33,6 +33,8 @@ const AD_CONFIG_FILE = path.join(__dirname, 'data', 'ad-config.json');
 const HERO_CONFIG_FILE = path.join(__dirname, 'data', 'hero-config.json');
 const CORNERSTONE_FILE = path.join(__dirname, 'data', 'cornerstone-pages.json');
 const DB_FILE = path.join(__dirname, 'data', 'database.json');
+const XAMATEUR_DIR = 'C:/Users/User/Desktop/xamateur';
+let xmateurVideos = [];
 
 // ═══════════════════════════════════════════════════════════════
 // STATISTICS & MONITORING
@@ -323,6 +325,27 @@ app.use('/videos', async (req, res, next) => {
 
   promoteToHot(filename, hddPath);
 });
+// xAmateur videos — served from C:\Users\User\Desktop\xamateur
+app.use('/xamateur/videos', async (req, res, next) => {
+  const filename = path.basename(decodeURIComponent(req.path));
+  if (!filename.endsWith('.mp4')) return next();
+  const filePath = path.join(XAMATEUR_DIR, filename);
+  try { await fsp.stat(filePath); } catch { return next(); }
+  const stat = await fsp.stat(filePath);
+  const range = req.headers.range;
+  const rs = range
+    ? (() => {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+        res.status(206);
+        res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
+        return fs.createReadStream(filePath, { start, end });
+      })()
+    : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(filePath));
+  rs.pipe(res);
+  res.on('close', () => rs.destroy());
+});
 // Thumbnails — served from micro-cache first, then disk
 const THUMBNAIL_PLACEHOLDER = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="#1a1a1e" width="320" height="240"/><rect fill="#2a2a30" x="120" y="80" width="80" height="80" rx="16"/><polygon fill="#6b6b75" points="145,95 145,145 175,120"/></svg>');
 
@@ -379,12 +402,27 @@ const db = new loki(DB_FILE, {
     if (!db.getCollection('adConfig')) db.addCollection('adConfig');
     if (!db.getCollection('heroConfig')) db.addCollection('heroConfig');
     if (!db.getCollection('cornerstonePages')) db.addCollection('cornerstonePages', { indices: ['route'] });
+    if (!db.getCollection('likes')) db.addCollection('likes', { indices: ['videoId'] });
+    // Migrate existing likes.json data into LokiJS
+    const likesCol = db.getCollection('likes');
+    if (likesCol.count() === 0) {
+      try {
+        const legacy = JSON.parse(fs.readFileSync(LIKES_FILE, 'utf8'));
+        const entries = Object.entries(legacy).filter(([_, v]) => v.count > 0);
+        if (entries.length > 0) {
+          entries.forEach(([videoId, data]) => likesCol.insert({ videoId, count: data.count, ips: data.ips }));
+          db.saveDatabase();
+          console.log(`✅ [LIKES] Migrated ${entries.length} entries from likes.json to LokiJS`);
+        }
+      } catch {}
+    }
   }
 });
 
 function getVideosCollection() { return db.getCollection('videos'); }
 function getPageConfigsCollection() { return db.getCollection('pageConfigs'); }
 function getCornerstoneCollection() { return db.getCollection('cornerstonePages'); }
+function getLikesCollection() { return db.getCollection('likes'); }
 
 async function syncVideosToDb() {
   const col = getVideosCollection();
@@ -451,6 +489,13 @@ async function loadDescriptions() {
 let CACHE_VERSION = Date.now();
 app.locals.cacheVersion = CACHE_VERSION;
 app.locals.siteBase = SITE_BASE;
+app.locals.cleanAlt = (v) => (v && (v.id || v.title || '')).replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+
+function cleanVideoTitle(video) {
+  let t = (video.id || video.title || '');
+  t = t.replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
 
 function bumpVersion() {
   CACHE_VERSION = Date.now();
@@ -492,6 +537,30 @@ async function loadIndex() {
     console.log('\n⚠️  [CACHE] No index found, building...\n');
     stats.cache.misses++;
     return await buildIndex();
+  }
+}
+
+async function loadXamateurIndex() {
+  try {
+    const data = await fsp.readFile(path.join(XAMATEUR_DIR, 'data', 'video-index.json'), 'utf8');
+    const raw = JSON.parse(data);
+    xmateurVideos = raw.map(v => ({
+      id: v.id,
+      name: v.name || v.title,
+      title: v.title,
+      filename: v.filename,
+      video: '/xamateur/videos/' + encodeURIComponent(v.filename),
+      thumbnail: '/thumbnails/' + encodeURIComponent(v.filename.replace(/\.mp4$/i, '.jpg')),
+      views: v.views || 0,
+      keywords: v.keywords || [],
+      category: v.category || 'Amateur',
+      uploaded: v.uploaded || new Date().toISOString(),
+      description: v.description || ''
+    }));
+    console.log(`\n🔶 [XAMATEUR] Loaded ${xmateurVideos.length} xMateur videos\n`);
+  } catch (err) {
+    xmateurVideos = [];
+    console.log(`\n🔶 [XAMATEUR] Could not load: ${err.message}\n`);
   }
 }
 
@@ -687,13 +756,31 @@ app.get('/', cachePage, async (req, res) => {
   const tags = getTags();
   const extraTag = SEO_KW.sort(() => Math.random() - 0.5).slice(0, 4);
   const extraTags = extraTag.map(t => ({ tag: t, count: Math.floor(Math.random() * 500) + 50 }));
+
+  const totalViews = videos.reduce((s, v) => s + (v.views || 0), 0);
+  const updatedLabel = 'Today';
+
+  const filterCategory = req.query.cat || '';
+  let filterTitle = seoInject('Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+');
+  let filterH1 = null;
+  let filterDesc = 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www. Free Malay porn, Melayu lucah, awek tudung bokep malay video.';
+  let filterKw = 'seks melayu, awek tudung, lucah, malay porn, malaysian chinese, xx amateur, xxx-matuer, xamatuer, video rakam, bilik, melayu x www, super x melayu malay pron, terkini';
+  if (filterCategory) {
+    filterTitle = `Lucahman - ${filterCategory} Malay Porn Videos | Awek Tudung Malaysia 18+`;
+    filterH1 = `Lucahman Melayu Porn — ${filterCategory} Malay Videos 18+`;
+    filterDesc = `Malay ${filterCategory} video lucah melayu malaysian chinese xx amateur. Free ${filterCategory} Malay porn, awek tudung bokep malay video.`;
+  }
+
   res.render('gallery', {
-    title: seoInject('Lucahman - Melayu Porn | Awek Tudung Video | Malaysia 18+'),
-    metaDesc: 'Malay seks awek tudung lucah malaysian chinese xx amateur video rakam bilik terkini xxx-matuer xamatuer Melayu x www. Free Malay porn, Melayu lucah, awek tudung bokep malay video.',
-    metaKeywords: 'seks melayu, awek tudung, lucah, malay porn, malaysian chinese, xx amateur, xxx-matuer, xamatuer, video rakam, bilik, melayu x www, super x melayu malay pron, terkini',
-    categories: getCategories(),
+    title: filterTitle,
+    filterCategory,
+    filterH1,
+    metaDesc: filterDesc,
+    metaKeywords: filterKw,
     topTags: tags.concat(extraTags).sort(() => Math.random() - 0.5),
     totalVideos: videos.length,
+    totalViews,
+    updatedLabel,
     canonicalUrl,
     structuredData: [websiteSchema, orgSchema],
     simplifiedSidebar: false,
@@ -716,6 +803,19 @@ app.get('/mega-x', cachePage, async (req, res) => {
     simplifiedSidebar: true
   });
 });
+
+function computeTotalViews() {
+  try {
+    return videos.reduce((s, v) => s + (v.views || 0), 0);
+  } catch {
+    return 0;
+  }
+}
+
+function computeUpdatedLabel() {
+  // Keep cheap + deterministic for SSR; if you later want "MMM d" you can derive from videos[0].uploaded.
+  return 'Today';
+}
 
 function renderSuperX(req, res, pageSlug) {
   const canonicalUrl = 'https://xmelayu.site/super-x-melayu';
@@ -786,9 +886,14 @@ function renderCornerstonePage(req, res, route) {
       totalVideos: filteredVideos.length,
       videos: filteredVideos,
       content: config.content,
-      galleries: (config.galleries || []).map(g => ({ name: g, previews: filteredVideos.slice(0, 3) })),
+      galleries: (config.galleries || []).map(g => ({
+        slug: g,
+        title: g.charAt(0).toUpperCase() + g.slice(1) + ' Collection',
+        videoCount: filteredVideos.length,
+        previews: filteredVideos.slice(0, 3).map(v => v.thumbnail)
+      })),
       latest: filteredVideos.slice(0, 20),
-      isGallery: !!config.isGallery,
+      isGallery: false,
       canonicalUrl,
       structuredData: [websiteSchema, orgSchema]
     });
@@ -821,7 +926,33 @@ function renderCornerstonePage(req, res, route) {
 }
 
 // Tier 1 page routes (explicit — must be before /:id catch-all)
-app.get('/xamateur', cachePage, (req, res) => renderCornerstonePage(req, res, '/xamateur'));
+app.get('/xamateur', cachePage, (req, res) => {
+  const canonicalUrl = 'https://xmelayu.site/xamateur';
+  const websiteSchema = seo.generateStructuredData('website');
+  const orgSchema = seo.generateStructuredData('organization');
+  const articles = xmateurVideos.slice(0, 5);
+  const popular = [...xmateurVideos].sort((a, b) => b.views - a.views).slice(0, 5);
+  const content = `<h1>xAmateur — USA Amateur Porn Collection</h1>
+<p>Welcome to <strong>xAmateur</strong> — premium American amateur video collection with ${xmateurVideos.length} authentic videos and growing daily.</p>
+<h2>Latest Videos</h2>
+<ul>${articles.map(v => `<li><a href="/xamateur/${v.id}"><strong>${v.title}</strong></a></li>`).join('')}</ul>
+<h2>Most Popular</h2>
+<ul>${popular.map(v => `<li><a href="/xamateur/${v.id}"><strong>${v.title}</strong></a> — ${(v.views || 0).toLocaleString()} views</li>`).join('')}</ul>
+<h2>What is xAmateur?</h2>
+<p>xAmateur is the USA Tier 1 amateur collection on xMelayu, featuring real homemade American amateur content. Every video is authentic, unfiltered, and exclusive to xAmateur.</p>
+<h2>Why USA Tier 1 Content?</h2>
+<p>Our <strong>USA Tier 1 amateur videos</strong> are curated for English-speaking audiences with higher engagement and premium quality. These videos target search intent from US, UK, Canada, and Australia viewers.</p>`;
+  res.render('cornerstone', {
+    title: 'xAmateur — USA Amateur Videos | Tier 1 Amateur Porn Collection',
+    metaDescription: `Watch ${xmateurVideos.length} American amateur porn videos. xAmateur premium USA amateur collection featuring authentic homemade content. Free access, HD streaming.`,
+    heading: `xAmateur — ${xmateurVideos.length} USA Amateur Videos`,
+    content,
+    videos: xmateurVideos,
+    canonicalUrl,
+    structuredData: [websiteSchema, orgSchema],
+    isXmateur: true
+  });
+});
 app.get('/xamateur/real', cachePage, (req, res) => renderCornerstonePage(req, res, '/xamateur/real'));
 app.get('/tudung-porn', cachePage, (req, res) => renderCornerstonePage(req, res, '/tudung-porn'));
 
@@ -889,7 +1020,34 @@ app.get('/api/health', (req, res) => {
   const mem = process.memoryUsage();
   res.json({ status: 'ok', timestamp: new Date().toISOString(), videos: videos.length, uptime: process.uptime(), memory: { heapUsed: (mem.heapUsed / 1024 / 1024).toFixed(2) + ' MB' } });
 });
+// Ad zones to inject into video descriptions (zones NOT already on gallery page — no ID conflicts)
+const DESC_AD_ZONES = [
+  { zone: 1118845, w: 300, h: 100 },
+  { zone: 1118841, w: 300, h: 100 },
+  { zone: 1120028, w: 108, h: 140 },
+  { zone: 1120029, w: 133, h: 139 }   // 125×125 image+title
+];
+const DESC_NATIVE_ZONE = 1119406;
 
+// Pre-build the ad HTML snippet for video descriptions
+function buildDescAdHtml() {
+  let html = '';
+  DESC_AD_ZONES.forEach(az => {
+    html += `<div class="ad-slot-placeholder" style="width:100%;max-width:${az.w}px;margin:8px auto">\n`;
+    html += `  <ins id="${az.zone}" data-width="${az.w}" data-height="${az.h}"></ins>\n`;
+    html += `</div>\n`;
+  });
+  // Native ad
+  html += `<div data-id="juicyads-native-ads" data-ad-zone="${DESC_NATIVE_ZONE}" data-targets="a"></div>\n`;
+  return html;
+}
+const DESC_AD_HTML = buildDescAdHtml();
+
+app.get('/api/video-descriptions/:id', (req, res) => {
+  const desc = videoDescriptions[req.params.id];
+  if (desc) return res.json({ text: desc.text || '', keywords: desc.keywords || [], adZones: DESC_AD_ZONES, nativeZone: DESC_NATIVE_ZONE, adHtml: DESC_AD_HTML });
+  res.json({ text: '', keywords: [], adZones: DESC_AD_ZONES, nativeZone: DESC_NATIVE_ZONE, adHtml: DESC_AD_HTML });
+});
 app.get('/api/refresh', async (req, res) => { console.log('\n🔄 [ADMIN] Refresh requested...\n'); videos = await loadIndex(); bumpVersion(); res.json({ success: true, count: videos.length, cacheVersion: CACHE_VERSION }); });
 app.get('/robots.txt', (req, res) => {
   stats.cache.hits++;
@@ -1120,6 +1278,30 @@ app.get('/k/:keyword', cachePage, (req, res) => {
   });
 });
 
+app.get('/xamateur/:id', async (req, res) => {
+  const video = xmateurVideos.find(v => v.id === req.params.id);
+  if (!video) return res.status(404).render('error', { message: 'Video not found' });
+  const related = xmateurVideos
+    .filter(v => v.id !== video.id)
+    .map(v => {
+      let score = 0;
+      const kwOverlap = video.keywords?.filter(k => v.keywords?.includes(k)).length || 0;
+      score += kwOverlap * 2;
+      score += Math.log2((v.views || 100) + 1) * 0.5;
+      return { v, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 12)
+    .map(x => x.v);
+  res.render('player-en', {
+    displayTitle: cleanVideoTitle(video) + ' - xAmateur',
+    title: video.title + ' - xAmateur',
+    video,
+    related,
+    isXmateur: true
+  });
+});
+
 app.get('/:id', async (req, res) => {
   const video = videos.find(v => v.id === req.params.id);
   if (!video) return res.status(404).render('error', { message: 'Video not found' });
@@ -1142,9 +1324,10 @@ app.get('/:id', async (req, res) => {
     .map(x => x.v);
   const canonicalUrl = `https://xmelayu.site/${req.params.id}`;
   const videoDesc = videoDescriptions[video.id] || null;
+  const displayTitle = cleanVideoTitle(video);
   const videoSchema = seo.generateStructuredData('video', {
-    title: video.title,
-    description: videoDesc?.text || `${video.title} - Homemade adult video`,
+    title: displayTitle,
+    description: videoDesc?.text || `${displayTitle} - Homemade adult video`,
     thumbnailUrl: SITE_BASE + video.thumbnail,
     contentUrl: SITE_BASE + video.video,
     embedUrl: SITE_BASE + video.video,
@@ -1152,7 +1335,16 @@ app.get('/:id', async (req, res) => {
     views: video.views,
     filename: video.id
   });
-  res.render('player', { title: video.title, video, related, canonicalUrl, siteBase: SITE_BASE, videoDescription: videoDesc, structuredData: [videoSchema] });
+  res.render('player', {
+    displayTitle,
+    title: video.title,
+    video,
+    related,
+    canonicalUrl,
+    siteBase: SITE_BASE,
+    videoDescription: videoDesc,
+    structuredData: [videoSchema]
+  });
 });
 
 app.get('/admin', (req, res) => {
@@ -1237,6 +1429,48 @@ app.post('/api/admin/super-x', async (req, res) => {
   res.json({ success: true });
 });
 
+// ═══════════════════════════════════════════════════════════════
+// LIKES API
+// ═══════════════════════════════════════════════════════════════
+
+const LIKES_FILE = path.join(__dirname, 'data', 'likes.json');
+
+app.get('/api/likes/:id', (req, res) => {
+  const col = getLikesCollection();
+  const videoId = req.params.id;
+  let entry = col.findOne({ videoId });
+  res.json({ videoId, likes: entry ? entry.count : 0 });
+});
+
+app.post('/api/likes/:id', (req, res) => {
+  const col = getLikesCollection();
+  const videoId = req.params.id;
+  const ip = req.ip;
+  let entry = col.findOne({ videoId });
+  if (!entry) {
+    entry = col.insert({ videoId, count: 0, ips: [] });
+  }
+  const idx = entry.ips.indexOf(ip);
+  let liked;
+  if (idx === -1) {
+    entry.ips.push(ip);
+    entry.count++;
+    liked = true;
+  } else {
+    entry.ips.splice(idx, 1);
+    entry.count--;
+    liked = false;
+  }
+  col.update(entry);
+  res.json({ videoId, likes: entry.count, liked });
+});
+
+// Redirect /v/:id to /:id (handles bot probes and legacy links)
+app.get('/v/:id', (req, res) => res.redirect(301, '/' + req.params.id));
+app.get('/video/:id', (req, res) => res.redirect(301, '/' + req.params.id));
+// Redirect old /xamateur/real/v/:id links to canonical /xamateur/:id
+app.get('/xamateur/real/v/:id', (req, res) => res.redirect(301, '/xamateur/' + req.params.id));
+
 app.use((req, res) => { res.status(404).render('error', { message: 'Page not found' }); });
 
 function formatUptime(ms) {
@@ -1261,6 +1495,7 @@ const server = http.createServer({ agent: httpAgent }, app);
   await loadHeroConfig();
   loadDescriptions();
   await loadCornerstonePages();
+  await loadXamateurIndex();
   server.listen(PORT, () => {
     const totalViews = videos.reduce((s, v) => s + v.views, 0);
     const cats = getCategories();

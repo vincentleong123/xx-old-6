@@ -33,8 +33,7 @@
 </style>
 </head>
 <body>
-<script type="text/javascript">var juicy_tags=['a','img'];</script>
-<script type="text/javascript" defer src="https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks"></script>
+<!-- display ads only (no popunder) -->
 
 <header class="header">
   <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu"><span>☰</span></button>
@@ -62,7 +61,7 @@
     </div>
 
     <div class="section-header">
-      <div class="section-title"><h2>🧕 Tudung Videos</h2><h3 id="resultInfo">loading...</h3></div>
+      <div class="section-title"><h3>Tudung Malay Hijab Videos</h3><span id="resultInfo">loading...</span></div>
     </div>
 
     <div class="grid-43" id="videoGrid">
@@ -71,7 +70,7 @@
         <a href="/<%= v.id %>" class="card-43" style="animation-delay:<%= (i % 8) * 0.04 %>s">
           <div class="thumb">
             <div class="img-shimmer"></div>
-            <img src="<%= v.thumbnail %>" alt="<%= v.title %> - Tudung Porn Melayu" loading="<%= i < 6 ? 'eager' : 'lazy' %>" decoding="async" width="320" height="240">
+            <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %> - Tudung Porn Melayu" loading="<%= i < 6 ? 'eager' : 'lazy' %>" decoding="async" width="320" height="240">
             <div class="overlay"></div>
             <span class="views">👁️ <%= v.views %></span>
           </div>
@@ -96,8 +95,9 @@
 <script>
 const TUDUNG = <%- JSON.stringify(videos) %>;
 const state = { page: 1, loading: false, hasMore: true, limit: 36, query: '' };
+function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
 function renderCard(v) {
-  return '<a href="/'+v.id+'" class="card-43"><div class="thumb"><div class="img-shimmer"></div><img src="'+v.thumbnail+'" alt="'+v.title+' - Tudung Porn" loading="lazy" decoding="async" width="320" height="240"><div class="overlay"></div><span class="views">👁️ '+v.views+'</span></div><div class="card-body"><div class="ctitle">'+v.title+'</div><div class="cmeta">'+v.category+'</div></div></a>';
+  return '<a href="/'+v.id+'" class="card-43"><div class="thumb"><div class="img-shimmer"></div><img src="'+v.thumbnail+'" alt="'+cleanAlt(v)+' - Tudung Porn" loading="lazy" decoding="async" width="320" height="240"><div class="overlay"></div><span class="views">👁️ '+v.views+'</span></div><div class="card-body"><div class="ctitle">'+v.title+'</div><div class="cmeta">'+v.category+'</div></div></a>';
 }
 function showBatch() {
   if (state.loading || !state.hasMore) return;
