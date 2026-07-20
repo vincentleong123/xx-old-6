@@ -1,0 +1,9 @@
+<script>
+window.chatConfig = {
+  visitorId: '<%= visitorId %>',
+  adminName: '<%= adminName || "Alex" %>',
+  isAdminPage: <%= isAdminPage || false %>
+};
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js?v=1"></script>

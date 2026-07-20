@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — xMelayu Chat</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d0f;
+      color: #e0e0e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .login-card {
+      background: #141418;
+      border: 1px solid #2a2a30;
+      border-radius: 16px;
+      padding: 40px;
+      width: 360px;
+      max-width: 90%;
+      text-align: center;
+    }
+    .login-icon { font-size: 48px; margin-bottom: 12px; }
+    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-sub { font-size: 13px; color: #6b6b75; margin-bottom: 24px; }
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #2a2a30;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: #e8793b; }
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #e8793b, #d96b2f);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: opacity 0.2s;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-error {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-icon">💬</div>
+    <div class="login-title">Chat Admin</div>
+    <div class="login-sub">Enter your password to access the chat dashboard</div>
+    <form action="/admin/chat/login" method="POST">
+      <input type="password" name="password" class="login-input" placeholder="Password" autofocus>
+      <button type="submit" class="login-btn">Access Dashboard</button>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="login-error" style="display:block;"><%= error %></div>
+      <% } %>
+    </form>
+  </div>
+</body>
+</html>

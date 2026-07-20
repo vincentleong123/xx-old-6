@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="description" content="<%= metaDescription %>">
+  <meta name="keywords" content="xamateur, real amateur, phone recorded, authentic, USA, homemade, amateur video">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= metaDescription %>">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
-  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://xmelayu.site/xamateur/real' %>">
-  <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+  <meta property="og:url" content="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/xamateur/real' %>">
+  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/xamateur/real' %>">
 <script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script type="application/ld+json">
@@ -22,13 +20,21 @@
     "@type": "CollectionPage",
     "name": "<%= title.replace(/"/g, '&quot;') %>",
     "description": "<%= metaDescription.replace(/"/g, '&quot;') %>",
-    "url": "<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl.replace(/"/g, '&quot;') : 'https://xmelayu.site/xamateur/real' %>"
+    "url": "<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl.replace(/"/g, '&quot;') : siteBase + '/xamateur/real' %>"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "<%= siteBase %>" },
+      { "@type": "ListItem", "position": 2, "name": "xAmateur", "item": "<%= siteBase %>/xamateur" },
+      { "@type": "ListItem", "position": 3, "name": "Real Phone Recordings", "item": "<%= siteBase %>/xamateur/real" }
+    ]
   }
   </script>
   <style>
-    .ad-holder { display: flex; align-items: center; justify-content: center; padding: 12px 0; margin: 4px 0; }
-    .ad-holder ins { display: block; }
-    .ad-holder--strip { gap: 16px; flex-wrap: wrap; padding: 20px 0; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -262,31 +268,19 @@
         <%- content %>
       </div>
 
-      <div class="ad-holder" style="gap:16px;flex-wrap:wrap;padding:16px 0">
-        <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
-          <ins id="r-lb" data-width="728" data-height="90"></ins>
-        </div>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
-        <ins id="r-h-a1" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-        <ins id="r-h-a2" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-        <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="width:100%;min-height:60px"></div>
-        <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="width:100%;min-height:60px"></div>
-      </div>
 
       <!-- Gallery Grid -->
       <div class="section-title">
-        Browse by Collection <span class="badge badge-phone">PHONE AMATEUR</span>
+        <h2 style="margin:0;font-size:inherit">Browse by Collection</h2> <span class="badge badge-phone">PHONE AMATEUR</span>
       </div>
       <div class="gallery-grid">
         <% galleries.forEach(function(g) { %>
           <a href="/xamateur/real/<%= g.slug %>" class="gallery-card">
             <div class="preview">
               <% if (g.previews && g.previews.length >= 3) { %>
-                <img src="<%= g.previews[0] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
-                <img src="<%= g.previews[1] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
-                <img src="<%= g.previews[2] %>" alt="<%= cleanAlt(g) %> preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[0] %>" alt="<%= g.title %> - phone recording preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[1] %>" alt="<%= g.title %> - phone recording preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                <img src="<%= g.previews[2] %>" alt="<%= g.title %> - phone recording preview" loading="lazy" decoding="async" onerror="this.style.display='none'">
               <% } else { %>
                 <div style="display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:24px;grid-column:1/-1;">&#x1F4F1;</div>
               <% } %>
@@ -301,13 +295,13 @@
 
       <!-- Latest video carousel -->
       <div class="section-title">
-        Latest Phone Recordings <span class="badge badge-new">NEW</span>
+        <h2 style="margin:0;font-size:inherit">Latest Phone Recordings</h2> <span class="badge badge-new">NEW</span>
       </div>
       <div class="carousel-wrap">
         <button class="carousel-arrow left" onclick="document.querySelector('.carousel').scrollBy({left:-300,behavior:'smooth'})">&#10094;</button>
         <div class="carousel">
           <% latest.slice(0, 20).forEach(function(v) { %>
-            <a href="/xamateur/<%= v.id %>" class="carousel-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
+            <a href="/xamateur/<%= v.id %>" class="carousel-card" data-id="<%= v.id %>" data-preview="<%= v._rawVideoUrl || v.video || '' %>">
               <div class="thumb">
                 <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                 <video muted loop preload="none" playsinline></video>
@@ -338,16 +332,10 @@
         <p><%= gallery.description %></p>
       </div>
 
-      <div class="ad-holder" style="gap:16px;flex-wrap:wrap;padding:16px 0">
-        <ins id="r-g-a1" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-        <ins id="r-g-a2" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-      </div>
 
       <div class="grid-43">
         <% videos.forEach(function(v) { %>
-          <a href="/xamateur/<%= v.id %>" class="card-43" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
+          <a href="/xamateur/<%= v.id %>" class="card-43" data-id="<%= v.id %>" data-preview="<%= v._rawVideoUrl || v.video || '' %>">
             <div class="thumb">
               <img src="<%= v.thumbnail || '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
               <video muted loop preload="none" playsinline></video>
@@ -361,20 +349,6 @@
         <% }); %>
       </div>
 
-      <div class="ad-holder ad-holder--strip">
-        <ins id="r-g-f1" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-        <ins id="r-g-f2" data-width="300" data-height="250"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-        <ins id="r-g-f3" data-width="108" data-height="140"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
-        <ins id="r-g-f4" data-width="133" data-height="139"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
-        <ins id="r-g-f5" data-width="300" data-height="100"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
-        <ins id="r-g-f6" data-width="300" data-height="100"></ins>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118841});</script>
-      </div>
     <% } %>
 
     <%- include('_about') %>
@@ -382,10 +356,9 @@
       <p>&copy; 2026 xAmateur &middot; <a href="/xamateur">American Amateur Videos</a> &middot; <a href="/xamateur/real">Real Phone Recordings</a> &middot; All models 18+</p>
     </div>
   </div>
-<ins id="1119407" data-width="108" data-height="140"></ins>
-<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
 
 <!--JuicyAds END-->
 <script>(function(){var m=new Map(),mx=6;function s(v){var e=m.get(v);if(e){e.pause();e.removeAttribute('src');e.load();m.delete(v)}}function p(vid){if(m.has(vid))return;var c=document.querySelector('[data-id="'+vid+'"]');if(!c)return;var th=c.querySelector('.thumb'),u=c.dataset.preview,vd=th&&th.querySelector('video');if(!vd||!u)return;vd.src=u+'#t=0.06,30';vd.currentTime=0.05;vd.preload='auto';vd.play().catch(function(){});m.set(vid,vd);if(m.size>mx){var o=m.entries().next().value;if(o){o[1].pause();o[1].removeAttribute('src');o[1].load();m.delete(o[0])}}}document.addEventListener('mouseover',function(e){var t=e.target.closest('.carousel-card,.card-43');if(!t)return;var id=t.dataset.id;if(id)p(id)});document.addEventListener('mouseout',function(e){var t=e.target.closest('.carousel-card,.card-43');if(t&&t.dataset.id)s(t.dataset.id)})})();</script>
+<%- include('chat') %>
 </body>
 </html>

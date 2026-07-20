@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+    .embed-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+    video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .brand { position: absolute; bottom: 6px; right: 10px; z-index: 10; opacity: 0.5; }
+    .brand a { color: #fff; font: 11px/1 Arial, sans-serif; text-decoration: none; letter-spacing: 0.5px; }
+    .brand a:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="embed-wrap">
+    <video id="vp" controls playsinline preload="metadata" poster="<%= poster %>">
+      <source src="<%= src %>" type="video/mp4">
+    </video>
+    <div class="brand"><a href="<%= siteBase %>/<%= videoId %>" target="_blank" rel="noopener">xMelayu</a></div>
+  </div>
+</body>
+</html>

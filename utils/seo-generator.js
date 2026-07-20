@@ -14,9 +14,9 @@ class SEOGenerator {
       defaultDescription: options.defaultDescription || 'Platform streaming video viral dengan kategorisasi intelligent',
       defaultKeywords: options.defaultKeywords || 'video viral, streaming, HD, kategori, malaysia, intelligent classification',
       socialMedia: {
-        facebook: options.facebook || 'https://facebook.com/videogallerymy',
-        twitter: options.twitter || 'https://twitter.com/videogallerymy',
-        instagram: options.instagram || 'https://instagram.com/videogallerymy'
+        facebook: options.facebook || '',
+        twitter: options.twitter || '',
+        instagram: options.instagram || ''
       },
       analytics: {
         googleAnalytics: options.googleAnalytics || '',
@@ -38,22 +38,8 @@ class SEOGenerator {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": this.options.siteName,
-        "description": this.options.defaultDescription,
         "url": this.options.siteUrl,
-        "logo": `${this.options.siteUrl}/logo.png`,
-        "foundingDate": "2024",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "MY",
-          "addressRegion": "Kuala Lumpur"
-        },
-        "sameAs": Object.values(this.options.socialMedia),
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+60-3-1234-5678",
-          "contactType": "customer service",
-          "availableLanguage": ["Malay", "English"]
-        }
+        "logo": `${this.options.siteUrl}/logo.png`
       },
 
       // VideoObject schema for individual videos
@@ -606,11 +592,11 @@ Crawl-delay: 1`;
   escapeXml(unsafe) {
     return unsafe.replace(/[<>&'"]/g, function (c) {
       switch (c) {
-        case '<': return '<';
-        case '>': return '>';
+        case '<': return '&lt;';
+        case '>': return '&gt;';
         case '&': return '&amp;';
         case '\'': return '&apos;';
-        case '"': return '"';
+        case '"': return '&quot;';
         default: return c;
       }
     });
@@ -629,12 +615,8 @@ Crawl-delay: 1`;
     return `
     <!-- DNS Prefetch -->
     <link rel="dns-prefetch" href="//cdn.fluidplayer.com">
-    <link rel="dns-prefetch" href="//cdn.tsyndicate.com">
-    <link rel="dns-prefetch" href="//a.magsrv.com">
-    
     <!-- Preconnect -->
     <link rel="preconnect" href="https://cdn.fluidplayer.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tsyndicate.com" crossorigin>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="/css/critical.css" as="style">

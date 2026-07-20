@@ -1,15 +1,6 @@
-# ==========================================
-# GLOBAL RULE - Catch-all for all bots
-# ==========================================
 User-agent: *
 Allow: /
-Disallow: /api/
 Disallow: /admin/
-Disallow: /temp/
-Disallow: /*.json$
-Crawl-delay: 1
+Disallow: /api/
 
-# ==========================================
-# SITE MAP
-# ==========================================
 Sitemap: https://xmelayu.site/sitemap.xml

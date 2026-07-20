@@ -15,7 +15,20 @@
         header Cache-Control "public, max-age=604800, must-revalidate"
     }
 
+#    handle_path /raw/videos/* {
+#        root * E:/videos
+#        file_server
+#        header Cache-Control "public, max-age=604800, must-revalidate"
+#    }
+
+#    handle_path /raw/xamateur/* {
+#        root * C:\Users\User\Desktop\xamateur
+#        file_server
+#        header Cache-Control "public, max-age=604800, must-revalidate"
+#    }
+
     handle {
+        encode zstd gzip
         reverse_proxy localhost:7004
     }
 }
@@ -37,7 +50,14 @@
         header Cache-Control "public, max-age=604800, must-revalidate"
     }
 
+    handle_path /videos/* {
+        root * E:/videos
+        file_server
+        header Cache-Control "public, max-age=604800, must-revalidate"
+    }
+
     handle {
+        encode zstd gzip
         reverse_proxy localhost:7003
     }
 }

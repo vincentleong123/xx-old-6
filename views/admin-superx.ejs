@@ -51,9 +51,6 @@
     .badge-new { font-size:9px; background:#ff2d55; color:#fff; padding:2px 6px; border-radius:4px; margin-left:4px; }
     .inline-group { display:flex; gap:8px; align-items:center; }
     .inline-group input { flex:1; }
-    .ad-zone-row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
-    .ad-zone-row label { margin:0; min-width:80px; text-transform:none; font-weight:400; }
-    .ad-zone-row input { flex:1; }
   </style>
 </head>
 <body>
@@ -117,7 +114,7 @@
   <div class="card">
     <h2>🔗 SEO Links (hidden, search-engine only)</h2>
     <p class="hint" style="margin-bottom:12px">One per line — format: label | /path-or-query | title-attribute</p>
-    <textarea id="seoLinks" rows="6" placeholder="Super X Melayu Malay Pron | /super-x-melayu | Super X Melayu Malay Pron - xMelayu.Online"></textarea>
+    <textarea id="seoLinks" rows="6" placeholder="Super X Melayu Malay Pron | /super-x-melayu | Super X Melayu Malay Pron - xMelayu.Site"></textarea>
   </div>
 
   <div class="card">
@@ -333,22 +330,6 @@
     </div>
   </div>
 
-  <div class="card">
-    <h2>📺 Ad Zones — <span style="font-size:12px;color:#6b6b75">Per-page ad slots (fill with JuicyAds zone IDs)</span></h2>
-    <div class="ad-zone-row">
-      <label>Top Banner</label>
-      <input type="text" id="adTop" placeholder="e.g. 1118844">
-    </div>
-    <div class="ad-zone-row">
-      <label>Sidebar</label>
-      <input type="text" id="adSidebar" placeholder="e.g. 1118840">
-    </div>
-    <div class="ad-zone-row">
-      <label>Inline</label>
-      <input type="text" id="adInline" placeholder="e.g. 1118846">
-    </div>
-  </div>
-
   <div class="btn-row">
     <button class="btn btn-primary" onclick="savePageConfig()">💾 Save Page Config</button>
     <button class="btn btn-secondary" onclick="loadPageConfig()">↻ Reset Form</button>
@@ -391,10 +372,6 @@
         document.getElementById('cat-viral').value = cats.viral || '';
         document.getElementById('cat-janda').value = cats.janda || '';
         document.getElementById('cat-kolej').value = cats.kolej || '';
-        const az = pageConfig.adZones || {};
-        document.getElementById('adTop').value = az.top || '';
-        document.getElementById('adSidebar').value = az.sidebar || '';
-        document.getElementById('adInline').value = az.inline || '';
         renderNicheTags();
         renderCtaButtons();
       } catch { console.error('Failed to load page config'); }
@@ -447,12 +424,7 @@
         badge: document.getElementById('badge').value, h1: document.getElementById('h1').value,
         h1Sub: document.getElementById('h1Sub').value, subtitle: document.getElementById('subtitle').value,
         nicheTags: pageConfig.nicheTags || [], ctaButtons: pageConfig.ctaButtons || [],
-        sectionTitles: st, sectionSubs: ss, cats,
-        adZones: {
-          top: document.getElementById('adTop').value,
-          sidebar: document.getElementById('adSidebar').value,
-          inline: document.getElementById('adInline').value
-        }
+        sectionTitles: st, sectionSubs: ss, cats
       };
       const status = document.getElementById('status');
       try {

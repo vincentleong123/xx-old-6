@@ -274,7 +274,7 @@ button { font-family: inherit; cursor: pointer; }
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s;
-  filter: contrast(1.1) brightness(0.9) saturate(1.15);
+
 }
 
 .video-card:hover .video-thumb img { transform: scale(1.05); }

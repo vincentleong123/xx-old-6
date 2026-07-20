@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="description" content="<%= metaDescription %>">
-  <meta name="robots" content="noindex, follow">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="<%= canonicalUrl %>">
+  <% if (typeof faqSchema !== 'undefined' && faqSchema) { %>
+  <script type="application/ld+json"><%- JSON.stringify(faqSchema) %></script>
+  <% } %>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,6 +51,7 @@
       <a href="/" class="logo">x<span>Melayu</span></a>
       <nav class="nav-links">
         <a href="/">Home</a>
+        <a href="/faq">FAQ</a>
         <a href="/about">About</a>
       </nav>
     </div>
@@ -59,5 +63,6 @@
   <div class="footer">
     <p>&copy; 2026 xMelayu. All rights reserved.</p>
   </div>
+<%- include('chat') %>
 </body>
 </html>

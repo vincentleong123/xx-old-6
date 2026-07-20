@@ -3,34 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %> - xAmateur USA</title>
-  <meta name="description" content="<%= video.description || (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %>">
+  <title><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %> - xAmateur USA</title>
+  <% var seoDesc = video.description || (typeof seoTitle !== 'undefined' ? seoTitle : video.title); %>
+  <meta name="description" content="<%= seoDesc %>">
+  <meta name="keywords" content="<%= (video.keywords || []).join(', ') %>, xamateur, amateur, USA, homemade">
   <meta name="robots" content="index, follow">
-  <meta name="googlebot" content="index, follow">
-  <link rel="canonical" href="https://xmelayu.site/xamateur/<%= video.id %>">
-  <meta property="og:title" content="<%= video.title %> - xAmateur">
-  <meta property="og:description" content="<%= video.description || video.title %>">
-  <meta property="og:url" content="https://xmelayu.site/xamateur/<%= video.id %>">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="<%= siteBase %>/xamateur/<%= video.id %>">
+<% var vidSrc = typeof video._rawVideoUrl !== 'undefined' ? video._rawVideoUrl : video.video; %>
   <meta property="og:type" content="video.other">
+  <meta property="og:title" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>">
+  <meta property="og:description" content="<%= seoDesc %>">
+  <meta property="og:url" content="<%= siteBase %>/xamateur/<%= video.id %>">
   <meta property="og:image" content="<%= video.thumbnail %>">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="<%= video.title %> - xAmateur">
-  <meta name="twitter:description" content="<%= video.description || video.title %>">
-  <meta name="twitter:image" content="<%= video.thumbnail %>">
+  <meta property="og:image:alt" content="<%= video.title %>">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta property="article:published_time" content="<%= video.uploaded || new Date().toISOString() %>">
+  <meta property="og:video" content="<%= siteBase %><%= vidSrc %>">
+  <meta property="og:video:url" content="<%= siteBase %><%= vidSrc %>">
+  <meta property="og:video:secure_url" content="<%= siteBase %><%= vidSrc %>">
+  <meta property="og:video:type" content="video/mp4">
+  <meta property="og:video:width" content="1920">
+  <meta property="og:video:height" content="1080">
+  <meta name="twitter:player:width" content="1920">
+  <meta name="twitter:player:height" content="1080">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    "name": "<%= video.title %>",
-    "description": "<%= (video.description || video.title).replace(/"/g, '&quot;') %>",
+    "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>",
+    "description": "<%= (video.description || (typeof seoTitle !== 'undefined' ? seoTitle : video.title)).replace(/"/g, '&quot;').replace(/\n/g, ' ') %>",
     "thumbnailUrl": "<%= video.thumbnail %>",
     "uploadDate": "<%= video.uploaded %>",
-    "contentUrl": "<%= video.video %>"
+    "contentUrl": "<%= siteBase %><%= vidSrc %>",
+    "embedUrl": "<%= siteBase %>/xamateur/<%= video.id %>",
+    "mainEntityOfPage": "<%= siteBase %>/xamateur/<%= video.id %>",
+    "genre": ["Adult", "<%= video.category || 'Amateur' %>"],
+    "keywords": "<%= (video.keywords || []).join(', ') %>",
+    "isAccessibleForFree": true,
+    "isFamilyFriendly": false,
+    "contentRating": "R18+",
+    "regionsAllowed": "US",
+    "publisher": {
+      "@type": "Organization",
+      "name": "xAmateur",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "<%= siteBase %>/logo.svg"
+      }
+    },
+    "potentialAction": {
+      "@type": "WatchAction",
+      "target": "<%= siteBase %>/xamateur/<%= video.id %>"
+    }
   }
   </script>
-  <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-  <script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "<%= siteBase %>" },
+      { "@type": "ListItem", "position": 2, "name": "xAmateur", "item": "<%= siteBase %>/xamateur" },
+      { "@type": "ListItem", "position": 3, "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle.replace(/"/g, '&quot;') : video.title.replace(/"/g, '&quot;') %>" }
+    ]
+  }
+  </script>
+
+
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -144,11 +186,6 @@
       aspect-ratio: 16/11; background: var(--bg3); position: relative; overflow: hidden;
     }
     .video-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .video-card .views {
-      position: absolute; bottom: 4px; right: 4px;
-      background: rgba(0,0,0,0.75); color: var(--text);
-      font-size: 10px; padding: 2px 6px; border-radius: 3px;
-    }
     .card-body { padding: 8px 10px; }
     .card-body .ctitle { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
     .footer { margin-top: 40px; text-align: center; color: var(--text3); font-size: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
@@ -255,26 +292,22 @@
   </div>
   <div class="container">
     <div class="tag-bar">
-      <a href="/xamateur" class="pill">xamateur</a>
-      <a href="/xamateur" class="pill">xmateur</a>
-      <a href="/xamateur" class="pill">x amateur</a>
-      <a href="/xamateur" class="pill">american</a>
-      <a href="/xamateur" class="pill">homemade</a>
-      <a href="/xamateur" class="pill">real</a>
-      <a href="/xamateur" class="pill">exclusive</a>
-      <a href="/xamateur" class="pill">trending</a>
+      <a href="/xamateur" class="pill">xAmateur</a>
+      <a href="/xamateur/real" class="pill">Real Amateur</a>
+      <a href="/xamateur" class="pill">USA Homemade</a>
+      <a href="/xmateur" class="pill">xMateur</a>
+      <a href="/super-x-melayu" class="pill">Super X Melayu</a>
+      <a href="/mega-x-melayu" class="pill">Mega X Melayu</a>
     </div>
     <div class="video-player">
-      <video controls preload="metadata" poster="<%= video.thumbnail %>">
-        <source src="<%= video.video %>" type="video/mp4">
+      <video controls preload="metadata" poster="<%= video.thumbnail %>" aria-label="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>">
+        <source src="<%= vidSrc %>" type="video/mp4">
       </video>
     </div>
 
     <div class="video-info">
-      <h1><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %></h1>
+      <h1><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %></h1>
       <div class="meta">
-        <span>👁 <%= (video.views || 0).toLocaleString() %> views</span>
-        <span>👍 <%= (video.likes || 0).toLocaleString() %></span>
         <span>📅 <%= new Date(video.uploaded).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
         <span>🏷 <span class="cat-badge"><%= video.category %></span></span>
       </div>
@@ -284,7 +317,7 @@
         <% }) %>
       </div>
       <div class="description">
-        <%= video.description || video.title %>
+        <%- video.description || '<p>Watch this ' + (video.category || 'amateur') + ' video on xAmateur. Authentic USA amateur content, verified and exclusive.</p>' %>
       </div>
 
       <div class="goodpart-area">
@@ -293,77 +326,26 @@
         </button>
         <div class="gp-marked-list" id="gpMarkedList"></div>
       </div>
-      <div class="ad-holder" style="margin:16px 0">
-      <!-- Leaderboard -->
-      <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
-        <ins id="1120025" data-width="728" data-height="90"></ins>
-      </div>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
-      <!-- Two-column banners -->
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-        <div class="ad-slot-placeholder" style="max-width:300px">
-          <ins id="1118844" data-width="300" data-height="250"></ins>
-        </div>
-        <div class="ad-slot-placeholder" style="max-width:300px">
-          <ins id="1118846" data-width="300" data-height="250"></ins>
-        </div>
-      </div>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-      <!-- Small banners row -->
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-        <div class="ad-slot-placeholder" style="max-width:300px">
-          <ins id="1118851" data-width="300" data-height="100"></ins>
-        </div>
-        <div class="ad-slot-placeholder" style="max-width:300px">
-          <ins id="1118847" data-width="300" data-height="100"></ins>
-        </div>
-      </div>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118851});</script>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
-      <!-- Native ads row -->
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-        <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
-        <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
-      </div>
-      <!-- Extra banner -->
-      <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:8px auto">
-        <ins id="1118841" data-width="300" data-height="100"></ins>
-      </div>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118841});</script>
-    </div>
+
     </div>
 
-    <h2>More Amateur Videos</h2>
+    <h2>Related <%= video.category || 'Amateur' %> Videos</h2>
     <div class="video-grid">
-<% var _rldZs2 = [1118847, 1118845, 1118841, 1120028, 1120029, 1119414]; %>
+
 <% related.forEach(function(v, i) { %>
         <a href="/xamateur/<%= v.id %>" class="video-card">
           <div class="thumb">
-            <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
-            <span class="views"><%= (v.views || 0).toLocaleString() %></span>
+            <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.style.display='none'">
           </div>
           <div class="card-body">
             <div class="ctitle"><%= v.title %></div>
           </div>
         </a>
-<% if ((i + 1) % 5 === 0 && i < related.length - 1) { var zi = Math.floor(i / 5) - 1; if (zi < _rldZs2.length) { %>
-        <div style="grid-column:1/-1" class="ad-holder">
-          <ins id="<%= _rldZs2[zi] %>" data-width="300" data-height="250"></ins>
-          <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':<%= _rldZs2[zi] %>});</script>
-        </div>
-<% } } %>
+
 <% }); %>
     </div>
 
-    <div class="ad-holder ad-holder--strip">
-      <ins id="1118846" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-      <ins id="1120028" data-width="108" data-height="140"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
-      <ins id="1120029" data-width="133" data-height="139"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
-    </div>
+
 
     <%- include('_about') %>
     <div class="footer">
@@ -454,14 +436,20 @@
       setTimeout(function() { t.classList.remove('show'); }, 2500);
     }
 
+    var ALT_ONLY_WORDS = new Set(['pussy','tits','ass','boobs','dick','cock','cum','fuck','suck','blowjob','handjob','orgasm','anal','dildo','vibrator','masturbate','moan','creampie','gangbang','threesome','foursome','deepthroat','squirting','facial','cuckold','nude','naked','xxx','sex','porn']);
+    function cleanAlt(v) {
+      var txt = (v.id || v.title || '').replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+      return txt.split(/\s+/).filter(function(w) { return w.length > 1 && !ALT_ONLY_WORDS.has(w.toLowerCase()); }).join(' ') || txt;
+    }
+
     (function() {
       var videoId = '<%= video.id %>';
       if (videoId) updateMarkedListUI(videoId);
     })();
   </script>
-  <ins id="1119407" data-width="108" data-height="140"></ins>
-<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+
 
 <!--JuicyAds END-->
+<%- include('chat') %>
 </body>
 </html>

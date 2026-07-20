@@ -323,14 +323,14 @@
 
     function schemaFor(v) {
       const desc = v.description || v.title;
-      const base = 'https://xmelayu.site';
+      const base = '<%= siteBase %>';
       return {
         '@context': 'https://schema.org',
         '@type': 'VideoObject',
         name: v.title || v.id,
         description: desc.slice(0, 200),
         thumbnailUrl: base + (v.thumbnail || '/thumbnails/' + v.id + '.jpg'),
-        contentUrl: base + v.video,
+        contentUrl: base + (v._rawVideoUrl || v.video),
         embedUrl: base + '/' + v.id,
         uploadDate: v.uploaded || new Date().toISOString(),
         interactionStatistic: {

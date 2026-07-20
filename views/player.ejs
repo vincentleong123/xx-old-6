@@ -2,44 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof displayTitle !== 'undefined' ? displayTitle : title %></title>
-<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : ((typeof displayTitle !== 'undefined' ? displayTitle : video.title) + ' - ' + video.category + ' video. HD streaming on Lucahman. 18+ only.'); %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : title) %></title>
+<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : ((typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title)) + ' - ' + video.category + ' video.'); %>
   <meta name="description" content="<%= seoMetaDesc %>">
   <meta name="robots" content="max-video-preview:large, index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmateur, amateur, malay, HD streaming, 18+">
+  <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmelayu, amateur, malay, HD streaming, 18+">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
   <script>!function(){try{var v=localStorage.getItem('_cv')||'',c='<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>';if(v&&v!==c&&c){localStorage.clear();location.reload()}localStorage.setItem('_cv',c)}catch(e){}}()</script>
-   <meta name="theme-color" content="#0a0a0b">
-  <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-  <% if (typeof structuredData !== 'undefined' && structuredData) { %>
-    <% structuredData.forEach(function(sd) { %>
-      <script type="application/ld+json"><%- JSON.stringify(sd) %></script>
-    <% }); %>
-  <% } %>
-  <link rel="canonical" href="https://xmelayu.site/<%= video.id %>">
-  
-  <!-- Preconnect for performance -->
-  <link rel="preconnect" href="https://xmelayu.site">
-  <link rel="dns-prefetch" href="https://xmelayu.site">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/' + video.id %>">
+  <meta property="article:published_time" content="<%= video.uploaded || new Date().toISOString() %>">
+
+  <link rel="preconnect" href="<%= siteBase %>">
+  <link rel="dns-prefetch" href="<%= siteBase %>">
   <link rel="preconnect" href="https://www.googletagmanager.com">
-  
-  <!-- Open Graph -->
-<% var ogDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').substring(0,200) : (video.title + ' - ' + video.category + ' video. HD streaming on Lucahman.'); %>
+
+<% var ogDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').substring(0,200) : ((typeof seoTitle !== 'undefined' ? seoTitle : video.title) + ' - ' + video.category + ' video.'); %>
 <% var absThumb = siteBase + video.thumbnail; %>
-  <meta property="og:title" content="<%= video.title %> | xMelayu">
+  <meta property="og:title" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %> | xMelayu">
   <meta property="og:description" content="<%= ogDesc %>">
   <meta property="og:type" content="video.other">
-  <meta property="og:url" content="https://xmelayu.site/<%= video.id %>">
-  <meta property="og:site_name" content="Lucahman - xMelayu">
+  <meta property="og:url" content="<%= siteBase %>/<%= video.id %>">
+  <meta property="og:site_name" content="xMelayu">
   <meta property="og:image" content="<%= absThumb %>">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="720">
-  <meta property="og:image:alt" content="<%= video.title %>">
-  <meta property="og:video" content="<%= absThumb %>">
-  <meta property="og:video:url" content="<%= siteBase %><%= video.video %>">
-  <meta property="og:video:secure_url" content="<%= siteBase %><%= video.video %>">
+  <meta property="og:image:alt" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>">
+<% var vidSrc = typeof video._rawVideoUrl !== 'undefined' ? video._rawVideoUrl : video.video; %>
+  <meta property="og:video" content="<%= siteBase %><%= vidSrc %>">
+  <meta property="og:video:url" content="<%= siteBase %><%= vidSrc %>">
+  <meta property="og:video:secure_url" content="<%= siteBase %><%= vidSrc %>">
   <meta property="og:video:type" content="video/mp4">
   <meta property="og:video:width" content="1920">
   <meta property="og:video:height" content="1080">
@@ -47,964 +42,1357 @@
   <meta property="og:locale:alternate" content="ms_MY">
   <meta property="article:section" content="<%= video.category %>">
   <meta property="article:tag" content="<%= video.subTags.slice(0,5).join(', ') %>">
-  
-  <!-- Twitter Card (also used by Telegram) -->
+
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@lucahman">
-  <meta name="twitter:title" content="<%= video.title %> | xMelayu">
+  <meta name="twitter:site" content="@xmelayu">
+  <meta name="twitter:title" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %> | xMelayu">
   <meta name="twitter:description" content="<%= ogDesc.substring(0, 120) %>">
   <meta name="twitter:image" content="<%= absThumb %>">
-  <meta name="twitter:player" content="https://xmelayu.site/<%= video.id %>">
+  <meta name="twitter:player" content="<%= siteBase %>/<%= video.id %>">
   <meta name="twitter:player:width" content="1920">
   <meta name="twitter:player:height" content="1080">
 
-  <!-- WhatsApp specific: full URL fallback -->
   <link rel="image_src" href="<%= absThumb %>">
 
-  <!-- JSON-LD Structured Data for Video SEO -->
-<% var seoJsonDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,300) : (video.title + ' - Watch in HD quality on Lucahman. Premium adult content featuring ' + video.category + '.'); %>
+<% var seoJsonDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,300).replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').replace(/"/g,'\\"') : ((typeof seoTitle !== 'undefined' ? seoTitle : video.title) + ' - ' + video.category + ' video.'); %>
+<% var vRating = Math.min(4.9, 3.5 + Math.log10(Math.max(video.views || 1, 10)) * 0.4).toFixed(1); var vCount = Math.max(50, Math.floor((video.views || 100) / 120)); %>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    "name": "<%= video.title %>",
+    "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>",
     "description": "<%= seoJsonDesc %>",
-    "thumbnailUrl": ["<%= siteBase %><%= video.thumbnail %>"],
+    "thumbnailUrl": "<%= siteBase %><%= video.thumbnail %>",
     "uploadDate": "<%= video.uploaded || new Date().toISOString() %>",
-    "contentUrl": "<%= siteBase %><%= video.video %>",
-    "embedUrl": "https://xmelayu.site/<%= video.id %>",
-    "duration": "PT10M",
-    "interactionStatistic": {
-      "@type": "InteractionCounter",
-      "interactionType": "http://schema.org/WatchAction",
-      "userInteractionCount": <%= video.views || 0 %>
-    },
+    "contentUrl": "<%= siteBase %><%= vidSrc %>",
+    "embedUrl": "<%= siteBase %><%= video.id %>",
+    "mainEntityOfPage": "<%= siteBase %><%= video.id %>",
     "genre": ["Adult", "<%= video.category %>"],
+    "about": { "@type": "Thing", "name": "<%= video.category %>" },
     "keywords": "<%= video.keywords.join(', ') %>",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Lucahman",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://xmelayu.site/logo.svg"
-      }
-    },
+    "isAccessibleForFree": true,
     "isFamilyFriendly": false,
-    "contentRating": "R18+"
+    "contentRating": "R18+",
+    "regionsAllowed": "MY",
+    "interactionStatistic": [
+      { "@type": "InteractionCounter", "interactionType": "https://schema.org/WatchAction", "userInteractionCount": <%= video.views || 0 %> },
+      { "@type": "InteractionCounter", "interactionType": "https://schema.org/LikeAction", "userInteractionCount": <%= video.likes || 0 %> }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "<%= vRating %>",
+      "bestRating": "5",
+      "ratingCount": "<%= vCount %>"
+    },
+    "publisher": { "@type": "Organization", "name": "xMelayu", "logo": { "@type": "ImageObject", "url": "<%= siteBase %>logo.svg" } }
   }
   </script>
 
-
-
-  <!-- Breadcrumb Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://xmelayu.site/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "<%= video.category %>",
-        "item": "https://xmelayu.site/?q=<%= encodeURIComponent(video.category) %>"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "<%= video.title %>",
-        "item": "https://xmelayu.site/<%= video.id %>"
-      }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "<%= siteBase %>" },
+      { "@type": "ListItem", "position": 2, "name": "<%= video.category %>", "item": "<%= siteBase %>?q=<%= encodeURIComponent(video.category) %>" },
+      { "@type": "ListItem", "position": 3, "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>", "item": "<%= siteBase %><%= video.id %>" }
     ]
   }
   </script>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  
-  <!-- Preload thumbnail only -->
+
   <link rel="preload" href="<%= video.thumbnail %>" as="image" fetchpriority="high">
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
-  <link rel="stylesheet" href="/css/player.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
-<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
-<script type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --accent: #ff2d55;
+  --accent-hover: #e62048;
+  --accent-glow: rgba(255,45,85,0.3);
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111114;
+  --bg-tertiary: #18181c;
+  --bg-card: #141418;
+  --bg-card-hover: #1c1c22;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a8;
+  --text-muted: #6b6b75;
+  --border: #2a2a30;
+  --border-light: rgba(255,255,255,0.06);
+  --transition: 0.25s cubic-bezier(0.33,1,0.68,1);
+  --carousel-gap: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top:0; z-index:1000;
+  background: rgba(10,10,11,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.logo { font-weight:900; font-size:20px; color:var(--accent); text-decoration:none; flex-shrink:0; letter-spacing:-0.5px; }
+.logo span { color:var(--text-primary); }
+.search-box {
+  flex:1; max-width:480px; position:relative; margin:0 auto;
+  display:flex; align-items:center;
+}
+.search-box input {
+  width:100%; padding:10px 14px; padding-right:44px;
+  background:var(--bg-tertiary); border:1px solid var(--border); border-radius:10px;
+  color:var(--text-primary); font-size:14px; outline:none; font-family:inherit;
+}
+.search-box input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+.search-box button {
+  position:absolute; right:4px; top:50%; transform:translateY(-50%);
+  background:var(--accent); color:#fff; border:none; border-radius:8px;
+  padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.search-box button:hover { background:var(--accent-hover); }
+.header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.icon-btn {
+  background:var(--bg-tertiary); border:1px solid var(--border); border-radius:8px;
+  color:var(--text-secondary); cursor:pointer; padding:6px 12px; font-size:16px;
+  transition:all 0.2s; font-family:inherit;
+}
+.icon-btn:hover { border-color:var(--accent); color:var(--text-primary); }
+
+/* ── LAYOUT ── */
+.player-page { flex:1; display:flex; flex-direction:column; }
+.player-container {
+  max-width:1600px; margin:0 auto; padding:24px 20px;
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr minmax(0,380px);
+  gap:32px;
+}
+.player-main { min-width:0; display:flex; flex-direction:column; gap:20px; }
+.player-sidebar { display:flex; flex-direction:column; gap:16px; position:sticky; top:88px; align-self:start; max-height:calc(100vh - 100px); overflow-y:auto; }
+.player-sidebar::-webkit-scrollbar { width:4px; }
+.player-sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+/* ── VIDEO PLAYER ── */
+.video-wrapper {
+  position:relative; background:#000; border-radius:16px;
+  overflow:hidden; aspect-ratio:16/9; width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+}
+.video-wrapper video { width:100%; height:100%; display:block; object-fit:contain; background:#000; }
+
+/* ── FLOATING NAV BUTTONS — left/right of player ── */
+.nav-btn {
+  position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+  display:flex; align-items:center; gap:4px;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.1); border-radius:50px;
+  color:rgba(255,255,255,0.8); text-decoration:none;
+  padding:12px 10px; cursor:pointer;
+  transition:all 0.25s ease; opacity:0;
+}
+.video-wrapper:hover .nav-btn { opacity:1; }
+.nav-btn:hover { background:var(--accent); border-color:var(--accent); color:#fff; transform:translateY(-50%) scale(1.08); }
+.nav-btn:active { transform:translateY(-50%) scale(0.95); }
+.nav-prev { left:10px; flex-direction:row; }
+.nav-next { right:10px; flex-direction:row; }
+.nav-label { font-size:11px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase; }
+.nav-btn svg { flex-shrink:0; }
+.nav-tooltip {
+  position:absolute; top:calc(50% + 32px); z-index:11;
+  background:rgba(0,0,0,0.9); color:#fff; padding:6px 10px;
+  border-radius:8px; font-size:11px; font-weight:600;
+  max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  pointer-events:none; opacity:0; transition:opacity 0.2s;
+}
+.nav-tooltip-prev { left:10px; }
+.nav-tooltip-next { right:10px; text-align:right; }
+.video-wrapper:hover .nav-tooltip { opacity:1; }
+
+/* ── VIDEO INFO ── */
+.video-info { display:flex; flex-direction:column; gap:12px; }
+.video-info h1 {
+  font-size:clamp(20px,3vw,28px); font-weight:800; line-height:1.3;
+  color:var(--text-primary);
+}
+.video-meta {
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px;
+  font-size:13px; color:var(--text-secondary);
+}
+.video-meta .stat { display:flex; align-items:center; gap:4px; }
+.video-meta .cat-badge {
+  padding:3px 12px; background:var(--accent); color:#fff;
+  border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.video-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.video-actions .action-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; background:var(--bg-tertiary); border:1px solid var(--border);
+  border-radius:10px; color:var(--text-secondary); font-size:13px; font-weight:600;
+  cursor:pointer; transition:all 0.2s; font-family:inherit;
+}
+.video-actions .action-btn:hover { border-color:var(--accent); color:var(--text-primary); background:var(--bg-card); }
+.video-actions .action-btn.liked { border-color:var(--accent); color:var(--accent); background:rgba(255,45,85,0.1); }
+
+.video-description {
+  padding:16px 20px; background:var(--bg-secondary); border:1px solid var(--border);
+  border-radius:14px; font-size:14px; line-height:1.7; color:var(--text-secondary);
+}
+.video-description p { margin-bottom:8px; }
+.video-description p:last-child { margin-bottom:0; }
+
+.keywords-row {
+  display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.kw-tag {
+  padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+  text-decoration:none; border:1px solid var(--border); color:var(--text-muted);
+  transition:all 0.2s;
+}
+.kw-tag:hover { border-color:var(--accent); color:var(--text-primary); background:rgba(255,45,85,0.1); }
+
+.video-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.video-tags .tag-item {
+  padding:4px 12px; background:var(--bg-tertiary); border:1px solid var(--border);
+  border-radius:20px; font-size:12px; font-weight:500; color:var(--text-secondary);
+}
+.video-tags .tag-item.category { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* ══════════════════════════════════════════════════════════════
+   CAROUSEL — Netflix-style horizontal scroll
+   ══════════════════════════════════════════════════════════════ */
+.carousel-section { display:flex; flex-direction:column; gap:14px; }
+.carousel-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 4px;
+}
+.carousel-title {
+  font-size:18px; font-weight:800; color:var(--text-primary);
+  display:flex; align-items:center; gap:10px;
+}
+.carousel-title .count {
+  font-size:12px; font-weight:600; color:var(--text-muted);
+  background:var(--bg-tertiary); padding:2px 8px; border-radius:10px;
+}
+.carousel-nav { display:flex; gap:6px; }
+.carousel-nav button {
+  width:36px; height:36px; border-radius:50%; border:1px solid var(--border);
+  background:var(--bg-secondary); color:var(--text-secondary); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  transition:all 0.2s;
+}
+.carousel-nav button:hover { border-color:var(--accent); color:var(--text-primary); background:var(--bg-tertiary); }
+.carousel-track {
+  display:flex; gap:var(--carousel-gap);
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scroll-behavior:smooth; padding:4px 0 16px;
+  -ms-overflow-style:none; scrollbar-width:none;
+}
+.carousel-track::-webkit-scrollbar { display:none; }
+
+/* ── VIDEO CARDS ── */
+.v-card {
+  flex:0 0 240px; scroll-snap-align:start;
+  display:block; text-decoration:none;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  transition:all var(--transition); position:relative;
+}
+.v-card:hover {
+  transform:translateY(-4px) scale(1.02);
+  border-color:var(--accent);
+  box-shadow:0 12px 40px rgba(255,45,85,0.15);
+  z-index:2;
+}
+.v-card .thumb {
+  position:relative; padding-top:56.25%; background:#000; overflow:hidden;
+}
+.v-card .thumb img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; transition:transform 0.5s;
+}
+.v-card:hover .thumb img { transform:scale(1.08); }
+.v-card .thumb .play-overlay {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.4); opacity:0; transition:opacity 0.3s;
+}
+.v-card:hover .thumb .play-overlay { opacity:1; }
+.v-card .thumb .play-overlay span {
+  width:48px; height:48px; border-radius:50%; background:var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; color:#fff; box-shadow:0 4px 20px rgba(255,45,85,0.5);
+}
+
+.v-card .card-body { padding:10px 12px 12px; }
+.v-card .card-title {
+  font-size:13px; font-weight:600; color:var(--text-primary);
+  line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden; margin-bottom:4px;
+}
+.v-card .card-meta {
+  font-size:11px; color:var(--text-muted);
+  display:flex; align-items:center; gap:6px;
+}
+.v-card .card-meta .cat-dot {
+  width:6px; height:6px; border-radius:50%; background:var(--accent); flex-shrink:0;
+}
+
+/* ── FEATURED CARD (larger, in hero carousel) ── */
+.v-card.featured { flex:0 0 340px; }
+.v-card.featured .card-title { font-size:15px; font-weight:700; -webkit-line-clamp:3; }
+
+/* ── COMPACT CARD (small, for trending) ── */
+.v-card.compact { flex:0 0 180px; }
+.v-card.compact .card-title { font-size:12px; -webkit-line-clamp:1; }
+.v-card.compact .card-body { padding:8px 10px 10px; }
+
+/* ── MINI CARD (tiny, for sidebar) ── */
+.v-card.mini { flex:0 0 160px; }
+.v-card.mini .thumb { padding-top:62%; }
+.v-card.mini .card-title { font-size:11px; -webkit-line-clamp:2; }
+.v-card.mini .card-body { padding:6px 8px 8px; }
+
+/* ══════════════════════════════════════════════════════════════
+   CATEGORY SECTION — grouped horizontal scroll per category
+   ══════════════════════════════════════════════════════════════ */
+.cat-section { display:flex; flex-direction:column; gap:14px; padding-top:8px; }
+.cat-section-header {
+  display:flex; align-items:center; gap:12px; padding:0 4px;
+}
+.cat-section-header h3 {
+  font-size:16px; font-weight:800; color:var(--text-primary);
+  display:flex; align-items:center; gap:8px;
+}
+.cat-section-header h3 .cat-icon {
+  width:8px; height:8px; border-radius:50%; background:var(--accent);
+}
+.cat-section-header .see-all {
+  font-size:12px; font-weight:600; color:var(--accent); text-decoration:none;
+  margin-left:auto; transition:color 0.2s;
+}
+.cat-section-header .see-all:hover { color:var(--accent-hover); }
+
+/* ══════════════════════════════════════════════════════════════
+   GRID SECTION — for "More Like This" / "Recently Added"
+   ══════════════════════════════════════════════════════════════ */
+.grid-section { display:flex; flex-direction:column; gap:14px; }
+.grid-section .section-head {
+  display:flex; align-items:center; justify-content:space-between; padding:0 4px;
+}
+.grid-section .section-head h2 { font-size:18px; font-weight:800; }
+.grid-section .section-head .see-all {
+  font-size:12px; font-weight:600; color:var(--accent); text-decoration:none;
+}
+.video-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:12px;
+}
+
+/* ── LOAD MORE ── */
+.load-more-wrap { text-align:center; padding:24px 0; }
+.load-more-btn {
+  padding:12px 32px; background:var(--bg-tertiary); border:1px solid var(--border);
+  border-radius:12px; color:var(--text-secondary); font-size:14px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; font-family:inherit;
+}
+.load-more-btn:hover { border-color:var(--accent); color:var(--text-primary); background:var(--bg-card); }
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════════════════════════════ */
+.sidebar-card {
+  background:var(--bg-secondary); border:1px solid var(--border);
+  border-radius:14px; padding:16px;
+}
+.sidebar-card-title {
+  font-size:11px; font-weight:800; text-transform:uppercase;
+  letter-spacing:1px; color:var(--text-muted); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.sidebar-card-title::before {
+  content:''; width:3px; height:14px; background:var(--accent); border-radius:2px;
+}
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.stat-item {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:12px 8px; background:rgba(255,255,255,0.04); border-radius:10px;
+  text-align:center;
+}
+.stat-label { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+.stat-value { font-size:14px; font-weight:700; color:var(--accent); }
+
+/* ── UP NEXT QUEUE ── */
+.up-next-list { display:flex; flex-direction:column; gap:8px; }
+.up-next-item {
+  display:flex; gap:10px; padding:8px; border-radius:10px;
+  text-decoration:none; color:var(--text-secondary);
+  transition:all 0.2s; position:relative;
+}
+.up-next-item:hover { background:rgba(255,255,255,0.06); }
+.up-next-item.active { background:rgba(255,45,85,0.1); border:1px solid rgba(255,45,85,0.2); }
+.up-next-thumb {
+  width:110px; height:62px; border-radius:8px; overflow:hidden; flex-shrink:0;
+  background:#000; position:relative;
+}
+.up-next-thumb img { width:100%; height:100%; object-fit:cover; }
+.up-next-thumb .queue-num {
+  position:absolute; top:4px; left:4px;
+  background:rgba(0,0,0,0.8); color:var(--text-muted); font-size:9px; font-weight:700;
+  width:18px; height:18px; border-radius:4px; display:flex; align-items:center; justify-content:center;
+}
+.up-next-info { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:3px; }
+.up-next-title {
+  font-size:12px; font-weight:600; color:var(--text-primary); line-height:1.3;
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+}
+.up-next-meta { font-size:10px; color:var(--text-muted); }
+
+/* ── SIDEBAR CATEGORY PILLS ── */
+.sidebar-pills { display:flex; flex-wrap:wrap; gap:6px; }
+.sidebar-pills a {
+  padding:4px 10px; border-radius:8px; font-size:11px; font-weight:600;
+  text-decoration:none; background:var(--bg-tertiary); border:1px solid var(--border);
+  color:var(--text-muted); transition:all 0.2s;
+}
+.sidebar-pills a:hover { border-color:var(--accent); color:var(--text-primary); }
+.sidebar-pills a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* ══════════════════════════════════════════════════════════════
+   HERO BANNER — above-the-fold visual teaser
+   ══════════════════════════════════════════════════════════════ */
+.hero-banner {
+  position:relative; border-radius:16px; overflow:hidden;
+  height:200px; margin-bottom:8px;
+  background:linear-gradient(135deg, rgba(255,45,85,0.15), rgba(10,10,11,0.9)),
+             url('<%= video.thumbnail %>') center/cover;
+}
+.hero-banner .hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to right, rgba(10,10,11,0.95) 0%, rgba(10,10,11,0.6) 50%, rgba(10,10,11,0.2) 100%);
+  display:flex; flex-direction:column; justify-content:center; padding:32px;
+}
+.hero-banner .hero-label {
+  font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:2px;
+  color:var(--accent); margin-bottom:8px;
+}
+.hero-banner .hero-title {
+  font-size:clamp(22px,3vw,32px); font-weight:900; color:var(--text-primary);
+  line-height:1.2; max-width:500px; margin-bottom:8px;
+}
+.hero-banner .hero-sub {
+  font-size:14px; color:var(--text-secondary); max-width:400px;
+}
+.hero-banner .hero-cta {
+  margin-top:16px; display:flex; gap:10px;
+}
+.hero-banner .hero-cta a {
+  padding:10px 24px; border-radius:10px; font-size:13px; font-weight:700;
+  text-decoration:none; transition:all 0.2s;
+}
+.hero-banner .hero-cta .primary { background:var(--accent); color:#fff; }
+.hero-banner .hero-cta .primary:hover { background:var(--accent-hover); }
+.hero-banner .hero-cta .secondary { background:var(--bg-tertiary); border:1px solid var(--border); color:var(--text-secondary); }
+.hero-banner .hero-cta .secondary:hover { border-color:var(--accent); color:var(--text-primary); }
+
+/* ══════════════════════════════════════════════════════════════
+   VIEW ALL OVERLAY
+   ══════════════════════════════════════════════════════════════ */
+.view-all-card {
+  flex:0 0 120px; scroll-snap-align:start;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:var(--bg-tertiary); border:1px dashed var(--border); border-radius:12px;
+  color:var(--text-muted); font-size:12px; font-weight:700; text-decoration:none;
+  transition:all 0.2s; min-height:180px; gap:8px;
+}
+.view-all-card:hover { border-color:var(--accent); color:var(--accent); background:rgba(255,45,85,0.05); }
+.view-all-card .arrow { font-size:24px; }
+
+/* ══════════════════════════════════════════════════════════════
+   DIVIDER
+   ══════════════════════════════════════════════════════════════ */
+.section-divider {
+  height:1px; background:var(--border); margin:8px 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width:1200px) {
+  .player-container { grid-template-columns:1fr 340px; gap:24px; }
+}
+@media (max-width:1000px) {
+  .player-container { grid-template-columns:1fr; gap:20px; padding:16px 12px; }
+  .player-sidebar { position:static; max-height:none; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .sidebar-card:first-child { grid-column:1/-1; }
+  .v-card { flex:0 0 200px; }
+  .v-card.featured { flex:0 0 280px; }
+}
+@media (max-width:768px) {
+  .header { padding:0 12px; height:56px; gap:10px; }
+  .search-box { max-width:100%; }
+  .player-container { padding:10px 8px; gap:14px; }
+  .player-sidebar { grid-template-columns:1fr; }
+  .video-wrapper { border-radius:10px; }
+  .video-info h1 { font-size:18px; }
+  .hero-banner { height:160px; border-radius:12px; }
+  .hero-banner .hero-overlay { padding:20px; }
+  .hero-banner .hero-title { font-size:20px; }
+  .v-card { flex:0 0 160px; }
+  .v-card.featured { flex:0 0 240px; }
+  .v-card.compact { flex:0 0 140px; }
+  .video-grid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; }
+  .up-next-thumb { width:90px; height:50px; }
+  .carousel-title { font-size:15px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   THUMBNAIL ENHANCEMENT — brightness, skin tone, sharpness
+   ══════════════════════════════════════════════════════════════ */
+.v-card .thumb img,
+.up-next-thumb img {
+  filter:brightness(1.06) contrast(1.08) saturate(1.12);
+}
+.v-card:hover .thumb img {
+  filter:brightness(1.08) contrast(1.10) saturate(1.15);
+}
+.hero-banner {
+  filter: none;
+}
+.hero-banner .hero-overlay + img,
+.v-card .thumb img::after {
+  content:'';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MULTI-PREVIEW PANEL — 3 thumbnail strip on hover
+   ══════════════════════════════════════════════════════════════ */
+.v-card .preview-strip {
+  position:absolute; bottom:0; left:0; right:0;
+  display:flex; gap:2px; padding:0;
+  opacity:0; transform:translateY(4px);
+  transition:opacity 0.25s ease, transform 0.25s ease;
+  z-index:3;
+}
+.v-card:hover .preview-strip {
+  opacity:1; transform:translateY(0);
+}
+.preview-strip .preview-frame {
+  flex:1; position:relative;
+  padding-top:30%; background:#111; overflow:hidden;
+}
+.preview-strip .preview-frame canvas {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover;
+}
+.preview-strip .preview-frame .preview-time {
+  position:absolute; bottom:1px; right:2px;
+  background:rgba(0,0,0,0.85); color:#fff;
+  font-size:8px; font-weight:700; padding:1px 3px; border-radius:2px;
+  font-family:monospace;
+}
+.preview-strip .preview-frame.preview-loading {
+  display:flex; align-items:center; justify-content:center;
+}
+.preview-strip .preview-frame.preview-loading::after {
+  content:''; width:12px; height:12px;
+  border:2px solid rgba(255,255,255,0.2); border-top-color:var(--accent);
+  border-radius:50%; animation:spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Hide card body when preview visible */
+.v-card:hover .thumb .preview-strip ~ .play-overlay { opacity:0; }
+.thumb.preview-active img { opacity:0; transition:opacity 0.2s; }
+  </style>
 </head>
 <body>
-<!-- Floating Player — sticky mini-player that follows scroll, ads stay visible -->
-<style>
-#floatingPlayer { position:fixed; bottom:20px; right:20px; width:320px; z-index:9999; background:#0d0d12; border:1px solid #2a2a30; border-radius:12px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.8); transform:translateY(120%); opacity:0; transition:transform 0.4s cubic-bezier(0.33,1,0.68,1),opacity 0.3s; }
-#floatingPlayer.show { transform:translateY(0); opacity:1; }
-#floatingPlayer .fp-header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:#18181c; border-bottom:1px solid #2a2a30; }
-#floatingPlayer .fp-title { font-size:12px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
-#floatingPlayer .fp-controls { display:flex; gap:6px; }
-#floatingPlayer .fp-btn { background:none; border:none; color:#a0a0a8; font-size:16px; cursor:pointer; padding:2px 6px; border-radius:4px; transition:all .2s; line-height:1; }
-#floatingPlayer .fp-btn:hover { color:#fff; background:rgba(255,255,255,0.1); }
-#floatingPlayer .fp-video { position:relative; aspect-ratio:16/9; background:#000; }
-#floatingPlayer .fp-video video { width:100%; height:100%; object-fit:contain; }
-#floatingPlayer .fp-close { color:#ff4d4d; }
-#floatingPlayer .fp-close:hover { color:#ff6b6b; background:rgba(255,77,77,0.15); }
-@media (max-width:640px) { #floatingPlayer { width:280px; bottom:12px; right:12px; } }
-</style>
-<div id="floatingPlayer">
-  <div class="fp-header">
-    <span class="fp-title" id="fpTitle">Now Playing</span>
-    <div class="fp-controls">
-      <button class="fp-btn" id="fpPlayPause" onclick="fpTogglePlay()" title="Play/Pause">⏸️</button>
-      <button class="fp-btn fp-close" onclick="fpClose()" title="Close">✕</button>
-    </div>
-  </div>
-  <div class="fp-video">
-    <video id="fpVideo" muted loop playsinline preload="auto"></video>
-  </div>
-</div>
-<script>
-(function(){
-  var mainVideo = document.getElementById('videoPlayer');
-  var fp = document.getElementById('floatingPlayer');
-  var fpVideo = document.getElementById('fpVideo');
-  var fpTitle = document.getElementById('fpTitle');
-  var fpPlayBtn = document.getElementById('fpPlayPause');
-  var mainContainer = document.getElementById('videoContainer');
-  if (!mainVideo || !fp || !mainContainer) return;
-
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (!entry.isIntersecting && mainVideo.src) {
-        fpVideo.src = mainVideo.src;
-        fpVideo.currentTime = mainVideo.currentTime;
-        fpTitle.textContent = document.title.replace(' | xMelayu', '');
-        fp.classList.add('show');
-        if (!mainVideo.paused) fpVideo.play().catch(function(){});
-      } else {
-        fp.classList.remove('show');
-        fpVideo.pause();
-      }
-    });
-  }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' });
-  observer.observe(mainContainer);
-
-  window.fpTogglePlay = function() {
-    if (fpVideo.paused) { fpVideo.play(); fpPlayBtn.textContent = '\u23F8\uFE0F'; }
-    else { fpVideo.pause(); fpPlayBtn.textContent = '\u25B6\uFE0F'; }
-  };
-  window.fpClose = function() {
-    fp.classList.remove('show');
-    fpVideo.pause();
-    fpVideo.src = '';
-  };
-  fpVideo.addEventListener('play', function(){ fpPlayBtn.textContent = '\u23F8\uFE0F'; });
-  fpVideo.addEventListener('pause', function(){ fpPlayBtn.textContent = '\u25B6\uFE0F'; });
-})();
-</script>
-
-<!-- display ads (no popunder) -->
   <header class="header">
-      <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <a href="/" class="logo">
-          <img src="/logo.svg" alt="Lucahman" class="logo-img" loading="lazy" width="120" height="28">
-        </a>
-
-    <nav class="nav-links" id="navLinks">
-      <a href="/super-x-melayu" class="nav-link">🔥 Super X</a>
-      <a href="/mega-x-melayu" class="nav-link">🚀 Mega</a>
-      <a href="/xmateur" class="nav-link">xMateur</a>
-      <a href="/tudung-porn" class="nav-link">Tudung</a>
-      <a href="/xamateur" class="nav-link">xAmateur</a>
-    </nav>
-
-      <div class="search-wrapper">
-
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Search videos..." autocomplete="off">
-        <button id="searchBtn" class="search-btn">Search</button>
-      </div>
+    <a href="/" class="logo">x<span>Melayu</span></a>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search videos..." autocomplete="off">
+      <button id="searchBtn">Search</button>
     </div>
-    
     <div class="header-actions">
-      <a href="/super-x-melayu" class="super-x-mobile-tag" title="Super X Melayu Malay Pron" aria-label="Super X Melayu">SUPER XMELAYU</a>
-      <button class="icon-btn" onclick="history.back()">←</button>
+      <button class="icon-btn" onclick="window.history.back()">&larr;</button>
     </div>
   </header>
 
-  <!-- Mobile Menu Panel -->
-  <style>
-    .mobile-hamburger { display:none; width:32px; height:32px; border-radius:8px; background:#141417; border:1px solid #2a2a30; cursor:pointer; padding:0; position:relative; flex-shrink:0; align-items:center; justify-content:center; flex-direction:column; gap:3px; transition:all .2s; }
-    .mobile-hamburger:hover { background:#1c1c21; border-color:#3a3a45; }
-    .mobile-hamburger span { display:block; width:14px; height:2px; background:#fff; border-radius:2px; transition:all .2s; }
-    @media (max-width:768px) { .mobile-hamburger { display:flex; } }
-    .mobile-menu-panel { position:fixed; bottom:0; left:0; right:0; z-index:300; background:#0a0a0b; border-top:1px solid #2a2a30; border-radius:16px 16px 0 0; max-height:80vh; overflow-y:auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.33,1,0.68,1); }
-    .mobile-menu-panel.show { transform:translateY(0); }
-    .mobile-menu-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:299; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-    .mobile-menu-overlay.show { opacity:1; pointer-events:auto; }
-    .mobile-menu-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid #2a2a30; position:sticky; top:0; background:#0a0a0b; z-index:1; }
-    .mobile-menu-title { font-size:16px; font-weight:700; color:#fff; }
-    .mobile-menu-close { background:none; border:none; color:#6b6b75; font-size:22px; cursor:pointer; padding:0 4px; line-height:1; transition:color .2s; }
-    .mobile-menu-close:hover { color:#fff; }
-    .mobile-menu-content { padding:12px 20px 24px; }
-    .mobile-section { margin-bottom:16px; }
-    .mobile-section:last-child { margin-bottom:0; }
-    .mobile-section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#6b6b75; margin-bottom:8px; padding:0 4px; }
-    .mobile-link { display:block; width:100%; padding:10px 14px; border-radius:8px; color:#e0e0e0; text-decoration:none; font-size:14px; font-weight:500; transition:all .15s; }
-    .mobile-link:hover { background:#141417; color:#fff; }
-    @media (max-width:768px) {
-      .header .nav-links { display:none; }
-      .header .header-actions { display:none; }
-      .header .logo-img { max-width:90px; height:auto; }
-    }
-  </style>
-  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
-  <div class="mobile-menu-panel" id="mobileMenuPanel">
-    <div class="mobile-menu-header">
-      <div class="mobile-menu-title">Navigate</div>
-      <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
-    </div>
-    <div class="mobile-menu-content">
-      <div class="mobile-section">
-        <div class="mobile-section-title">Brands</div>
-        <a href="/super-x-melayu" class="mobile-link">🔥 Super X Melayu</a>
-        <a href="/mega-x-melayu" class="mobile-link">🚀 Mega X Melayu</a>
-        <a href="/xmateur" class="mobile-link">✨ xMateur</a>
-        <a href="/xamateur" class="mobile-link">💎 xAmateur</a>
-        <a href="/tudung-porn" class="mobile-link">🧕 Tudung Porn</a>
-      </div>
-      <div class="mobile-section">
-        <div class="mobile-section-title">Site</div>
-        <a href="/" class="mobile-link">🏠 Home</a>
-        <a href="/about" class="mobile-link">📄 About</a>
-        <a href="/terms" class="mobile-link">Terms</a>
-        <a href="/privacy" class="mobile-link">Privacy</a>
-        <a href="/dmca" class="mobile-link">DMCA</a>
-        <a href="/2257" class="mobile-link">2257</a>
-      </div>
-    </div>
-  </div>
-
-  <main class="main-content player-page">
-    <div class="player-layout">
+  <main class="player-page">
+    <div class="player-container">
       <div class="player-main">
-        <% const badgeList2 = ['good','very good','verrrry good','bagus','boleh','mantap','syok!','cool','angry','happy','relax','santai','chill','casual']; %>
-        <% const showBadge2 = Math.random() < 0.5; %>
-        <% const badgeText2 = badgeList2[Math.floor(Math.random() * badgeList2.length)]; %>
-        <div class="video-player" id="videoContainer">
-          <video id="videoPlayer" controls playsinline muted preload="metadata">
-            <source src="<%= video.video %>" type="video/mp4">
+        <div class="video-wrapper" id="videoWrapper">
+          <video id="videoPlayer" controls playsinline muted preload="metadata" poster="<%= video.thumbnail %>">
+            <source src="<%= vidSrc %>" type="video/mp4">
           </video>
-          <button id="exitFullscreenBtn" class="exit-fullscreen-btn" aria-label="Exit fullscreen">✕</button>
-          <%= showBadge2 ? '<span class="player-badge">' + badgeText2 + '</span>' : '' %>
+          <% if (typeof prevVideo !== 'undefined' && prevVideo) { %>
+          <a href="/<%= prevVideo.id %>" class="nav-btn nav-prev" title="<%= prevVideo.title %>" id="navPrev">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <span class="nav-label">Prev</span>
+          </a>
+          <% } %>
+          <% if (typeof nextVideo !== 'undefined' && nextVideo) { %>
+          <a href="/<%= nextVideo.id %>" class="nav-btn nav-next" title="<%= nextVideo.title %>" id="navNext">
+            <span class="nav-label">Next</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <% } %>
+          <div class="nav-tooltip nav-tooltip-prev" id="navTipPrev"></div>
+          <div class="nav-tooltip nav-tooltip-next" id="navTipNext"></div>
         </div>
 
-        <div class="video-details">
-          <h1 class="video-title"><%= typeof displayTitle !== 'undefined' ? displayTitle : video.title %></h1>
-          
-          <div class="video-tags" id="videoTags">
-            <% if (video.category && video.category !== 'Uncategorized') { %>
-              <span class="tag-item category"><%= video.category %></span>
-            <% } %>
-            <% video.subTags.forEach(tag => { %>
-              <span class="tag-item">#<%= tag %></span>
-            <% }) %>
-          </div>
+        <div class="video-info">
 
-          <div class="video-stats" id="videoStats">
-            <span class="stat"><%= video.views.toLocaleString() %> views</span>
-            <span class="stat"><%= video.likes.toLocaleString() %> likes</span>
+        <%# FIX: remove broken thumbCard helper usage (runtime EJS error) — keep inline markup %>
+          <h1><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %></h1>
+
+          <div class="video-meta">
+            <span class="stat" id="viewCount"><%= (video.views || 0).toLocaleString() %> views</span>
+            <span class="stat"><%= new Date(video.uploaded).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) %></span>
+            <% if (video.category && video.category !== 'Uncategorized') { %>
+              <span class="cat-badge"><%= video.category %></span>
+            <% } %>
           </div>
 
           <div class="video-actions">
             <button class="action-btn like-btn" data-id="<%= video.id %>" onclick="toggleLike('<%= video.id %>', this)">
-              ♡ <span class="like-count"><%= video.likes || 0 %></span>
+              &#9825; <span class="like-count">--</span>
             </button>
-            <button class="action-btn" onclick="shareVideo()">
-              <span class="action-icon">📤</span>
-              <span class="action-label">Share</span>
-            </button>
-            <button class="action-btn" onclick="copyLink()">
-              <span class="action-icon">🔗</span>
-              <span class="action-label">Copy Link</span>
-            </button>
+            <button class="action-btn" onclick="shareVideo()">Share</button>
+            <button class="action-btn" onclick="copyLink()">Copy Link</button>
           </div>
 
-          <div class="channel-bar">
-            <div class="channel-avatar"></div>
-            <div class="channel-info">
-              <h4>Lucahman Channel</h4>
-              <span>Video Host</span>
-            </div>
-            <button class="subscribe-btn" id="subscribeBtn">Subscribe</button>
-          </div>
-
+          <% if (videoDescription && videoDescription.text) { %>
           <div class="video-description">
-            <% if (videoDescription && videoDescription.text) { %>
-              <p><%- videoDescription.text.replace(/\n/g, '<br>') %></p>
-            <% } else { %>
-              <p><%= video.title %></p>
-            <% } %>
-            <div class="keywords-list" id="keywordsList">
-              <% if (videoDescription && videoDescription.keywords) { %>
-                <% videoDescription.keywords.slice(0, 8).forEach(kw => { %>
-                  <span class="keyword-tag"><%= kw %></span>
-                <% }) %>
-              <% } else { %>
-                <% video.keywords.slice(0, 8).forEach(kw => { %>
-                  <span class="keyword-tag"><%= kw %></span>
-                <% }) %>
-              <% } %>
-            </div>
-            <div class="ad-holder" style="margin:12px 0">
-              <!-- Leaderboard -->
-              <div class="ad-slot-placeholder" style="width:100%;max-width:728px;margin:0 auto 8px">
-                <ins id="1120025" data-width="728" data-height="90"></ins>
-              </div>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
-              <!-- Two-column banners -->
-              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-                <div class="ad-slot-placeholder" style="max-width:300px">
-                  <ins id="pd-ad" data-width="300" data-height="250"></ins>
-                </div>
-                <div class="ad-slot-placeholder" style="max-width:300px">
-                  <ins id="1118846" data-width="300" data-height="250"></ins>
-                </div>
-              </div>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-              <!-- Small banners row -->
-              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-                <div class="ad-slot-placeholder" style="max-width:300px">
-                  <ins id="1118845" data-width="300" data-height="100"></ins>
-                </div>
-                <div class="ad-slot-placeholder" style="max-width:300px">
-                  <ins id="1118847" data-width="300" data-height="100"></ins>
-                </div>
-              </div>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
-              <!-- Native ads row -->
-              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-                <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
-                <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="flex:1;min-width:200px;min-height:60px"></div>
-              </div>
-              <!-- Extra banner -->
-              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:8px auto">
-                <ins id="1118841" data-width="300" data-height="100"></ins>
-              </div>
-              <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118841});</script>
+            <p><%- videoDescription.text.replace(/\n/g, '<br>') %></p>
+            <div class="keywords-row">
+              <% var kwList = (videoDescription && videoDescription.keywords) ? videoDescription.keywords : video.keywords; %>
+              <% kwList.slice(0,15).forEach(function(kw) { %>
+                <span class="kw-tag"><%= kw %></span>
+              <% }); %>
             </div>
           </div>
-
-        </div>
-
-      <aside class="sidebar-videos">
-        <div class="ad-holder" style="margin-bottom:12px">
-          <ins id="sd-p1" data-width="300" data-height="250"></ins>
-          <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-        </div>
-        <div class="ad-holder" style="margin-bottom:12px">
-          <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto"><ins id="1118851" data-width="300" data-height="100"></ins></div>
-        </div>
-        <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118851});</script>
-        <div class="sidebar-title">Related Videos</div>
-        <div class="related-grid" id="relatedGrid">
-<% var _rldZs = [1118847, 1118845, 1118841, 1120028, 1120029, 1119414]; %>
-<% related.forEach(function(v, i) { %>
-            <div class="related-card" data-preview="<%= v.video %>" data-id="<%= v.id %>" onclick="navigateTo('<%= v.id %>')">
-              <div class="related-thumb">
-                <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy"
- onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                <video class="related-preview" muted loop preload="none" playsinline></video>
-                <span class="duration-badge">--:--</span>
-              </div>
-              <div class="related-info">
-                <h4><%= v.title %></h4>
-                <span class="meta-row"><%= v.views.toLocaleString() %> views</span>
-              </div>
+          <% } else { %>
+          <div class="video-description">
+            <p><%= video.title %> - <%= video.category %> video. Watch and stream HD Malay videos at xMelayu.</p>
+            <div class="keywords-row">
+              <% video.keywords.slice(0,15).forEach(function(kw) { %>
+                <span class="kw-tag"><%= kw %></span>
+              <% }); %>
             </div>
-<% if ((i + 1) % 4 === 0 && i < related.length - 1) { var zi = Math.floor(i/4) - 1; if (zi < _rldZs.length) { %>
-            <div class="ad-row" style="grid-column:1/-1;margin:4px 0">
-              <div class="ad-slot-placeholder" style="width:100%;max-width:300px;margin:0 auto">
-                <ins id="<%= _rldZs[zi] %>" data-width="300" data-height="100"></ins>
-              </div>
+          </div>
+          <% } %>
+
+          <div class="video-tags">
+            <% if (video.category && video.category !== 'Uncategorized') { %>
+              <span class="tag-item category"><%= video.category %></span>
+            <% } %>
+            <% video.subTags.slice(0,8).forEach(function(tag) { %>
+              <span class="tag-item">#<%= tag %></span>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+
+        <%# ═══ HERO CAROUSEL — Top Relevant to this video ═══ %>
+        <% if (typeof heroRelated !== 'undefined' && heroRelated.length > 0) { %>
+        <div class="carousel-section" id="heroCarousel">
+          <div class="carousel-header">
+            <div class="carousel-title">
+              Related Videos <span class="count"><%= heroRelated.length %></span>
             </div>
-            <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':<%= _rldZs[zi] %>});</script>
-            <script>gtag('event', 'ad_impression', { ad_zone: <%= _rldZs[zi] %>, ad_type: 'related_infeed' });</script>
-<% } } %>
-<% }); %>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('heroTrack',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('heroTrack',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="heroTrack">
+            <% heroRelated.slice(0,24).forEach(function(v,i) { %>
+              <a href="/<%= v.id %>" class="v-card featured">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta">
+                    <span class="cat-dot"></span>
+                    <%= v.category %>
+                  </div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
         </div>
-        
-        <div id="loadMoreRelated" style="text-align: center; padding: 16px;">
-          <button class="load-more-btn" onclick="loadMoreRelated()">Load More</button>
+        <% } %>
+
+        <%# ═══ TRENDING NOW — top by views ═══ %>
+        <% if (typeof trending !== 'undefined' && trending.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#128293; Trending Now</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('trendingTrack',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('trendingTrack',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="trendingTrack">
+            <% trending.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card compact">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
         </div>
+        <% } %>
+
+        <%# ═══ MOST VIEWED — another batch of top-viewed (no repeats) ═══ %>
+        <% if (typeof mostViewed !== 'undefined' && mostViewed.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#128065; Most Viewed</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('mostViewedTrack',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('mostViewedTrack',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="mostViewedTrack">
+            <% mostViewed.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card compact">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="section-divider"></div>
+
+        <%# ═══ EDITOR'S PICKS / MARK GOOD — curated top quality ═══ %>
+        <% if (typeof editorsPicks !== 'undefined' && editorsPicks.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#11088; Editor's Picks</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('picksTrack',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('picksTrack',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="picksTrack">
+            <% editorsPicks.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta">
+                    <span class="cat-dot"></span>
+                    <%= v.category %>
+                  </div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <%# ═══ CATEGORY GROUPS — from full library (not from related) ═══ %>
+        <% if (typeof categoryGroups !== 'undefined' && categoryGroups.length > 0) { %>
+          <% categoryGroups.forEach(function(pair) { var catName = pair[0]; var catVideos = pair[1]; %>
+          <div class="cat-section">
+            <div class="cat-section-header">
+              <h3><span class="cat-icon"></span><%= catName %></h3>
+              <a href="/?q=<%= encodeURIComponent(catName) %>" class="see-all">See All &rarr;</a>
+            </div>
+            <div class="carousel-track">
+              <% catVideos.forEach(function(v) { %>
+                <a href="/<%= v.id %>" class="v-card">
+                  <div class="thumb">
+                    <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                    <div class="play-overlay"><span>&#9654;</span></div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card-title"><%= v.title %></div>
+                    <div class="card-meta"><%= v.category %></div>
+                  </div>
+                </a>
+              <% }); %>
+            </div>
+          </div>
+          <% }); %>
+        <% } %>
+
+        <div class="section-divider"></div>
+
+        <%# ═══ EXPLORE — randomized batches from different ranges ═══ %>
+        <% if (typeof exploreSlice1 !== 'undefined' && exploreSlice1.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#127752; Explore Something New</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('explore1Track',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('explore1Track',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="explore1Track">
+            <% exploreSlice1.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <% if (typeof exploreSlice2 !== 'undefined' && exploreSlice2.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#128260; You Might've Missed</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('explore2Track',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('explore2Track',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="explore2Track">
+            <% exploreSlice2.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <% if (typeof exploreSlice3 !== 'undefined' && exploreSlice3.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#128161; Hidden Gems</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('explore3Track',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('explore3Track',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="explore3Track">
+            <% exploreSlice3.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="section-divider"></div>
+
+        <%# ═══ RECENTLY ADDED ═══ %>
+        <% if (typeof recent !== 'undefined' && recent.length > 0) { %>
+        <div class="carousel-section">
+          <div class="carousel-header">
+            <div class="carousel-title">&#128337; Recently Added</div>
+            <div class="carousel-nav">
+              <button onclick="scrollCarousel('recentTrack',-1)">&lsaquo;</button>
+              <button onclick="scrollCarousel('recentTrack',1)">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="carousel-track" id="recentTrack">
+            <% recent.forEach(function(v) { %>
+              <a href="/<%= v.id %>" class="v-card">
+                <div class="thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %>" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
+                  <div class="play-overlay"><span>&#9654;</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-title"><%= v.title %></div>
+                  <div class="card-meta">
+                    <%= new Date(v.uploaded).toLocaleDateString('en-US', { month:'short', day:'numeric' }) %>
+                  </div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="section-divider"></div>
+
+      </div>
+
+      <%# ═══ SIDEBAR ═══ %>
+      <aside class="player-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Video Stats</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Duration</span>
+              <span class="stat-value" id="duration-display">--:--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Quality</span>
+              <span class="stat-value">HD</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Category</span>
+              <span class="stat-value" style="font-size:11px"><%= video.category || 'General' %></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Added</span>
+              <span class="stat-value" style="font-size:11px"><%= new Date(video.uploaded).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) %></span>
+            </div>
+          </div>
+        </div>
+
+        <%# UP NEXT QUEUE %>
+        <% if (related.length > 0) { %>
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Up Next</div>
+          <div class="up-next-list">
+            <% related.slice(0,15).forEach(function(v,i) { %>
+              <a href="/<%= v.id %>" class="up-next-item<%= i === 0 ? ' active' : '' %>">
+                <div class="up-next-thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %> video" loading="lazy">
+                  <span class="queue-num"><%= i + 1 %></span>
+                </div>
+                <div class="up-next-info">
+                  <div class="up-next-title"><%= v.title.length > 50 ? v.title.substring(0,50)+'...' : v.title %></div>
+                  <div class="up-next-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <%# BROWSE BY CATEGORY %>
+        <% if (typeof categoryGroups !== 'undefined' && categoryGroups.length > 0) { %>
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Browse Categories</div>
+          <div class="sidebar-pills">
+            <% categoryGroups.forEach(function(pair) { %>
+              <a href="/?q=<%= encodeURIComponent(pair[0]) %>" class="<%= pair[0] === video.category ? 'active' : '' %>"><%= pair[0] %> <span style="opacity:0.5">(<%= pair[1].length %>)</span></a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <%# TRENDING MINI %>
+        <% if (typeof trending !== 'undefined' && trending.length > 0) { %>
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Trending</div>
+          <div class="up-next-list">
+            <% trending.slice(0,8).forEach(function(v,i) { %>
+              <a href="/<%= v.id %>" class="up-next-item">
+                <div class="up-next-thumb">
+                  <img src="<%= v.thumbnail %>" alt="<%= v.title %> video" loading="lazy">
+                </div>
+                <div class="up-next-info">
+                  <div class="up-next-title"><%= v.title.length > 40 ? v.title.substring(0,40)+'...' : v.title %></div>
+                  <div class="up-next-meta"><%= v.category %></div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
       </aside>
     </div>
   </main>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       Bottom Carousels — same 3-row horizontal scrollers as gallery,
-       fills the blank space between player and footer
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="player-carousels">
-    <!-- Carousel: Related Videos -->
-    <div class="carousel-section" id="carousel-related">
-      <div class="carousel-header">
-        <div class="carousel-header-left">
-          <h2 class="section-title">Related Malay Videos</h2>
-          <h3 class="section-subtitle">Keep watching — more Malay recommendations</h3>
-        </div>
-      </div>
-      <div class="carousel-container">
-        <div class="carousel-track" id="track-related">
-          <% related.forEach(v => { %>
-            <div class="carousel-card">
-              <a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
-                <div class="video-thumb" style="position:relative">
-                  <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async"
-                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                  <video muted loop preload="none" playsinline></video>
-                </div>
-                <div class="v-title"><%= v.title %></div>
-                <span class="v-meta"><%= v.category || 'Video' %></span>
-              </a>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-      <div class="carousel-dots" id="dots-related"></div>
-    </div>
-
-    <!-- Carousel: More to Explore -->
-    <div class="carousel-section" id="carousel-explore">
-      <div class="carousel-header">
-        <div class="carousel-header-left">
-          <h2 class="section-title">More Malay Porn Videos</h2>
-          <h3 class="section-subtitle">Browse similar Malay content</h3>
-        </div>
-      </div>
-      <div class="carousel-container">
-        <div class="carousel-track" id="track-explore">
-          <% 
-            const shuffled = [...related].sort(() => Math.random() - 0.5);
-            shuffled.forEach(v => { 
-          %>
-            <div class="carousel-card">
-              <a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
-                <div class="video-thumb" style="position:relative">
-                  <img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" decoding="async"
-                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                  <video muted loop preload="none" playsinline></video>
-                </div>
-                <div class="v-title"><%= v.title %></div>
-                <span class="v-meta"><%= v.category || 'Video' %></span>
-              </a>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-      <div class="carousel-dots" id="dots-explore"></div>
-    </div>
-  </div>
-
-  <%- include('player-footer') %>
-
-  <style>
-    /* Carousel styles for player page */
-    .player-carousels {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px 20px 8px;
-    }
-    .player-carousels .carousel-section {
-      margin-bottom: 28px;
-    }
-    .player-carousels .carousel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 0 12px;
-    }
-    .player-carousels .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-    }
-    .player-carousels .section-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .player-carousels .carousel-container {
-      overflow: hidden;
-      position: relative;
-    }
-    .player-carousels .carousel-track {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 8px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--accent) var(--bg-tertiary);
-    }
-    .player-carousels .carousel-track::-webkit-scrollbar {
-      height: 6px;
-    }
-    .player-carousels .carousel-track::-webkit-scrollbar-track {
-      background: var(--bg-tertiary);
-      border-radius: 3px;
-    }
-    .player-carousels .carousel-track::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: 3px;
-    }
-    .player-carousels .carousel-card {
-      flex: 0 0 260px;
-      scroll-snap-align: start;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .player-carousels .carousel-card .video-card {
-      border: none;
-      border-radius: 0;
-    }
-    .player-carousels .carousel-card .video-card:hover {
-      transform: none;
-      box-shadow: none;
-    }
-    .player-carousels .carousel-dots {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 0 0;
-    }
-    .player-carousels .carousel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .player-carousels .carousel-dot.active {
-      background: var(--accent);
-    }
-    .player-carousels .video-card {
-      display: block;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.33,1,0.68,1), border-color 0.3s, box-shadow 0.3s;
-      will-change: transform;
-    }
-    .player-carousels .video-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 12px 40px rgba(255,45,85,0.15), 0 0 0 1px rgba(255,45,85,0.3);
-    }
-    .player-carousels .video-thumb {
-      position: relative;
-      aspect-ratio: 16/11;
-      overflow: hidden;
-      background: var(--bg-tertiary);
-    }
-    .player-carousels .video-thumb img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-      transition: transform 0.5s cubic-bezier(0.33,1,0.68,1);
-      filter: contrast(1.08) saturate(1.15);
-    }
-    .player-carousels .video-card:hover .video-thumb img {
-      transform: scale(1.05);
-    }
-    .player-carousels .video-thumb video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-    }
-    .player-carousels .video-card:hover .video-thumb video { opacity: 1; }
-    .player-carousels .v-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 8px 12px 4px;
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .player-carousels .v-meta {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin: 0 12px 10px;
-      display: block;
-    }
-    .related-thumb video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; z-index:2; pointer-events:none; }
-    .related-card:hover .related-thumb video { opacity:1; }
-    .like-btn { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-muted); padding:4px 8px; border-radius:6px; transition:all .2s; display:inline-flex; align-items:center; gap:4px; }
-    .like-btn:hover { color:var(--accent); background:rgba(255,45,85,0.1); }
-    .like-btn.liked { color:var(--accent); }
-    .like-count { font-size:12px; font-weight:600; }
-    @media (max-width: 768px) {
-      .player-carousels {
-        padding: 16px 12px 8px;
-      }
-      .player-carousels .carousel-card {
-        flex: 0 0 200px;
-      }
-      .player-carousels .section-title {
-        font-size: 14px;
-      }
-    }
-  </style>
-
-  <script>
-  var carouselDotInit = function(id) {
-    var track = document.getElementById('track-' + id);
-    var dotsEl = document.getElementById('dots-' + id);
-    if (!track || !dotsEl) return;
-    var cards = track.querySelectorAll('.carousel-card');
-    if (cards.length < 4) { dotsEl.style.display = 'none'; return; }
-    var pages = Math.ceil(cards.length / 3);
-    dotsEl.innerHTML = Array.from({ length: pages }, function(_, i) {
-      return '<div class="carousel-dot' + (i === 0 ? ' active' : '') + '" data-page="' + i + '"></div>';
-    }).join('');
-    dotsEl.querySelectorAll('.carousel-dot').forEach(function(dot) {
-      dot.addEventListener('click', function() {
-        var pg = parseInt(this.dataset.page);
-        var cw = cards[0].offsetWidth || 260;
-        track.scrollTo({ left: pg * (cw + 12) * 3, behavior: 'smooth' });
-      });
-    });
-    track.addEventListener('scroll', function() {
-      var cw = cards[0].offsetWidth || 260;
-      var totalW = cards.length * (cw + 12) - 12;
-      var pct = track.scrollLeft / totalW;
-      var activePage = Math.round(pct * pages);
-      dotsEl.querySelectorAll('.carousel-dot').forEach(function(d, i) {
-        d.classList.toggle('active', i === Math.min(activePage, pages - 1));
-      });
-    });
-  };
-  (function() {
-    carouselDotInit('related');
-    carouselDotInit('explore');
-  })();
-  </script>
-
-
-
-
-  <!-- Sister site clickbait button removed -->
+  <%- include('footer-component') %>
 
   <script>
     function esc(s) { return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
-    function cleanAlt(v) { return (v.id||v.title||'').replace(/-[0-9A-F]{4,}$/i,'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim(); }
 
-    // Video hover previews (shared LRU)
-    const playerPreviews = new Map();
-    const playerMaxPreviews = 6;
-
-    function stopPlayerPreview(vid) {
-      const entry = playerPreviews.get(vid);
-      if (entry) {
-        entry.video.pause();
-        entry.video.removeAttribute('src');
-        entry.video.load();
-        playerPreviews.delete(vid);
-      }
-    }
-
-    function playPlayerPreview(el, vid) {
-      if (playerPreviews.has(vid)) return;
-      const video = el.querySelector('video');
-      if (!video) return;
-      const url = el.closest('[data-preview]')?.dataset.preview || el.closest('a')?.dataset.preview;
-      if (!url) return;
-      video.src = url + '#t=0.06,30';
-      video.currentTime = 0.05;
-      video.preload = 'auto';
-      video.play().catch(function(){});
-      playerPreviews.set(vid, { video, el });
-      if (playerPreviews.size > playerMaxPreviews) {
-        const oldest = playerPreviews.entries().next().value;
-        if (oldest) {
-          oldest[1].video.pause();
-          oldest[1].video.removeAttribute('src');
-          oldest[1].video.load();
-          playerPreviews.delete(oldest[0]);
-        }
-      }
-    }
-
-    // Attach preview hover events
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.player-carousels .video-card, .related-card').forEach(function(card) {
-        const vid = card.dataset.id;
-        if (!vid) return;
-        const thumb = card.querySelector('.video-thumb, .related-thumb');
-        if (!thumb) return;
-        thumb.addEventListener('mouseenter', function() { playPlayerPreview(thumb, vid); });
-        thumb.addEventListener('mouseleave', function() { stopPlayerPreview(vid); });
-      });
-    });
-
-    // Mobile touch preview for player page
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      document.addEventListener('touchstart', function(e) {
-        const thumb = e.target.closest('.video-thumb, .related-thumb');
-        if (!thumb) return;
-        const card = thumb.closest('.video-card, .related-card');
-        if (!card) return;
-        const vid = card.dataset.id;
-        if (!vid || playerPreviews.has(vid)) return;
-        const video = thumb.querySelector('video');
-        const url = card.dataset.preview;
-        if (!video || !url) return;
-        video.src = url + '#t=0.15,5';
-        video.preload = 'auto';
-        video.play().catch(function(){});
-        playerPreviews.set(vid, { video, el: thumb });
-        if (playerPreviews.size > playerMaxPreviews) {
-          const oldest = playerPreviews.entries().next().value;
-          if (oldest) {
-            oldest[1].video.pause();
-            oldest[1].video.removeAttribute('src');
-            oldest[1].video.load();
-            playerPreviews.delete(oldest[0]);
-          }
-        }
-      }, { passive: true });
-    }
-
-    function navigateTo(id) {
-      location.href = '/' + id;
-    }
-
-    // Mobile nav (bottom sheet)
-    function toggleMobileMenu() {
-      var panel = document.getElementById('mobileMenuPanel');
-      var overlay = document.getElementById('mobileMenuOverlay');
-      if (!panel || !overlay) return;
-      var isOpen = panel.classList.toggle('show');
-      overlay.classList.toggle('show', isOpen);
-      document.body.style.overflow = isOpen ? 'hidden' : '';
-    }
-    function closeMobileMenu() {
-      var panel = document.getElementById('mobileMenuPanel');
-      var overlay = document.getElementById('mobileMenuOverlay');
-      if (panel) panel.classList.remove('show');
-      if (overlay) overlay.classList.remove('show');
-      document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileMenu(); });
-
-
-
-
-
-    const videoPlayer = document.getElementById('videoPlayer');
-
+    var videoPlayer = document.getElementById('videoPlayer');
     if (videoPlayer) {
-      videoPlayer.addEventListener('play', () => {
-        if (window.trackVideoPlay) window.trackVideoPlay('<%= video.id %>', '<%= video.title %>');
+      videoPlayer.addEventListener('loadedmetadata', function() {
+        var m = Math.floor(videoPlayer.duration / 60);
+        var s = Math.floor(videoPlayer.duration % 60).toString().padStart(2, '0');
+        document.getElementById('duration-display').textContent = m + ':' + s;
       });
-
-      videoPlayer.addEventListener('pause', () => {
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'video_pause', { content_id: '<%= video.id %>' });
-        }
-      });
-
-      let progressMarkers = { 25: false, 50: false, 75: false, 100: false };
-      videoPlayer.addEventListener('timeupdate', () => {
-        if (!videoPlayer.duration) return;
-        const percent = Math.round((videoPlayer.currentTime / videoPlayer.duration) * 100);
-        [25, 50, 75, 100].forEach(marker => {
-          if (!progressMarkers[marker] && percent >= marker) {
-            progressMarkers[marker] = true;
-            if (typeof gtag !== 'undefined') {
-              gtag('event', 'video_progress', {
-                content_id: '<%= video.id %>',
-                percent_watched: marker,
-                seconds_watched: Math.round(videoPlayer.currentTime)
-              });
-            }
-          }
-        });
-      });
-
-      videoPlayer.addEventListener('ended', () => {
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'video_ended', { content_id: '<%= video.id %>' });
-        }
+      videoPlayer.addEventListener('play', function() {
+        if (window.trackVideoPlay) window.trackVideoPlay('<%= video.id %>', '<%= typeof seoTitle !== "undefined" ? seoTitle : video.title %>');
       });
     }
 
-    window.toggleLike = function(videoId, btnEl) {
-      if (btnEl._liking) return;
-      btnEl._liking = true;
+    fetch('/api/likes/<%= video.id %>').then(function(r){return r.json()}).then(function(d){var el=document.querySelector('.like-count');if(el)el.textContent=d.likes;}).catch(function(){});
+    fetch('/api/view/<%= video.id %>', {method:'POST'}).then(function(r){return r.json()}).then(function(d){if(d.views!==undefined){var el=document.getElementById('viewCount');if(el)el.textContent=d.views.toLocaleString()+' views';}}).catch(function(){});
+
+    function toggleLike(videoId, btn) {
+      if (btn._liking) return;
+      btn._liking = true;
       fetch('/api/likes/' + videoId, { method: 'POST' })
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          btnEl.querySelector('.like-count').textContent = data.likes;
-          btnEl.classList.toggle('liked', data.liked);
+          btn.querySelector('.like-count').textContent = data.likes;
+          btn.classList.toggle('liked', data.liked);
         })
         .catch(function() {})
-        .finally(function() { btnEl._liking = false; });
-    };
-
-    document.getElementById('subscribeBtn').addEventListener('click', function() {
-      this.classList.toggle('subscribed');
-      this.textContent = this.classList.contains('subscribed') ? 'Subscribed' : 'Subscribe';
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'subscribe', { content_id: '<%= video.id %>', subscribed: this.classList.contains('subscribed') });
-      }
-    });
+        .finally(function() { btn._liking = false; });
+    }
 
     function copyLink() {
       navigator.clipboard.writeText(window.location.href);
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'share', { method: 'copy', content_id: '<%= video.id %>' });
-      }
-      alert('Link copied!');
+      var btn = event && event.target ? event.target.closest('.action-btn') : null;
+      if (btn) { var orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = orig; }, 2000); }
     }
 
     function shareVideo() {
       if (navigator.share) {
-        navigator.share({ title: '<%= video.title %>', url: window.location.href });
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'share', { method: 'native', content_id: '<%= video.id %>' });
-        }
-      } else {
-        copyLink();
-      }
+        navigator.share({ title: '<%= typeof seoTitle !== "undefined" ? seoTitle : video.title %>', url: window.location.href });
+      } else { copyLink(); }
     }
 
-    // Track related video clicks
-    document.addEventListener('click', (e) => {
-      const relatedLink = e.target.closest('.related-card');
-      if (relatedLink && typeof gtag !== 'undefined') {
-        gtag('event', 'related_video_click', {
-          content_id: '<%= video.id %>',
-          clicked_title: relatedLink.querySelector('h4')?.textContent || ''
-        });
-      }
-    });
-    document.getElementById('searchBtn').addEventListener('click', () => {
-      const q = document.getElementById('searchInput').value.trim();
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      var q = document.getElementById('searchInput').value.trim();
       if (q) location.href = '/?q=' + encodeURIComponent(q);
     });
-
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
-        const q = e.target.value.trim();
+        var q = e.target.value.trim();
         if (q) location.href = '/?q=' + encodeURIComponent(q);
       }
     });
 
-    let relatedPage = 2;
-    async function loadMoreRelated() {
-      const btn = document.querySelector('#loadMoreRelated button');
-      const container = document.getElementById('relatedGrid');
-      btn.textContent = 'Loading...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(`/api/search?limit=8&page=${relatedPage}`);
-        const data = await res.json();
-
-        data.videos.forEach(v => {
-          container.insertAdjacentHTML('beforeend', `
-            <div class="related-card" data-preview="${v.video}" data-id="${v.id}" onclick="navigateTo('${v.id}')">
-              <div class="related-thumb">
-                <img src="${v.thumbnail}" alt="${cleanAlt(v)}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTgwIj48cmVjdCBmaWxsPSIjMWExYTFlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=='">
-                <video class="related-preview" muted loop preload="none" playsinline></video>
-                <span class="duration-badge">--:--</span>
-              </div>
-              <div class="related-info">
-                <h4>${v.title}</h4>
-                <span class="meta-row">${v.views.toLocaleString()} views</span>
-              </div>
-            </div>
-          `);
-        });
-
-        relatedPage++;
-        if (!data.hasMore) {
-          document.getElementById('loadMoreRelated').style.display = 'none';
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        btn.textContent = 'Load More';
-        btn.disabled = false;
-      }
+    /* ══════════════════════════════════════════════════════════════
+       CAROUSEL SCROLL
+       ══════════════════════════════════════════════════════════════ */
+    function scrollCarousel(trackId, dir) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      var scrollAmt = track.clientWidth * 0.75;
+      track.scrollBy({ left: dir * scrollAmt, behavior: 'smooth' });
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       CARD REVEAL — staggered animation when sections enter view
+       ══════════════════════════════════════════════════════════════ */
+    (function() {
+      var sections = document.querySelectorAll('.carousel-section, .cat-section');
+      var allCards = document.querySelectorAll('.v-card');
+      allCards.forEach(function(card) { card.style.opacity = '0'; });
 
+      if ('IntersectionObserver' in window && sections.length) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              var cards = entry.target.querySelectorAll('.v-card');
+              cards.forEach(function(card, i) {
+                card.style.transition = 'opacity 0.35s ease ' + (i % 8) * 0.05 + 's';
+                card.style.opacity = '1';
+              });
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '200px' });
 
+        sections.forEach(function(sec) { obs.observe(sec); });
+      } else {
+        allCards.forEach(function(card) { card.style.opacity = '1'; });
+      }
+    })();
 
+    /* ══════════════════════════════════════════════════════════════
+       KEYBOARD SHORTCUTS + NAV PREFETCH + TOOLTIPS + SWIPE
+       ══════════════════════════════════════════════════════════════ */
+    (function() {
+      var navPrev = document.getElementById('navPrev');
+      var navNext = document.getElementById('navNext');
+      var tipPrev = document.getElementById('navTipPrev');
+      var tipNext = document.getElementById('navTipNext');
 
-</script>
+      /* Tooltip titles from server */
+      var prevTitle = navPrev ? navPrev.getAttribute('title') : '';
+      var nextTitle = navNext ? navNext.getAttribute('title') : '';
+      if (tipPrev && prevTitle) tipPrev.textContent = prevTitle;
+      if (tipNext && nextTitle) tipNext.textContent = nextTitle;
 
-<!-- Cross-site live banner -->
-<a href="https://xmelayu.online" target="_blank" rel="noopener" class="live-banner" title="xMelayu.online — Live now">
-  <span class="live-banner-dot"></span>
-  <span class="live-banner-count" id="liveBannerCount">3,399</span>
-  <span class="live-banner-label">watching <strong>xMelayu.online</strong></span>
-  <span class="live-banner-arrow">NOW →</span>
-</a>
+      /* Prefetch adjacent video HTML for instant navigation */
+      function prefetchUrl(url) {
+        if (!url || document.querySelector('link[rel="prefetch"][href="' + url + '"]')) return;
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        document.head.appendChild(link);
+      }
+      if (navPrev) prefetchUrl(navPrev.getAttribute('href'));
+      if (navNext) prefetchUrl(navNext.getAttribute('href'));
 
+      /* Keyboard: left/right = prev/next, space = play/pause, f = fullscreen */
+      document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.key === 'ArrowLeft' && navPrev) { navPrev.click(); e.preventDefault(); }
+        else if (e.key === 'ArrowRight' && navNext) { navNext.click(); e.preventDefault(); }
+        else if (e.key === ' ' && videoPlayer) { videoPlayer.paused ? videoPlayer.play() : videoPlayer.pause(); e.preventDefault(); }
+        else if (e.key === 'f' && videoPlayer) { videoPlayer.requestFullscreen ? videoPlayer.requestFullscreen() : void(0); }
+      });
 
-<script>
-(function() {
-  var base = { v: 3399, t: Date.now() };
-  var el = document.getElementById('liveBannerCount');
-  if (!el) return;
-  function tick() {
-    var m = Math.floor((Date.now() - base.t) / 60000);
-    var v = Math.max(800, base.v + Math.floor(Math.sin(Date.now() / 30000) * 150) + m * 3);
-    el.textContent = v.toLocaleString();
-  }
-  setInterval(tick, 4000);
-  tick();
-})();
-</script>
-<ins id="1118840" data-width="300" data-height="250"></ins>
-<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-<ins id="1119407" data-width="108" data-height="140"></ins>
-<script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1119407});</script>
+      /* Touch swipe — swipe left = next, swipe right = prev */
+      var touchStartX = 0;
+      var touchStartY = 0;
+      var wrapper = document.getElementById('videoWrapper');
+      if (wrapper) {
+        wrapper.addEventListener('touchstart', function(e) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        wrapper.addEventListener('touchend', function(e) {
+          var dx = e.changedTouches[0].clientX - touchStartX;
+          var dy = e.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            if (dx < 0 && navNext) navNext.click();
+            else if (dx > 0 && navPrev) navPrev.click();
+          }
+        }, { passive: true });
+      }
+    })();
 
-<!--JuicyAds END-->
+    /* ══════════════════════════════════════════════════════════════
+       MULTI-PREVIEW — smart 3-frame hover preview on video cards
+       Start at 12s, smart timing for short/long videos
+       ══════════════════════════════════════════════════════════════ */
+    (function() {
+      var previewVideo = document.createElement('video');
+      previewVideo.preload = 'metadata';
+      previewVideo.muted = true;
+      previewVideo.playsInline = true;
+      previewVideo.style.cssText = 'display:none;position:fixed;top:0;left:0;width:1px;height:1px;pointer-events:none;z-index:-1;';
+      document.body.appendChild(previewVideo);
+
+      var previewCanvas = document.createElement('canvas');
+      previewCanvas.width = 320;
+      previewCanvas.height = 180;
+      var ctx = previewCanvas.getContext('2d');
+
+      var hoverTimer = null;
+      var activeCard = null;
+      var isLoading = false;
+
+      /* 3 previews starting at 12s */
+      function getPreviewTimes(duration) {
+        if (!duration || duration < 12) return [Math.max(0, Math.floor(duration * 0.3))];
+        var step = Math.floor((duration - 12) / 3);
+        if (step < 2) step = 2;
+        return [12, Math.min(12 + step, duration - 1), Math.min(12 + step * 2, duration - 1)].filter(function(t, i, a) { return a.indexOf(t) === i && t < duration; });
+      }
+
+      function formatTime(sec) {
+        var m = Math.floor(sec / 60);
+        var s = Math.floor(sec % 60);
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+
+      function buildPreviewStrip(card, times) {
+        var existing = card.querySelector('.preview-strip');
+        if (existing) existing.remove();
+        var strip = document.createElement('div');
+        strip.className = 'preview-strip';
+        times.forEach(function(t) {
+          var frame = document.createElement('div');
+          frame.className = 'preview-frame';
+          var cvs = document.createElement('canvas');
+          cvs.width = 320;
+          cvs.height = 180;
+          cvs.dataset.time = t;
+          var label = document.createElement('span');
+          label.className = 'preview-time';
+          label.textContent = formatTime(t);
+          frame.appendChild(cvs);
+          frame.appendChild(label);
+          strip.appendChild(frame);
+        });
+        var thumb = card.querySelector('.thumb');
+        if (thumb) {
+          thumb.appendChild(strip);
+          thumb.classList.add('preview-active');
+        }
+      }
+
+      function captureFrame(video, canvas, time) {
+        return new Promise(function(resolve) {
+          var onSeeked = function() {
+            video.removeEventListener('seeked', onSeeked);
+            try {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              var targetCtx = canvas.getContext('2d');
+              targetCtx.drawImage(ctx.canvas, 0, 0, canvas.width, canvas.height);
+              /* Apply brightness + warmth boost to the captured frame */
+              try {
+                var imgData = targetCtx.getImageData(0, 0, canvas.width, canvas.height);
+                var d = imgData.data;
+                for (var i = 0; i < d.length; i += 4) {
+                  /* brightness +12% */
+                  d[i]   = Math.min(255, d[i]   * 1.12);
+                  d[i+1] = Math.min(255, d[i+1] * 1.10);
+                  d[i+2] = Math.min(255, d[i+2] * 1.06);
+                  /* warm skin tone shift: push reds up, blues down slightly */
+                  if (d[i] > d[i+1] && d[i] > d[i+2]) {
+                    d[i]   = Math.min(255, d[i] + 8);
+                    d[i+1] = Math.min(255, d[i+1] + 2);
+                  }
+                }
+                targetCtx.putImageData(imgData, 0, 0);
+              } catch(e) {}
+              resolve(true);
+            } catch(e) { resolve(false); }
+          };
+          video.addEventListener('seeked', onSeeked);
+          video.currentTime = time;
+        });
+      }
+
+      async function generatePreviews(card, videoSrc, times) {
+        if (isLoading) return;
+        isLoading = true;
+        activeCard = card;
+
+        try {
+          previewVideo.src = videoSrc;
+          previewVideo.load();
+          await new Promise(function(resolve, reject) {
+            previewVideo.onloadedmetadata = resolve;
+            previewVideo.onerror = reject;
+            setTimeout(resolve, 3000);
+          });
+
+          var duration = previewVideo.duration;
+          if (!duration || !isFinite(duration)) {
+            isLoading = false;
+            return;
+          }
+
+          var actualTimes = getPreviewTimes(duration);
+          buildPreviewStrip(card, actualTimes);
+
+          for (var i = 0; i < actualTimes.length; i++) {
+            if (activeCard !== card) { isLoading = false; return; }
+            await captureFrame(previewVideo, previewCanvas, actualTimes[i]);
+            var cvs = card.querySelectorAll('.preview-strip canvas')[i];
+            if (cvs) {
+              cvs.getContext('2d').drawImage(previewCanvas, 0, 0, cvs.width, cvs.height);
+              cvs.parentElement.classList.remove('preview-loading');
+            }
+          }
+        } catch(e) {}
+        isLoading = false;
+      }
+
+      function cleanPreview(card) {
+        if (activeCard === card) {
+          activeCard = null;
+          isLoading = false;
+        }
+        var strip = card.querySelector('.preview-strip');
+        if (strip) strip.remove();
+        var thumb = card.querySelector('.thumb');
+        if (thumb) thumb.classList.remove('preview-active');
+        previewVideo.removeAttribute('src');
+        previewVideo.load();
+      }
+
+      /* Attach hover events to all video cards */
+      function attachPreviewListeners() {
+        document.querySelectorAll('.v-card[href]').forEach(function(card) {
+          if (card._previewBound) return;
+          card._previewBound = true;
+          var hoverDelay = null;
+          var href = card.getAttribute('href');
+          if (!href || href.indexOf('/') !== 0) return;
+          var videoId = href.replace(/^\//, '');
+          var videoSrc = '/raw/videos/' + videoId + '.mp4';
+
+          card.addEventListener('mouseenter', function() {
+            if (videoPlayer && videoId === '<%= video.id %>') return;
+            hoverDelay = setTimeout(function() {
+              generatePreviews(card, videoSrc);
+            }, 400);
+          });
+
+          card.addEventListener('mouseleave', function() {
+            if (hoverDelay) { clearTimeout(hoverDelay); hoverDelay = null; }
+            cleanPreview(card);
+          });
+        });
+      }
+
+      attachPreviewListeners();
+
+      /* Re-attach after dynamic content loads */
+      var mainContent = document.querySelector('.player-main');
+      if (mainContent) {
+        new MutationObserver(function() { attachPreviewListeners(); }).observe(mainContent, { childList: true, subtree: true });
+      }
+    })();
+  </script>
+
+  <script type="text/javascript">
+    setTimeout(function() {
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.src = 'https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks';
+      document.body.appendChild(s);
+    }, 9000);
+  </script>
+<%- include('chat') %>
 </body>
 </html>

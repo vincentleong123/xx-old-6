@@ -7,16 +7,12 @@
   <meta name="description" content="<%= metaDescription %>">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="keywords" content="<%= keywords %>">
-  <meta name="juicyads-site-verification" content="46572b6e9c3f0cd05fa280411328c8ff">
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-<script async type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
-<script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
   <link rel="canonical" href="<%= canonicalUrl %>">
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= metaDescription %>">
   <meta property="og:type" content="website">
   <meta property="og:url" content="<%= canonicalUrl %>">
-  <meta property="og:image" content="https://xmelayu.site/og-default.jpg">
+  <meta property="og:image" content="<%= siteBase %>/og-default.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<%= title %>">
   <meta name="twitter:description" content="<%= metaDescription %>">
@@ -55,8 +51,6 @@
     .meta-row { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
     .meta-tag { padding:4px 12px; border-radius:20px; font-size:12px; background:var(--bg3); border:1px solid var(--border); color:var(--text2); text-decoration:none; transition:all .2s; }
     .meta-tag:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .ad-holder { display:flex; align-items:center; justify-content:center; padding:12px 0; margin:4px 0; }
-    .ad-holder--strip { gap:16px; flex-wrap:wrap; padding:20px 0; margin-top:8px; border-top:1px solid rgba(255,255,255,0.05); }
     .footer { margin-top:40px; text-align:center; color:var(--text3); font-size:12px; padding:20px 0; border-top:1px solid var(--border); }
     @media (max-width:640px) {
       .container { padding:12px; }
@@ -84,30 +78,14 @@
       <% }); } %>
     </div>
 
-    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
-      <ins id="kw-a1" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-      <ins id="kw-a2" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118846});</script>
-    </div>
-    <div data-id="juicyads-native-ads" data-ad-zone="1118843" data-targets="a" style="margin:8px 0;min-height:60px"></div>
-
     <div class="seo-content"><%- content %></div>
-
-    <div class="ad-holder" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0">
-      <ins id="kw-m1" data-width="300" data-height="100"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118845});</script>
-      <ins id="kw-m2" data-width="300" data-height="100"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118847});</script>
-    </div>
-    <div data-id="juicyads-native-ads" data-ad-zone="1119406" data-targets="a" style="margin:8px 0;min-height:60px"></div>
 
     <div class="section-title">
       <%= heading %> Videos <span class="badge badge-hot"><%= videos.length %> VIDEOS</span>
     </div>
     <div class="grid">
       <% videos.forEach(function(v) { %>
-        <a href="/<%= v.id %>" class="card" data-id="<%= v.id %>" data-preview="<%= v.video || '' %>">
+        <a href="/<%= v.id %>" class="card" data-id="<%= v.id %>" data-preview="<%= v._rawVideoUrl || v.video || '' %>">
           <div class="thumb">
             <img src="<%= typeof v.thumbnail !== 'undefined' ? v.thumbnail : '' %>" alt="<%= cleanAlt(v) %>" loading="lazy" onerror="this.style.display='none'">
             <video muted loop preload="none" playsinline></video>
@@ -121,26 +99,10 @@
       <% }); %>
     </div>
 
-    <div class="ad-holder ad-holder--strip">
-      <div class="ad-slot-placeholder" style="max-width:728px;margin:0 auto">
-        <ins id="kw-lb" data-width="728" data-height="90"></ins>
-      </div>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120025});</script>
-      <ins id="kw-f1" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118840});</script>
-      <ins id="kw-f2" data-width="300" data-height="250"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118844});</script>
-      <ins id="kw-f3" data-width="108" data-height="140"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120028});</script>
-      <ins id="kw-f4" data-width="133" data-height="139"></ins>
-      <script>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1120029});</script>
-    </div>
-
     <div class="footer">
       <p>&copy; 2026 xMelayu &middot; All models 18+</p>
     </div>
   </div>
-<!-- display ads only (no popunder) -->
 <script>
 (function() {
   const kwPreviews = new Map(), kwMax = 6;
@@ -168,5 +130,6 @@
   });
 })();
 </script>
+<%- include('chat') %>
 </body>
 </html>

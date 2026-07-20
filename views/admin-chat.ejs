@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Admin — xMelayu</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d0f;
+      color: #e0e0e8;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ── Sidebar: Visitor List ── */
+    .sidebar {
+      width: 320px;
+      background: #141418;
+      border-right: 1px solid #2a2a30;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2a2a30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar-header h2 { font-size: 16px; font-weight: 700; }
+    .sidebar-count { font-size: 12px; color: #6b6b75; }
+    .visitor-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .visitor-list::-webkit-scrollbar { width: 4px; }
+    .visitor-list::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 4px; }
+
+    .visitor-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .visitor-card:hover { background: #1c1c21; }
+    .visitor-card.active { background: #1c1c21; border: 1px solid #2a2a30; }
+
+    .visitor-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #2a2a30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .visitor-avatar.online::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #141418;
+    }
+    .visitor-avatar.offline::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6b6b75;
+      border: 2px solid #141418;
+    }
+
+    .visitor-info { flex: 1; min-width: 0; }
+    .visitor-name {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .visitor-name .new-badge {
+      font-size: 9px;
+      background: #e8793b;
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .visitor-page {
+      font-size: 11px;
+      color: #6b6b75;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .visitor-time {
+      font-size: 10px;
+      color: #4a4a50;
+      white-space: nowrap;
+    }
+
+    /* ── Main: Chat Panel ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0d0d0f;
+    }
+    .main-placeholder {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a4a50;
+      font-size: 15px;
+      text-align: center;
+      padding: 40px;
+    }
+    .main-placeholder .big-icon { font-size: 48px; margin-bottom: 12px; }
+
+    .chat-panel { display: none; flex-direction: column; height: 100%; }
+    .chat-panel.active { display: flex; }
+
+    .chat-panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #2a2a30;
+      background: #141418;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-panel-header .info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-panel-header .name { font-weight: 600; font-size: 14px; }
+    .chat-panel-header .page { font-size: 11px; color: #6b6b75; }
+    .chat-panel-header .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+    }
+    .chat-panel-header .status-dot.online { background: #22c55e; }
+    .chat-panel-header .status-dot.offline { background: #6b6b75; }
+
+    .start-chat-bar {
+      padding: 12px 20px;
+      background: #1a1a1f;
+      border-bottom: 1px solid #2a2a30;
+      display: flex;
+      gap: 8px;
+    }
+    .start-chat-bar input {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #2a2a30;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .start-chat-bar input:focus { border-color: #e8793b; }
+    .start-chat-bar button {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #e8793b, #d96b2f);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .start-chat-bar button:hover { opacity: 0.9; }
+    .start-chat-bar button:disabled { opacity: 0.4; cursor: default; }
+
+    .chat-msg-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-msg-area::-webkit-scrollbar { width: 4px; }
+    .chat-msg-area::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 4px; }
+
+    .msg {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      word-wrap: break-word;
+      animation: msgIn 0.15s ease-out;
+    }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .msg.admin {
+      align-self: flex-start;
+      background: #1e1e24;
+      color: #e0e0e8;
+      border: 1px solid #2a2a30;
+      border-bottom-left-radius: 4px;
+    }
+    .msg.visitor {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #e8793b, #d96b2f);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg .time {
+      display: block;
+      font-size: 10px;
+      margin-top: 4px;
+      opacity: 0.5;
+    }
+
+    .reply-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px 16px;
+      background: #141418;
+      border-top: 1px solid #2a2a30;
+    }
+    .reply-bar textarea {
+      flex: 1;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #2a2a30;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      line-height: 1.4;
+      max-height: 80px;
+    }
+    .reply-bar textarea:focus { border-color: #e8793b; }
+    .reply-bar button {
+      padding: 10px 18px;
+      background: linear-gradient(135deg, #e8793b, #d96b2f);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .reply-bar button:hover { opacity: 0.9; }
+
+    .logout-btn {
+      background: none;
+      border: 1px solid #2a2a30;
+      color: #6b6b75;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover { color: #ef4444; border-color: #ef4444; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; max-height: 40vh; border-right: none; border-bottom: 1px solid #2a2a30; }
+      .app { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar: Visitor List -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>👥 Visitors</h2>
+        <span class="sidebar-count" id="visitorCount">0 online</span>
+      </div>
+      <div class="visitor-list" id="visitorList">
+        <div style="text-align:center;padding:40px;color:#4a4a50;font-size:13px;">Waiting for visitors...</div>
+      </div>
+    </div>
+
+    <!-- Main: Chat Panel -->
+    <div class="main">
+      <div class="main-placeholder" id="placeholder">
+        <div>
+          <div class="big-icon">💬</div>
+          <div>Select a visitor to start chatting</div>
+          <div style="font-size:12px;color:#4a4a50;margin-top:8px;">
+            Visitors appear here in real-time when they land on your site
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-panel" id="chatPanel">
+        <div class="chat-panel-header" id="chatPanelHeader">
+          <div class="info">
+            <span class="status-dot" id="chatStatusDot"></span>
+            <div>
+              <div class="name" id="chatVisitorName">—</div>
+              <div class="page" id="chatVisitorPage">/</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:11px;color:#6b6b75;" id="chatVisitorTime"></span>
+            <button class="logout-btn" onclick="window.location='/admin/chat/logout'">Logout</button>
+          </div>
+        </div>
+
+        <div class="start-chat-bar" id="startChatBar">
+          <input type="text" id="firstMessageInput" placeholder="Type your first message..." maxlength="300"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendFirstMessage()}">
+          <button id="startChatBtn" onclick="sendFirstMessage()">Start Chat →</button>
+        </div>
+
+        <div class="chat-msg-area" id="chatMsgArea"></div>
+
+        <div class="reply-bar">
+          <textarea id="replyInput" placeholder="Type a reply..." rows="1" maxlength="500"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendReply()}"></textarea>
+          <button onclick="sendReply()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── Admin Chat JS ───
+    (function() {
+      const socket = io({ query: { admin: 'true' } });
+      let visitors = [];
+      let selectedVisitorId = null;
+      let messages = {};
+
+      const visitorList = document.getElementById('visitorList');
+      const visitorCount = document.getElementById('visitorCount');
+      const placeholder = document.getElementById('placeholder');
+      const chatPanel = document.getElementById('chatPanel');
+      const chatMsgArea = document.getElementById('chatMsgArea');
+      const chatVisitorName = document.getElementById('chatVisitorName');
+      const chatVisitorPage = document.getElementById('chatVisitorPage');
+      const chatVisitorTime = document.getElementById('chatVisitorTime');
+      const chatStatusDot = document.getElementById('chatStatusDot');
+      const replyInput = document.getElementById('replyInput');
+      const firstMessageInput = document.getElementById('firstMessageInput');
+      const startChatBar = document.getElementById('startChatBar');
+
+      socket.on('admin:init', (data) => {
+        visitors = data.sessions || [];
+        renderVisitorList();
+      });
+
+      socket.on('admin:session_update', (data) => {
+        visitors = data.sessions || [];
+        renderVisitorList();
+      });
+
+      socket.on('admin:message', (msg) => {
+        if (!messages[msg.visitorId]) messages[msg.visitorId] = [];
+        messages[msg.visitorId].push(msg);
+        if (msg.visitorId === selectedVisitorId) {
+          renderMessages();
+        }
+        // Update visitor list to reflect new message
+        renderVisitorList();
+      });
+
+      function renderVisitorList() {
+        const online = visitors.filter(v => v.isOnline).length;
+        visitorCount.textContent = online + ' online';
+
+        if (!visitors.length) {
+          visitorList.innerHTML = '<div style="text-align:center;padding:40px;color:#4a4a50;font-size:13px;">Waiting for visitors...</div>';
+          return;
+        }
+
+        visitorList.innerHTML = visitors.map(v => {
+          const initial = v.name.charAt(0).toUpperCase();
+          const isActive = v.visitorId === selectedVisitorId;
+          const isNew = !v.contacted && v.isOnline;
+          const timeAgo = getTimeAgo(v.lastActive);
+          const pageShort = v.pageUrl ? v.pageUrl.substring(0, 30) : '/';
+          return '<div class="visitor-card' + (isActive ? ' active' : '') + '" onclick="selectVisitor(\'' + v.visitorId + '\')">' +
+            '<div class="visitor-avatar ' + (v.isOnline ? 'online' : 'offline') + '">' + initial + '</div>' +
+            '<div class="visitor-info">' +
+              '<div class="visitor-name">' + escapeHtml(v.name) +
+                (isNew ? '<span class="new-badge">NEW</span>' : '') +
+              '</div>' +
+              '<div class="visitor-page">' + escapeHtml(pageShort) + '</div>' +
+            '</div>' +
+            '<div class="visitor-time">' + timeAgo + '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      window.selectVisitor = function(visitorId) {
+        selectedVisitorId = visitorId;
+        const v = visitors.find(x => x.visitorId === visitorId);
+
+        placeholder.style.display = 'none';
+        chatPanel.classList.add('active');
+
+        if (v) {
+          chatVisitorName.textContent = v.name;
+          chatVisitorPage.textContent = v.pageUrl || '/';
+          chatStatusDot.className = 'status-dot ' + (v.isOnline ? 'online' : 'offline');
+          chatVisitorTime.textContent = getTimeAgo(v.lastActive);
+
+          // Show start chat bar only if not yet contacted
+          startChatBar.style.display = v.contacted ? 'none' : 'flex';
+        }
+
+        // Fetch conversation history
+        fetchConversation(visitorId);
+        renderVisitorList();
+      };
+
+      function fetchConversation(visitorId) {
+        fetch('/api/admin/chat/conversation/' + visitorId)
+          .then(r => r.json())
+          .then(data => {
+            messages[visitorId] = data.messages || [];
+            renderMessages();
+          })
+          .catch(() => { messages[visitorId] = []; renderMessages(); });
+      }
+
+      function renderMessages() {
+        const msgs = messages[selectedVisitorId] || [];
+        if (!msgs.length) {
+          chatMsgArea.innerHTML = '<div style="text-align:center;padding:40px;color:#4a4a50;font-size:13px;">No messages yet. Send a greeting to start the conversation!</div>';
+          return;
+        }
+        chatMsgArea.innerHTML = msgs.map(m => {
+          const isAdmin = m.from === 'admin';
+          const time = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          return '<div class="msg ' + (isAdmin ? 'admin' : 'visitor') + '">' +
+            escapeHtml(m.text) + '<span class="time">' + time + '</span></div>';
+        }).join('');
+        chatMsgArea.scrollTop = chatMsgArea.scrollHeight;
+      }
+
+      function sendFirstMessage() {
+        const text = firstMessageInput.value.trim();
+        if (!text || !selectedVisitorId) return;
+        const btn = document.getElementById('startChatBtn');
+        btn.disabled = true;
+        fetch('/api/admin/chat/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visitorId: selectedVisitorId, text: text })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            firstMessageInput.value = '';
+            startChatBar.style.display = 'none';
+            // Message will arrive via admin:message event
+          }
+        })
+        .catch(() => {})
+        .finally(() => { btn.disabled = false; });
+      }
+      window.sendFirstMessage = sendFirstMessage;
+
+      function sendReply() {
+        const text = replyInput.value.trim();
+        if (!text || !selectedVisitorId) return;
+        fetch('/api/admin/chat/reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visitorId: selectedVisitorId, text: text })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            replyInput.value = '';
+          }
+        })
+        .catch(() => {});
+      }
+      window.sendReply = sendReply;
+
+      replyInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+      });
+
+      function escapeHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function getTimeAgo(ts) {
+        if (!ts) return '';
+        const diff = Date.now() - ts;
+        if (diff < 60000) return 'now';
+        if (diff < 3600000) return Math.floor(diff/60000) + 'm';
+        if (diff < 86400000) return Math.floor(diff/3600000) + 'h';
+        return Math.floor(diff/86400000) + 'd';
+      }
+    })();
+  </script>
+</body>
+</html>

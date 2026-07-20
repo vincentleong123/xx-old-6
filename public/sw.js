@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lucahman-v2';
+const CACHE_NAME = 'xmelayu-v2';
 const PRECACHE = ['/css/style.css', '/favicon.svg', '/logo.svg', '/manifest.json'];
 
 self.addEventListener('install', event => {
