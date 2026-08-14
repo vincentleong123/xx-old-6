@@ -3,41 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : title) %></title>
-<% var seoMetaDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,160) : ((typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title)) + ' - ' + video.category + ' video.'); %>
+  <title><%= displayTitle %></title>
   <meta name="description" content="<%= seoMetaDesc %>">
   <meta name="robots" content="max-video-preview:large, index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="keywords" content="<%= video.keywords.join(', ') %>, <%= video.category %>, xmelayu, amateur, malay, HD streaming, 18+">
-  <meta http-equiv="pragma" content="no-cache">
-  <meta http-equiv="expires" content="0">
-  <script>!function(){try{var v=localStorage.getItem('_cv')||'',c='<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>';if(v&&v!==c&&c){localStorage.clear();location.reload()}localStorage.setItem('_cv',c)}catch(e){}}()</script>
   <meta name="theme-color" content="#0a0a0a">
 
-  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/' + video.id %>">
+  <link rel="canonical" href="<%= canonicalUrl %>">
   <meta property="article:published_time" content="<%= video.uploaded || new Date().toISOString() %>">
 
   <link rel="preconnect" href="<%= siteBase %>">
   <link rel="dns-prefetch" href="<%= siteBase %>">
   <link rel="preconnect" href="https://www.googletagmanager.com">
 
-<% var ogDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').substring(0,200) : ((typeof seoTitle !== 'undefined' ? seoTitle : video.title) + ' - ' + video.category + ' video.'); %>
-<% var absThumb = siteBase + video.thumbnail; %>
-  <meta property="og:title" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %> | xMelayu">
+  <meta property="og:title" content="<%= displayTitle %>">
   <meta property="og:description" content="<%= ogDesc %>">
   <meta property="og:type" content="video.other">
-  <meta property="og:url" content="<%= siteBase %>/<%= video.id %>">
+  <meta property="og:url" content="<%= canonicalUrl %>">
   <meta property="og:site_name" content="xMelayu">
-  <meta property="og:image" content="<%= absThumb %>">
+  <meta property="og:image" content="<%= video.thumbnail.startsWith('http') ? video.thumbnail : siteBase + video.thumbnail %>">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="720">
-  <meta property="og:image:alt" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>">
-<% var vidSrc = typeof video._rawVideoUrl !== 'undefined' ? video._rawVideoUrl : video.video; %>
-  <meta property="og:video" content="<%= siteBase %><%= vidSrc %>">
-  <meta property="og:video:url" content="<%= siteBase %><%= vidSrc %>">
-  <meta property="og:video:secure_url" content="<%= siteBase %><%= vidSrc %>">
-  <meta property="og:video:type" content="video/mp4">
-  <meta property="og:video:width" content="1920">
-  <meta property="og:video:height" content="1080">
+  <meta property="og:image:alt" content="<%= displayTitle %>">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="ms_MY">
   <meta property="article:section" content="<%= video.category %>">
@@ -45,48 +32,20 @@
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@xmelayu">
-  <meta name="twitter:title" content="<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %> | xMelayu">
+  <meta name="twitter:title" content="<%= displayTitle %>">
   <meta name="twitter:description" content="<%= ogDesc.substring(0, 120) %>">
-  <meta name="twitter:image" content="<%= absThumb %>">
-  <meta name="twitter:player" content="<%= siteBase %>/<%= video.id %>">
+  <meta name="twitter:image" content="<%= video.thumbnail.startsWith('http') ? video.thumbnail : siteBase + video.thumbnail %>">
+  <meta name="twitter:player" content="<%= canonicalUrl %>">
   <meta name="twitter:player:width" content="1920">
   <meta name="twitter:player:height" content="1080">
 
-  <link rel="image_src" href="<%= absThumb %>">
+  <link rel="image_src" href="<%= video.thumbnail.startsWith('http') ? video.thumbnail : siteBase + video.thumbnail %>">
 
-<% var seoJsonDesc = (typeof videoDescription !== 'undefined' && videoDescription && videoDescription.text) ? videoDescription.text.replace(/<[^>]+>/g,'').trim().substring(0,300).replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').replace(/"/g,'\\"') : ((typeof seoTitle !== 'undefined' ? seoTitle : video.title) + ' - ' + video.category + ' video.'); %>
-<% var vRating = Math.min(4.9, 3.5 + Math.log10(Math.max(video.views || 1, 10)) * 0.4).toFixed(1); var vCount = Math.max(50, Math.floor((video.views || 100) / 120)); %>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>",
-    "description": "<%= seoJsonDesc %>",
-    "thumbnailUrl": "<%= siteBase %><%= video.thumbnail %>",
-    "uploadDate": "<%= video.uploaded || new Date().toISOString() %>",
-    "contentUrl": "<%= siteBase %><%= vidSrc %>",
-    "embedUrl": "<%= siteBase %><%= video.id %>",
-    "mainEntityOfPage": "<%= siteBase %><%= video.id %>",
-    "genre": ["Adult", "<%= video.category %>"],
-    "about": { "@type": "Thing", "name": "<%= video.category %>" },
-    "keywords": "<%= video.keywords.join(', ') %>",
-    "isAccessibleForFree": true,
-    "isFamilyFriendly": false,
-    "contentRating": "R18+",
-    "regionsAllowed": "MY",
-    "interactionStatistic": [
-      { "@type": "InteractionCounter", "interactionType": "https://schema.org/WatchAction", "userInteractionCount": <%= video.views || 0 %> },
-      { "@type": "InteractionCounter", "interactionType": "https://schema.org/LikeAction", "userInteractionCount": <%= video.likes || 0 %> }
-    ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "<%= vRating %>",
-      "bestRating": "5",
-      "ratingCount": "<%= vCount %>"
-    },
-    "publisher": { "@type": "Organization", "name": "xMelayu", "logo": { "@type": "ImageObject", "url": "<%= siteBase %>logo.svg" } }
-  }
-  </script>
+<% if (typeof structuredData !== 'undefined' && structuredData) { %>
+<% structuredData.forEach(function(sd) { %>
+  <script type="application/ld+json"><%- JSON.stringify(sd) %></script>
+<% }); %>
+<% } %>
 
   <script type="application/ld+json">
   {
@@ -95,7 +54,7 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "<%= siteBase %>" },
       { "@type": "ListItem", "position": 2, "name": "<%= video.category %>", "item": "<%= siteBase %>?q=<%= encodeURIComponent(video.category) %>" },
-      { "@type": "ListItem", "position": 3, "name": "<%= typeof seoTitle !== 'undefined' ? seoTitle : video.title %>", "item": "<%= siteBase %><%= video.id %>" }
+      { "@type": "ListItem", "position": 3, "name": "<%= displayTitle %>", "item": "<%= canonicalUrl %>" }
     ]
   }
   </script>
@@ -177,6 +136,15 @@ body {
   transition:all 0.2s; font-family:inherit;
 }
 .icon-btn:hover { border-color:var(--accent); color:var(--text-primary); }
+.back-to-gallery {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:8px;
+  color:#fff; cursor:pointer; padding:8px 16px; font-size:14px; font-weight:600;
+  text-decoration:none; transition:all 0.2s; white-space:nowrap;
+  backdrop-filter:blur(4px);
+}
+.back-to-gallery:hover { background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.5); color:#fff; }
+.back-to-gallery svg { width:18px; height:18px; flex-shrink:0; }
 
 /* ── LAYOUT ── */
 .player-page { flex:1; display:flex; flex-direction:column; }
@@ -217,22 +185,16 @@ body {
 .nav-next { right:10px; flex-direction:row; }
 .nav-label { font-size:11px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase; }
 .nav-btn svg { flex-shrink:0; }
-.nav-tooltip {
-  position:absolute; top:calc(50% + 32px); z-index:11;
-  background:rgba(0,0,0,0.9); color:#fff; padding:6px 10px;
-  border-radius:8px; font-size:11px; font-weight:600;
-  max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  pointer-events:none; opacity:0; transition:opacity 0.2s;
-}
-.nav-tooltip-prev { left:10px; }
-.nav-tooltip-next { right:10px; text-align:right; }
-.video-wrapper:hover .nav-tooltip { opacity:1; }
 
 /* ── VIDEO INFO ── */
-.video-info { display:flex; flex-direction:column; gap:12px; }
+.video-info { display:flex; flex-direction:column; gap:6px; }
 .video-info h1 {
-  font-size:clamp(20px,3vw,28px); font-weight:800; line-height:1.3;
-  color:var(--text-primary);
+  font-size:clamp(22px,3vw,30px); font-weight:800; line-height:1.3;
+  color:var(--text-primary); margin:0;
+}
+.video-info h2 {
+  font-size:clamp(15px,2.2vw,20px); font-weight:600; line-height:1.3;
+  color:var(--text-secondary); margin:0;
 }
 .video-meta {
   display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px;
@@ -556,6 +518,7 @@ body {
   .player-sidebar { grid-template-columns:1fr; }
   .video-wrapper { border-radius:10px; }
   .video-info h1 { font-size:18px; }
+  .video-info h2 { font-size:14px; }
   .hero-banner { height:160px; border-radius:12px; }
   .hero-banner .hero-overlay { padding:20px; }
   .hero-banner .hero-title { font-size:20px; }
@@ -635,7 +598,10 @@ body {
       <button id="searchBtn">Search</button>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="window.history.back()">&larr;</button>
+      <a href="/" class="back-to-gallery" title="Back to videos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Back</span>
+      </a>
     </div>
   </header>
 
@@ -643,8 +609,8 @@ body {
     <div class="player-container">
       <div class="player-main">
         <div class="video-wrapper" id="videoWrapper">
-          <video id="videoPlayer" controls playsinline muted preload="metadata" poster="<%= video.thumbnail %>">
-            <source src="<%= vidSrc %>" type="video/mp4">
+          <video id="videoPlayer" controls playsinline muted autoplay preload="metadata" poster="<%= video.thumbnail %>">
+            <source src="/raw/videos/<%= encodeURIComponent(video.id) %>.mp4" type="video/mp4">
           </video>
           <% if (typeof prevVideo !== 'undefined' && prevVideo) { %>
           <a href="/<%= prevVideo.id %>" class="nav-btn nav-prev" title="<%= prevVideo.title %>" id="navPrev">
@@ -658,14 +624,15 @@ body {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </a>
           <% } %>
-          <div class="nav-tooltip nav-tooltip-prev" id="navTipPrev"></div>
-          <div class="nav-tooltip nav-tooltip-next" id="navTipNext"></div>
         </div>
 
         <div class="video-info">
 
         <%# FIX: remove broken thumbCard helper usage (runtime EJS error) — keep inline markup %>
-          <h1><%= typeof seoTitle !== 'undefined' ? seoTitle : (typeof displayTitle !== 'undefined' ? displayTitle : video.title) %></h1>
+          <% if (oldId) { %>
+            <h1><%= oldId.replace(/-/g, ' ') %></h1>
+          <% } %>
+          <h2><%= displayTitle %></h2>
 
           <div class="video-meta">
             <span class="stat" id="viewCount"><%= (video.views || 0).toLocaleString() %> views</span>
@@ -893,7 +860,7 @@ body {
         <% if (typeof exploreSlice2 !== 'undefined' && exploreSlice2.length > 0) { %>
         <div class="carousel-section">
           <div class="carousel-header">
-            <div class="carousel-title">&#128260; You Might've Missed</div>
+            <div class="carousel-title"><%= ['🔄 Anda Mungkin Terlepas Xxx','🔄 You Might\'ve Missed Xx','🔄 Jangan Ketinggalan Xxx','🔄 Don\'t Miss These Xx','🔄 Untuk Anda Tonton Xxx'][Math.floor(Math.random()*5)] %></div>
             <div class="carousel-nav">
               <button onclick="scrollCarousel('explore2Track',-1)">&lsaquo;</button>
               <button onclick="scrollCarousel('explore2Track',1)">&rsaquo;</button>
@@ -1004,7 +971,7 @@ body {
         <%# UP NEXT QUEUE %>
         <% if (related.length > 0) { %>
         <div class="sidebar-card">
-          <div class="sidebar-card-title">Up Next</div>
+          <div class="sidebar-card-title"><%= ['▶ Senarai Main Xxx','▶ Up Next Xx','▶ Tonton Seterusnya Xxx','▶ Watch Next Xx','▶ Seterusnya Xxx'][Math.floor(Math.random()*5)] %></div>
           <div class="up-next-list">
             <% related.slice(0,15).forEach(function(v,i) { %>
               <a href="/<%= v.id %>" class="up-next-item<%= i === 0 ? ' active' : '' %>">
@@ -1071,7 +1038,7 @@ body {
         document.getElementById('duration-display').textContent = m + ':' + s;
       });
       videoPlayer.addEventListener('play', function() {
-        if (window.trackVideoPlay) window.trackVideoPlay('<%= video.id %>', '<%= typeof seoTitle !== "undefined" ? seoTitle : video.title %>');
+        if (window.trackVideoPlay) window.trackVideoPlay('<%= video.id %>', '<%= displayTitle %>');
       });
     }
 
@@ -1099,7 +1066,7 @@ body {
 
     function shareVideo() {
       if (navigator.share) {
-        navigator.share({ title: '<%= typeof seoTitle !== "undefined" ? seoTitle : video.title %>', url: window.location.href });
+        navigator.share({ title: '<%= displayTitle %>', url: window.location.href });
       } else { copyLink(); }
     }
 
@@ -1158,14 +1125,6 @@ body {
     (function() {
       var navPrev = document.getElementById('navPrev');
       var navNext = document.getElementById('navNext');
-      var tipPrev = document.getElementById('navTipPrev');
-      var tipNext = document.getElementById('navTipNext');
-
-      /* Tooltip titles from server */
-      var prevTitle = navPrev ? navPrev.getAttribute('title') : '';
-      var nextTitle = navNext ? navNext.getAttribute('title') : '';
-      if (tipPrev && prevTitle) tipPrev.textContent = prevTitle;
-      if (tipNext && nextTitle) tipNext.textContent = nextTitle;
 
       /* Prefetch adjacent video HTML for instant navigation */
       function prefetchUrl(url) {

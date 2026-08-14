@@ -440,15 +440,15 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 768px) {
   .layout { flex-direction: column; }
   .sidebar { width: 100%; }
-  .video-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-  .header { padding: 8px 12px; gap: 10px; }
+  .video-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; }
+  .header { padding: 6px 8px; gap: 8px; }
   .search-wrapper { display: none; }
   .header-actions { display: none; }
   .nav-links { display: none; }
-  .logo-img { max-width: 120px; }
+  .logo-img { max-width: 100px; }
 }
 
-@media (max-width: 480px) { .video-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .video-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; } }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }

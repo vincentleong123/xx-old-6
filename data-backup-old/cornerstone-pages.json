@@ -1,0 +1,41 @@
+{
+  "/xamateur": {
+    "template": "cornerstone",
+    "title": "xAmateur – Asian Amateur Videos | Real Homemade Asian Videos",
+    "metaDescription": "xAmateur asian amateur videos. Watch real amateur Asian videos. xAmateur collection featuring authentic homemade content from Malaysia, Indonesia and Southeast Asia.",
+    "heading": "xAmateur — Asian Amateur Collection",
+    "content": "<h1>xAmateur — Asian Amateur Videos</h1><p>Welcome to xAmateur, the destination for authentic Asian amateur videos. Our collection features real homemade videos from Malaysia, Indonesia, and across Southeast Asia. Every video is carefully curated to bring you the most genuine amateur experience possible.</p><h2>Why xAmateur?</h2><p>Our xAmateur collection stands out for its authenticity. Each video is submitted by real couples and amateur performers, ensuring you get the most genuine content available anywhere online. We verify all content to ensure it meets our quality standards while maintaining that raw, real feel that makes amateur videos so compelling.</p>",
+    "videoFilter": { "category": "Amateur", "max": 40, "sort": "views" },
+    "manualVideos": []
+  },
+  "/xamateur/real": {
+    "template": "cornerstone-real",
+    "title": "xAmateur Real — Authentic Asian Amateur Videos",
+    "metaDescription": "xAmateur Real — authentic Asian amateur videos. Real content from Malaysia and Southeast Asia.",
+    "heading": "xAmateur Real — No Scripts, Just Real",
+    "content": "<h1>xAmateur Real — Authentic Asian Amateur</h1><p>xAmateur Real is our collection of verified authentic amateur content. These videos feature real couples in genuine intimate moments, captured on camera with their consent. No scripts, no actors, just real people.</p>",
+    "videoFilter": { "max": 40, "sort": "newest" },
+    "galleries": ["tudung", "montok", "viral", "skandal"],
+    "isGallery": true,
+    "manualVideos": []
+  },
+  "/tudung-porn": {
+    "template": "cornerstone",
+    "title": "Tudung — Malaysian Hijab Amateur Videos",
+    "metaDescription": "Malaysian hijab amateur video collection featuring authentic content from Malaysia.",
+    "heading": "Tudung — Malaysian Hijab Collection",
+    "content": "<h1>Tudung — Malaysian Hijab Amateur Videos</h1><p>Our Tudung collection features Malaysian hijab amateur content. These videos showcase real Malaysian women in authentic amateur settings.</p>",
+    "videoFilter": { "keyword": "tudung", "max": 40, "sort": "views" },
+    "manualVideos": []
+  },
+  "/xmateur": {
+    "template": "gallery",
+    "title": "xMateur — Malay Amateur Video Collection",
+    "metaDescription": "xMateur — Malay amateur video collection. Real amateur videos from Malaysia, Indonesia and Southeast Asian couples.",
+    "heading": "xMateur — Malay Amateur Videos",
+    "content": "",
+    "videoFilter": { "category": "Malay Adult", "max": 72, "sort": "views" },
+    "manualVideos": [],
+    "simplifiedSidebar": true
+  }
+}

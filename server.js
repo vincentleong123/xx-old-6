@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const fsp = fs.promises;
 const os = require('os');
+const { exec } = require('child_process');
 const ejs = require('ejs');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -38,6 +39,7 @@ const CORNERSTONE_FILE = path.join(__dirname, 'data', 'cornerstone-pages.json');
 const DB_FILE = path.join(__dirname, 'data', 'database.json');
 const XAMATEUR_DIR = 'C:/Users/User/Desktop/xamateur';
 const chatServer = require('./utils/chat-server');
+const aiWriter = require('./utils/ai-writer');
 let xmateurVideos = [];
 
 // ═══════════════════════════════════════════════════════════════
@@ -338,6 +340,12 @@ app.get('/xamateur/videos/:slug', (req, res, next) => {
 app.use('/raw/videos', async (req, res, next) => {
   const filename = path.basename(decodeURIComponent(req.path));
   if (!filename.endsWith('.mp4')) return next();
+
+  // Redirect old video filenames (vulgar → clean rename)
+  const baseName = filename.replace(/\.mp4$/i, '');
+  const newBase = oldIdRedirects.get(baseName);
+  if (newBase) return res.redirect(301, '/raw/videos/' + newBase + '.mp4');
+
   const hddPath = path.join(VIDEO_DIR, filename);
   let stat;
   try { stat = await fsp.stat(hddPath); } catch { return next(); }
@@ -346,7 +354,7 @@ app.use('/raw/videos', async (req, res, next) => {
     hotCache.get(filename).atime = Date.now();
     try {
       return res.sendFile(path.join(HOT_CACHE_DIR, filename), {
-        headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }
+        headers: { 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable', 'X-Robots-Tag': 'noindex' }
       });
     } catch { hotCache.delete(filename); }
   }
@@ -358,10 +366,10 @@ app.use('/raw/videos', async (req, res, next) => {
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
         res.status(206);
-        res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' });
+        res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable', 'X-Robots-Tag': 'noindex' });
         return fs.createReadStream(hddPath, { start, end });
       })()
-    : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable' }), fs.createReadStream(hddPath));
+    : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800, immutable', 'X-Robots-Tag': 'noindex' }), fs.createReadStream(hddPath));
 
   rs.pipe(res);
   res.on('close', () => rs.destroy());
@@ -384,10 +392,10 @@ app.use('/raw/xamateur', async (req, res, next) => {
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
         res.status(206);
-        res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' });
+        res.set({ 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Content-Length': end - start + 1, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800', 'X-Robots-Tag': 'noindex' });
         return fs.createReadStream(filePath, { start, end });
       })()
-    : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800' }), fs.createReadStream(filePath));
+    : (res.set({ 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Cache-Control': 'public, max-age=604800', 'X-Robots-Tag': 'noindex' }), fs.createReadStream(filePath));
   rs.pipe(res);
   res.on('close', () => rs.destroy());
 });
@@ -399,20 +407,28 @@ function thumbnailCache(dirs) {
     const filename = path.basename(req.path);
     if (!filename.match(/\.(jpg|jpeg|png|webp)$/i)) return next();
 
+    // Redirect old thumbnail filenames to new (vulgar → clean rename)
+    const baseName = filename.replace(/\.[^.]+$/, '');
+    const newBase = oldIdRedirects.get(baseName);
+    if (newBase) {
+      const ext = path.extname(filename);
+      return res.redirect(301, '/thumbnails/' + newBase + ext);
+    }
+
     const cached = microCache.get(filename);
     if (cached) {
-      res.set('Cache-Control', 'public, max-age=604800, immutable');
+      res.set({ 'Cache-Control': 'public, max-age=2592000, immutable', 'Vary': 'Accept' });
       res.type(path.extname(filename));
       return res.send(cached);
     }
 
-    const headers = { 'Cache-Control': 'public, max-age=604800, immutable' };
+    const headers = { 'Cache-Control': 'public, max-age=2592000, immutable', 'Vary': 'Accept' };
 
     (function tryDir(i) {
       if (i >= dirs.length) {
         microCache.set(filename, THUMBNAIL_PLACEHOLDER);
         res.type('image/svg+xml');
-        res.set('Cache-Control', 'public, max-age=300');
+        res.set('Cache-Control', 'public, max-age=86400');
         return res.send(THUMBNAIL_PLACEHOLDER);
       }
       const fp = path.join(dirs[i], filename);
@@ -553,14 +569,158 @@ app.locals.cleanAltText = (text) => {
   return text.split(/\s+/).filter(w => !ALT_ONLY_WORDS.has(w.toLowerCase())).join(' ') || text;
 };
 
+// ═══ FOCUS KEYWORD SYSTEM — Yoast-style title optimization ═══
+// High-value search terms people actually Google (ordered by search volume)
+const FOCUS_KEYWORDS = [
+  { phrase: 'Awek Tudung', words: ['awek', 'tudung'], priority: 10 },
+  { phrase: 'Video Viral Melayu', words: ['viral', 'melayu'], priority: 9 },
+  { phrase: 'Tudung Bogel', words: ['tudung', 'bogel'], priority: 9 },
+  { phrase: 'Janda Melayu', words: ['janda', 'melayu'], priority: 8 },
+  { phrase: 'Bini Montok', words: ['bini', 'montok'], priority: 8 },
+  { phrase: 'Ustazah Tudung', words: ['ustazah', 'tudung'], priority: 8 },
+  { phrase: 'Skandal Melayu', words: ['skandal', 'melayu'], priority: 7 },
+  { phrase: 'Awek Melayu', words: ['awek', 'melayu'], priority: 7 },
+  { phrase: 'Bokep Melayu', words: ['bokep', 'melayu'], priority: 7 },
+  { phrase: 'Tudung Labuh', words: ['tudung', 'labuh'], priority: 7 },
+  { phrase: 'Awek Kolej', words: ['awek', 'kolej'], priority: 6 },
+  { phrase: 'Janda Bogel', words: ['janda', 'bogel'], priority: 6 },
+  { phrase: 'Tudung', words: ['tudung'], priority: 6 },
+  { phrase: 'Awek', words: ['awek'], priority: 6 },
+  { phrase: 'Ustazah', words: ['ustazah'], priority: 5 },
+  { phrase: 'Janda', words: ['janda'], priority: 5 },
+  { phrase: 'Viral', words: ['viral'], priority: 5 },
+  { phrase: 'Skandal', words: ['skandal'], priority: 5 },
+  { phrase: 'Bini', words: ['bini'], priority: 4 },
+  { phrase: 'Montok', words: ['montok'], priority: 4 },
+  { phrase: 'Kolej', words: ['kolej'], priority: 4 },
+  { phrase: 'Chubby', words: ['chubby'], priority: 4 },
+  { phrase: 'Indonesian', words: ['indonesian', 'indo'], priority: 4 },
+  { phrase: 'Thai', words: ['thai'], priority: 3 },
+  { phrase: 'MILF', words: ['milf'], priority: 3 },
+  { phrase: 'Couple', words: ['couple'], priority: 3 },
+];
+
+function pickFocusKeyword(video) {
+  // Collect all available words from every source
+  const allWords = new Set();
+  const source = (video.id || '').replace(/-/g, ' ').toLowerCase();
+  source.split(/\s+/).forEach(w => { if (w.length > 2) allWords.add(w); });
+  (video.keywords || []).forEach(k => allWords.add(k.toLowerCase()));
+  (video.subTags || []).forEach(t => allWords.add(t.toLowerCase()));
+  if (video.category) allWords.add(video.category.toLowerCase());
+
+  let best = null;
+  let bestScore = -1;
+
+  for (const fk of FOCUS_KEYWORDS) {
+    const matchCount = fk.words.filter(w => allWords.has(w)).length;
+    if (matchCount === 0) continue;
+    // Score = how many words matched * priority * match ratio
+    const score = matchCount * fk.priority * (matchCount / fk.words.length);
+    if (score > bestScore) {
+      bestScore = score;
+      best = fk;
+    }
+  }
+
+  return best;
+}
+
 function cleanVideoTitle(video) {
-  let t = (video.title || video.id || '');
-  t = t.replace(/\s*[-–|]\s*xMelayu\s*$/i, '').replace(/\.mp4$/i, '').replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
-  const words = t.split(/\s+/).filter(w => w.length > 1 && !EXPLICIT_WORDS.has(w.toLowerCase()));
-  if (!words.length) return 'Video';
-  const title = words.join(' ').replace(/\b\w/g, c => c.toUpperCase());
-  if (title.toLowerCase().includes('xmelayu')) return title;
+  const focus = pickFocusKeyword(video);
+
+  // Build raw words from video ID
+  let source = video.id || video.title || '';
+  let rawWords = source
+    .replace(/\s*[-–|]\s*xMelayu\s*$/i, '')
+    .replace(/\.mp4$/i, '')
+    .replace(/-[0-9A-F]{4,}$/i, '')
+    .replace(/[-_]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 1 && !EXPLICIT_WORDS.has(w.toLowerCase()));
+
+  if (!rawWords.length) return 'Video - xMelayu';
+
+  // If we found a focus keyword, move its words to the front
+  if (focus) {
+    const focusLower = focus.words.map(w => w.toLowerCase());
+    const focusWords = rawWords.filter(w => focusLower.includes(w.toLowerCase()));
+    const otherWords = rawWords.filter(w => !focusLower.includes(w.toLowerCase()));
+
+    // Deduplicate and rebuild: focus words first, then other meaningful words
+    const seen = new Set();
+    const ordered = [];
+    for (const w of [...focusWords, ...otherWords]) {
+      const lw = w.toLowerCase();
+      if (!seen.has(lw)) { seen.add(lw); ordered.push(w); }
+    }
+
+    const title = ordered.slice(0, 8).join(' ').replace(/\b\w/g, c => c.toUpperCase());
+    return title + ' - xMelayu';
+  }
+
+  // Fallback: no focus keyword found, just clean up the raw title
+  const title = rawWords.slice(0, 8).join(' ').replace(/\b\w/g, c => c.toUpperCase());
   return title + ' - xMelayu';
+}
+
+function buildVideoMeta(video, videoDesc) {
+  const displayTitle = cleanVideoTitle(video);
+  const category = video.category || 'Amateur';
+  const views = video.views || 0;
+  const likes = video.likes || 0;
+
+  const description = videoDesc && videoDesc.text
+    ? videoDesc.text.replace(/<[^>]+>/g, '').replace(/^\s*[^\n]+\n/, '').trim().substring(0, 160)
+    : `${displayTitle} — Watch this ${category.toLowerCase()} video on xMelayu. ${views} views, ${likes} likes. Real amateur content from Southeast Asia.`;
+
+  const ogDesc = videoDesc && videoDesc.text
+    ? videoDesc.text.replace(/<[^>]+>/g, '').substring(0, 200)
+    : description;
+
+  const thumbnail = `${SITE_BASE}${video.thumbnail}`;
+  const cleanThumbnail = thumbnail.split('?')[0]; // strip ?v= cache-buster for schema
+
+  return { displayTitle, description, ogDesc, thumbnail, cleanThumbnail };
+}
+
+function buildVideoSchemas(video, meta, canonicalUrl) {
+  const uploadDate = video.uploaded ? new Date(video.uploaded).toISOString() : new Date().toISOString();
+  const videoObject = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    'name': meta.displayTitle,
+    'description': meta.description,
+    'thumbnailUrl': [meta.cleanThumbnail],
+    'uploadDate': uploadDate,
+    'contentUrl': `${SITE_BASE}/raw/videos/${encodeURIComponent(video.id)}.mp4`,
+    'embedUrl': canonicalUrl,
+    'duration': 'PT10M',
+    'interactionStatistic': [
+      { '@type': 'InteractionCounter', 'interactionType': 'https://schema.org/WatchAction', 'userInteractionCount': video.views || 0 },
+      { '@type': 'InteractionCounter', 'interactionType': 'https://schema.org/LikeAction', 'userInteractionCount': video.likes || 0 }
+    ]
+  };
+
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    'headline': meta.displayTitle,
+    'description': meta.description,
+    'image': meta.thumbnail,
+    'datePublished': video.uploaded || new Date().toISOString(),
+    'dateModified': video.uploaded || new Date().toISOString(),
+    'author': { '@type': 'Organization', 'name': 'xMelayu' },
+    'publisher': { '@type': 'Organization', 'name': 'xMelayu', 'logo': { '@type': 'ImageObject', 'url': `${SITE_BASE}/og-default.jpg` } },
+    'mainEntityOfPage': canonicalUrl,
+    'articleSection': video.category || 'Amateur'
+  };
+
+  return [videoObject, article];
+}
+
+function invalidateSitemapCache() {
+  // no-op placeholder — sitemap is now static files
 }
 
 function bumpVersion() {
@@ -635,12 +795,26 @@ async function loadXamateurIndex() {
 }
 
 const EXPLICIT_WORDS = new Set([
+  // Malay/Indonesian vulgar
   'lucah','bogel','pancut','memek','kontol','ngentot','sundal','pantat','kimak',
-  'telanjang','bugil','coli','stagen','crot',
-  'mesum','cabul','bejat','entot','ngewe','ngocok','masturbasi'
+  'telanjang','bugil','coli','stagen','crot','skandal','henjut','batang','kulum','pepek',
+  'isap','bontot','jilat','doggy',
+  'mesum','cabul','bejat','entot','ngewe','ngocok','masturbasi',
+  // English explicit
+  'fuck','fucks','fucking','fucked','cum','cums','cumming','cumshot',
+  'slut','sluts','blowjob','blowjobs','handjob','handjobs',
+  'creampie','creampies','gangbang','gangbangs','doublepenetration',
+  'buttfuck','anal','rimjob','titfuck','footjob','deepthroat','cowgirl',
+  'threesome','foursome','squirting',
+  // Non-consensual / degrading
+  'non-con','noncon','revenge','blackmail','degradation',
+  // Sex acts
+  'sex','seks','sexual','seduction','seducing','masturbation','bdsm',
+  // Other explicit
+  'hentai','nsfw','xnxx','xvideo'
 ]);
 
-const BANNED_WORDS = new Set(['incest','revenge porn','slut','shaming']);
+const BANNED_WORDS = new Set(['incest','revenge porn','slut','shaming','non-con','noncon','blackmail','revenge']);
 const ALT_ONLY_WORDS = new Set(['pussy','tits','ass','boobs','dick','cock','cum','fuck','suck','blowjob','handjob','orgasm','anal','dildo','vibrator','masturbate','moan','creampie','gangbang','threesome','foursome','deepthroat','squirting','facial','cuckold','nude','naked','xxx','sex','porn']);
 
 function makeCleanTitle(baseName, category, keywords) {
@@ -839,7 +1013,7 @@ function cachePage(req, res, next) {
   };
   next();
 }
-  const SEO_KW = ['amateur', 'homemade', 'malaysian', 'southeast asian', 'authentic', 'xmelayu', 'xmateur'];
+  const SEO_KW = ['amateur', 'homemade', 'malaysian', 'southeast asian', 'authentic', 'xmelayu', 'xmateur', 'x melayu', 'xmalay', 'xmalayu', 'xmalayporn', 'xmalayporn.com', 'xmalay', 'xmalay.xyz'];
 
   app.get('/', cachePage, async (req, res) => {
     const canonicalUrl = `${SITE_BASE}/`;
@@ -852,14 +1026,14 @@ function cachePage(req, res, next) {
     const updatedLabel = 'Today';
 
   const filterCategory = req.query.cat || '';
-  let filterTitle = 'xMelayu - Malaysian Amateur Video Collection';
+  let filterTitle = 'xMelayu | Awek Tudung, Viral Malay Porn & Amateur Videos';
   let filterH1 = null;
-  let filterDesc = 'xMelayu Malaysian amateur video collection featuring authentic homemade content from Malaysia and Southeast Asia.';
-  let filterKw = 'xmelayu, malaysian amateur, malay video, southeast asian content';
+  let filterDesc = 'Watch 6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.';
+  let filterKw = 'xmelayu, x melayu, xmalay, xmalayu, xxmelayu, xxxmelayu, xmalayporn, xmalayporn.com, xmalay, xmalay.xyz, malay porn, awek tudung, melayu xxx, viral scandal, bini montok, janda bogel, bokep melayu, indonesian viral, thai amateur';
   if (filterCategory) {
-    filterTitle = `xMelayu - ${filterCategory} Malaysian Amateur Videos`;
+    filterTitle = `xMelayu | ${filterCategory} Amateur Videos & Malay Porn HD`;
     filterH1 = `xMelayu — ${filterCategory} Malaysian Videos`;
-    filterDesc = `xMelayu ${filterCategory} malaysian amateur videos. Authentic homemade content.`;
+    filterDesc = `Watch ${filterCategory} Malaysian amateur videos in HD. Awek tudung, viral scandal, bini montok. Free streaming, updated daily.`;
   }
 
   const ssrVideos = videos
@@ -883,7 +1057,8 @@ function cachePage(req, res, next) {
     simplifiedSidebar: false,
     isSuperX: false,
     heroConfig,
-    ssrVideos
+    ssrVideos,
+    cornerstonePages
   });
 });
 
@@ -1069,6 +1244,234 @@ app.get('/xmateur', cachePage, (req, res) => {
   });
 });
 
+// ═══ BRAND LANDING PAGE — ranks for all brand name variations ═══
+app.get('/xmelayu', cachePage, (req, res) => {
+  const canonicalUrl = `${SITE_BASE}/xmelayu`;
+  const topVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 48);
+
+  const brandSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'xMelayu',
+    'alternateName': ['x Melayu', 'xx Melayu', 'xxx Melayu', 'xmalay', 'xmalayu', 'xmelayu site'],
+    'url': SITE_BASE,
+    'description': 'xMelayu (also known as x Melayu, xmalay, xx Melayu, xxx Melayu) — Southeast Asia\'s largest amateur video platform with 6000+ videos from Malaysia, Indonesia, Thailand and beyond.',
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': `${SITE_BASE}/search?q={search_term_string}`,
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
+  const content = `<h2>What is xMelayu?</h2>
+<p><strong>xMelayu</strong> (also written as <strong>x Melayu</strong>, <strong>xmalay</strong>, <strong>xmelayu site</strong>, or <strong>xx Melayu</strong>) is Southeast Asia's largest amateur video platform featuring authentic homemade content from Malaysia, Indonesia, Thailand, and across the region.</p>
+<p>Whether you search for us as <strong>xMelayu</strong>, <strong>x Melayu</strong>, <strong>xmalay</strong>, <strong>xmalayu</strong>, <strong>xxmelayu</strong>, or <strong>xxxmelayu</strong> — you've found the right place. We are the official home for all xMelayu content.</p>
+
+<h2>Why xMelayu?</h2>
+<ul>
+<li><strong>6000+ Videos</strong> — Malaysian, Indonesian, Thai, and Southeast Asian amateur content</li>
+<li><strong>HD Streaming</strong> — All videos available in full HD quality</li>
+<li><strong>Updated Daily</strong> — Fresh uploads every single day</li>
+<li><strong>100% Free</strong> — No subscriptions, no paywalls, no hidden fees</li>
+<li><strong>Real Content</strong> — Authentic amateur videos, not studio-produced</li>
+</ul>
+
+<h2>xMelayu vs Other Platforms</h2>
+<p>xMelayu stands out because we focus exclusively on authentic Southeast Asian amateur content. While other platforms mix studio content with amateur videos, xMelayu curates only real homemade videos from verified creators across Malaysia, Indonesia, and Thailand.</p>
+
+<h2>Is xMelayu Free?</h2>
+<p>Yes, <strong>xMelayu is completely free</strong>. You can watch all 6000+ videos without creating an account, without entering credit card details, and without any hidden charges. Just click and watch.</p>
+
+<h2>How to Access xMelayu</h2>
+<p>xMelayu is accessible worldwide at <a href="${SITE_BASE}" style="color:#ff2d55">xmelayu.site</a>. No VPN needed for most regions. We support multiple languages including English, Malay, Indonesian, and Thai.</p>`;
+
+  res.render('keyword', {
+    title: 'xMelayu — Official Site | x Melayu, xmalay, xx Melayu, xxx Melayu',
+    metaDescription: 'xMelayu (x Melayu, xmalay) — Southeast Asia\'s largest free amateur video platform. 6000+ Malaysian, Indonesian & Thai videos. HD streaming.',
+    keywords: 'xmelayu, x melayu, xmalay, xmalayu, xxmelayu, xxxmelayu, xx melayu, xxx melayu, x melayu porn, xmelayu site, malay porn, awek tudung',
+    heading: 'xMelayu — The Official xMelayu Site',
+    canonicalUrl,
+    videos: topVideos,
+    content,
+    relatedKeywords: ['x melayu', 'xmalay', 'xmelayu site', 'xx melayu', 'xxx melayu', 'malay porn', 'amateur videos'],
+    structuredData: [brandSchema],
+    lang: 'en'
+  });
+});
+
+// ═══ COMPETITOR NAME LANDING PAGES — ranks when people search competitor brands ═══
+function buildCompetitorPage(competitorName, competitorDomains, altNames, content) {
+  return (req, res) => {
+    const topVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 48);
+    const canonicalUrl = `${SITE_BASE}${req.path}`;
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      'name': 'xMelayu',
+      'alternateName': altNames,
+      'url': SITE_BASE,
+      'description': `xMelayu — the best alternative to ${competitorName}. Free amateur videos from Malaysia, Indonesia & Southeast Asia.`
+    };
+
+    res.render('keyword', {
+      title: `xMelayu vs ${competitorName} — Better Free Malay Videos | xMelayu`,
+      metaDescription: `Looking for ${competitorName}? xMelayu has 6000+ free Malaysian, Indonesian & Thai amateur videos. HD streaming, updated daily, no signup needed.`,
+      keywords: `${competitorName.toLowerCase()}, ${competitorDomains.join(', ')}, ${altNames.join(', ')}, malay porn, xmelayu, free amateur videos`,
+      heading: `xMelayu — Better Than ${competitorName}`,
+      canonicalUrl,
+      videos: topVideos,
+      content,
+      relatedKeywords: [competitorName.toLowerCase(), ...competitorDomains, ...altNames.slice(0, 5)],
+      structuredData: [schema],
+      lang: 'en'
+    });
+  };
+}
+
+const competitorContent = {
+  xmalayporn: `<h2>xMelayu vs xMalayPorn.com</h2>
+<p>Looking for <strong>xMalayPorn</strong>? You've found <strong>xMelayu</strong> — the better alternative with more videos, better quality, and faster streaming.</p>
+<p>While xMalayPorn.com offers a limited collection, <strong>xMelayu has 6000+ videos</strong> from Malaysia, Indonesia, Thailand, and across Southeast Asia. All videos are free, HD quality, and updated daily.</p>
+<h2>Why Choose xMelayu Over xMalayPorn?</h2>
+<ul>
+<li><strong>More Content</strong> — 6000+ videos vs limited library</li>
+<li><strong>Better Quality</strong> — All videos in HD, not compressed garbage</li>
+<li><strong>Faster Streaming</strong> — Optimized servers for instant loading</li>
+<li><strong>No Ads</strong> — Clean viewing experience, no pop-ups</li>
+<li><strong>Daily Updates</strong> — Fresh content uploaded every day</li>
+<li><strong>100% Free</strong> — No subscriptions, no paywalls</li>
+</ul>
+<h2>What Makes xMelayu Different?</h2>
+<p>xMelayu curates only <strong>authentic amateur content</strong> — real homemade videos from real people across Southeast Asia. We focus on quality over quantity, ensuring every video is genuine and high-quality.</p>
+<p>Whether you call it <strong>xMalayPorn</strong>, <strong>x Malay Porn</strong>, or just <strong>xmalay</strong> — xMelayu has you covered with the best free Malaysian amateur content available anywhere online.</p>`,
+
+  xmalay: `<h2>xMelayu vs xMalay</h2>
+<p>Searching for <strong>xMalay</strong> or <strong>xMalay.xyz</strong>? <strong>xMelayu</strong> is the upgraded experience with 6000+ free videos from Malaysia, Indonesia, and Thailand.</p>
+<p>Formerly known as <strong>xMalay1.net</strong>, xMalay has rebranded multiple times. xMelayu is the stable, reliable home for Southeast Asian amateur content that you can trust.</p>
+<h2>xMelayu Advantages</h2>
+<ul>
+<li><strong>6000+ Videos</strong> — The largest collection of Malaysian, Indonesian & Thai amateur content</li>
+<li><strong>HD Quality</strong> — Every video streams in full HD</li>
+<li><strong>Instant Loading</strong> — Optimized for speed, no buffering</li>
+<li><strong>No Registration</strong> — Watch immediately, no signup required</li>
+<li><strong>Mobile Friendly</strong> — Perfect viewing on any device</li>
+<li><strong>Daily Fresh Content</strong> — New videos every day</li>
+</ul>
+<h2>The xMelayu Difference</h2>
+<p>xMelayu isn't just another <strong>xMalay</strong> clone. We're a curated platform that focuses on <strong>authentic Southeast Asian amateur content</strong> — real videos from real people across Malaysia, Indonesia, and Thailand.</p>
+<p>Stop searching for <strong>xMalay.xyz</strong> or <strong>xMalay1.net</strong>. xMelayu is your one-stop destination for the best free Malay, Indonesian, and Thai amateur videos online.</p>`
+};
+
+app.get('/xmalayporn', cachePage, buildCompetitorPage(
+  'xMalayPorn.com',
+  ['xmalayporn.com', 'xmalayporn.net'],
+  ['xmalayporn', 'x malay porn', 'xmalay porn', 'xmelayu porn'],
+  competitorContent.xmalayporn
+));
+
+app.get('/xmalay', cachePage, buildCompetitorPage(
+  'xMalay',
+  ['xmalay.xyz', 'xmalay1.net', 'xmalay.com'],
+  ['xmalay', 'x malay', 'xmalay1', 'xmalay xyz', 'xmalay1.net'],
+  competitorContent.xmalay
+));
+
+// ═══ QUICK-WIN LONG-TAIL LANDING PAGES — targets keywords at positions 30-80 ═══
+const QUICK_WIN_PAGES = {
+  'xxmelayu': {
+    title: 'XXMelayu — Viral Malay XXX Videos | xMelayu',
+    desc: 'Looking for XXMelayu? xMelayu has 6000+ free Malaysian viral XXX videos. HD streaming, updated daily, 100% free.',
+    h1: 'XXMelayu — Free Malay XXX Videos',
+    content: `<h2>XXMelayu Videos</h2>
+<p>You searched for <strong>XXMelayu</strong> — you found <strong>xMelayu</strong>, the largest free Malaysian amateur video platform with 6000+ videos.</p>
+<p>Whether you spell it <strong>XXMelayu</strong>, <strong>xx melayu</strong>, or <strong>xxx melayu</strong>, xMelayu has the best collection of authentic Malaysian, Indonesian, and Thai amateur videos. All content is free, HD quality, and updated daily.</p>
+<h2>What is XXMelayu?</h2>
+<p><strong>XXMelayu</strong> is a popular search term for Malaysian adult content. xMelayu is the official platform that delivers exactly what you're looking for — real amateur videos from Southeast Asia.</p>
+<h2>Why xMelayu?</h2>
+<ul><li><strong>6000+ Videos</strong> — the largest collection online</li><li><strong>HD Quality</strong> — every video in full HD</li><li><strong>Daily Updates</strong> — fresh content every day</li><li><strong>100% Free</strong> — no signup, no paywalls</li><li><strong>Real Content</strong> — authentic amateur videos only</li></ul>`,
+    keywords: 'xxmelayu, xx melayu, xxx melayu, melayu xxx, malay porn, viral melayu, xmelayu'
+  },
+  'x-melayu-sex': {
+    title: 'X Melayu Sex — Free Malaysian Sex Videos | xMelayu',
+    desc: 'X Melayu Sex videos — 6000+ free Malaysian, Indonesian & Thai amateur sex videos on xMelayu. HD streaming, updated daily.',
+    h1: 'X Melayu Sex — Free Malaysian Amateur Videos',
+    content: `<h2>X Melayu Sex Videos</h2>
+<p>Searching for <strong>X Melayu Sex</strong>? xMelayu has thousands of free Malaysian amateur sex videos — real content from real people across Southeast Asia.</p>
+<p>Whether you search for <strong>x melayu sex</strong>, <strong>x melayu seks</strong>, or <strong>sex xmelayu</strong>, you've found the right place. xMelayu is the largest free platform for authentic Malaysian amateur content.</p>
+<h2>Malaysian Amateur Content</h2>
+<p>xMelayu features <strong>6000+ videos</strong> from Malaysia, Indonesia, and Thailand. Every video is real amateur content — not studio-produced. From viral scandals to couple videos, hijab content to outdoor adventures.</p>
+<h2>Free HD Streaming</h2>
+<ul><li><strong>No Registration</strong> — watch instantly</li><li><strong>HD Quality</strong> — full resolution streaming</li><li><strong>Mobile Friendly</strong> — perfect on any device</li><li><strong>Daily Updates</strong> — new videos every day</li></ul>`,
+    keywords: 'x melayu sex, x melayu seks, sex xmelayu, melayu sex, malay sex, xmelayu sex'
+  },
+  'video-lucah-melayu': {
+    title: 'Video Lucah Melayu — Free Malaysian Porn Videos | xMelayu',
+    desc: 'Video Lucah Melayu — 6000+ free Malaysian amateur porn videos on xMelayu. HD quality, updated daily, no signup needed.',
+    h1: 'Video Lucah Melayu — Free Malaysian Porn',
+    content: `<h2>Video Lucah Melayu</h2>
+<p>Looking for <strong>video lucah melayu</strong>? xMelayu has 6000+ free Malaysian amateur videos — the largest collection of authentic Southeast Asian content online.</p>
+<p>Whether you call it <strong>video lucah melayu</strong>, <strong>lucah melayu</strong>, or <strong>melayu lucah</strong>, xMelayu delivers real amateur content from Malaysia, Indonesia, and Thailand.</p>
+<h2>What Makes xMelayu Different?</h2>
+<p>Unlike other platforms, xMelayu focuses on <strong>authentic amateur content</strong>. Every video is real — real couples, real situations, real passion. No studio productions, no fake scenarios.</p>
+<h2>Features</h2>
+<ul><li><strong>6000+ Videos</strong> — the largest Malaysian amateur collection</li><li><strong>HD Quality</strong> — all videos stream in full HD</li><li><strong>Instant Access</strong> — no registration required</li><li><strong>Mobile Optimized</strong> — watch on any device</li><li><strong>Daily Fresh Content</strong> — new uploads every day</li></ul>`,
+    keywords: 'video lucah melayu, lucah melayu, melayu lucah, lucah malay, malay lucah, xmelayu'
+  },
+  'xmalay-video': {
+    title: 'XMalay Videos — Free Malaysian Amateur Videos | xMelayu',
+    desc: 'XMalay Videos — 6000+ free Malaysian amateur videos on xMelayu. HD streaming, updated daily, no signup needed.',
+    h1: 'XMalay Videos — Free Malaysian Amateur Content',
+    content: `<h2>XMalay Videos</h2>
+<p>Searching for <strong>XMalay videos</strong>? xMelayu has 6000+ free Malaysian amateur videos — more content, better quality, and faster streaming than any other platform.</p>
+<p>Whether you search for <strong>xmalay videos</strong>, <strong>x malay video</strong>, or <strong>xmalay video</strong>, xMelayu is your destination for the best Malaysian amateur content online.</p>
+<h2>Why xMelayu?</h2>
+<ul><li><strong>More Videos</strong> — 6000+ and growing daily</li><li><strong>Better Quality</strong> — all HD, not compressed</li><li><strong>Faster Loading</strong> — optimized servers</li><li><strong>No Ads</strong> — clean viewing experience</li><li><strong>Free Forever</strong> — no hidden charges</li></ul>`,
+    keywords: 'xmalay video, xmalay videos, x malay video, xmalay, xmalayporn, xmelayu'
+  },
+  'xlucah': {
+    title: 'XLucah Malay — Free Malaysian Amateur Videos | xMelayu',
+    desc: 'XLucah Malay videos — 6000+ free Malaysian amateur videos on xMelayu. HD quality, updated daily, 100% free.',
+    h1: 'XLucah Malay — Free Malaysian Videos',
+    content: `<h2>XLucah Malay</h2>
+<p>Looking for <strong>XLucah Malay</strong>? You've found <strong>xMelayu</strong> — the largest free platform for authentic Malaysian, Indonesian, and Thai amateur videos.</p>
+<p>Whether you call it <strong>xlucah malay</strong>, <strong>x lucah melayu</strong>, or just <strong>xlucah</strong>, xMelayu has 6000+ videos with HD streaming and daily updates.</p>
+<h2>The xMelayu Advantage</h2>
+<ul><li><strong>6000+ Videos</strong> — largest collection online</li><li><strong>HD Quality</strong> — full resolution streaming</li><li><strong>Daily Updates</strong> — fresh content every day</li><li><strong>100% Free</strong> — no signup needed</li><li><strong>Real Content</strong> — authentic amateur videos</li></ul>`,
+    keywords: 'xlucah malay, x lucah melayu, xlucah, lucah melayu, malay lucah, xmelayu'
+  }
+};
+
+Object.entries(QUICK_WIN_PAGES).forEach(([slug, page]) => {
+  app.get(`/quick/${slug}`, cachePage, (req, res) => {
+    const topVideos = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 48);
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      'name': 'xMelayu',
+      'url': SITE_BASE,
+      'description': page.desc
+    };
+    res.render('keyword', {
+      title: page.title,
+      metaDescription: page.desc,
+      keywords: page.keywords,
+      heading: page.h1,
+      canonicalUrl: `${SITE_BASE}/quick/${slug}`,
+      videos: topVideos,
+      content: page.content,
+      relatedKeywords: Object.keys(QUICK_WIN_PAGES).filter(k => k !== slug),
+      structuredData: [schema],
+      lang: 'en'
+    });
+  });
+});
+
+// Brand variation redirects → canonical /xmelayu page
+['/xmalayu', '/xxmelayu', '/xxxmelayu', '/x-melayu', '/x_melayu'].forEach(path => {
+  app.get(path, (req, res) => res.redirect(301, '/xmelayu'));
+});
+
 app.get('/api/search', async (req, res) => {
   const start = Date.now();
   const cacheKey = req.originalUrl;
@@ -1123,16 +1526,29 @@ app.get('/api/video-descriptions/:id', (req, res) => {
   if (desc) return res.json({ text: desc.text || '', keywords: desc.keywords || [] });
   res.json({ text: '', keywords: [] });
 });
+app.post('/api/ai-describe/:id', (req, res) => {
+  const video = videos.find(v => v.id === req.params.id);
+  if (!video) return res.status(404).json({ error: 'Video not found' });
+  const corpus = videos.slice(0, 500).map(v => v.title || v.name || '').filter(Boolean);
+  const result = aiWriter.generateDescription(video, corpus);
+  videoDescriptions[video.id] = result;
+  fsp.writeFile(DESCRIPTIONS_FILE, JSON.stringify({ descriptions: videoDescriptions }, null, 2)).catch(() => {});
+  res.json({ id: video.id, text: result.text, keywords: result.keywords });
+});
 app.get('/api/refresh', async (req, res) => { console.log('\n🔄 [ADMIN] Refresh requested...\n'); videos = await loadIndex(); bumpVersion(); res.json({ success: true, count: videos.length, cacheVersion: CACHE_VERSION }); });
 app.get('/robots.txt', (req, res) => {
   stats.cache.hits++;
   res.type('text/plain').send(`User-agent: *
-Disallow:
+Disallow: /api/
+Disallow: /raw/
+Disallow: /admin
 
 User-agent: Googlebot
-Disallow: /*?*
+Disallow: /api/
+Disallow: /raw/
+Disallow: /admin
 
-Sitemap: ${SITE_BASE}/sitemap.xml
+Sitemap: ${SITE_BASE}/sitemap-index.xml
 `);
 });
 
@@ -1152,54 +1568,13 @@ function isCleanKeyword(kw) {
   return true;
 }
 
-let cachedSitemapXml = null;
-let cachedSitemapLength = 0;
-
-function buildSitemapXml() {
-  const parts = [];
-  parts.push('<?xml version="1.0" encoding="UTF-8"?>\n');
-  parts.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ');
-  parts.push('xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" ');
-  parts.push('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n');
-  parts.push(`  <url><loc>${SITE_BASE}/</loc><priority>1.0</priority><changefreq>daily</changefreq></url>\n`);
-  ['about', 'faq', 'collections'].forEach(page => {
-    parts.push(`  <url><loc>${SITE_BASE}/${page}</loc><priority>0.5</priority></url>\n`);
-  });
-  ['super-x-melayu', 'mega-x-melayu', 'xmateur', 'xamateur', 'tudung-porn'].forEach(page => {
-    parts.push(`  <url><loc>${SITE_BASE}/${page}</loc><priority>0.9</priority><changefreq>daily</changefreq></url>\n`);
-  });
-  videos.forEach(v => {
-    const st = sanitizeSitemapText(v.title);
-    const desc = videoDescriptions[v.id] ? sanitizeSitemapText(videoDescriptions[v.id].text.replace(/<[^>]*>/g, '').substring(0, 150)) : `${st} - Homemade adult video`;
-    const rawTags = (videoDescriptions[v.id]?.keywords || []);
-    const cleanTags = [...new Set(rawTags)].filter(isCleanKeyword).slice(0, 3);
-    parts.push(`  <url><loc>${SITE_BASE}/${v.id}</loc>`);
-    parts.push(`<video:video><video:title>${st}</video:title><video:description>${desc}</video:description>`);
-    parts.push(`<video:thumbnail_loc>${SITE_BASE}${v.thumbnail}</video:thumbnail_loc><video:player_loc>${SITE_BASE}/${v.id}</video:player_loc>`);
-    parts.push(`<video:category>${v.category}</video:category><video:family_friendly>no</video:family_friendly>`);
-    cleanTags.forEach(t => { parts.push(`<video:tag>${sanitizeSitemapText(t)}</video:tag>`); });
-    parts.push(`</video:video>`);
-    parts.push(`<image:image><image:loc>${SITE_BASE}${v.thumbnail}</image:loc><image:title>${st}</image:title></image:image>`);
-    parts.push(`</url>\n`);
-  });
-  parts.push('</urlset>');
-  const xml = parts.join('');
-  cachedSitemapXml = xml;
-  cachedSitemapLength = Buffer.byteLength(xml, 'utf8');
-  return xml;
-}
-
-function invalidateSitemapCache() { cachedSitemapXml = null; }
+const SITEMAP_FILE = path.join(__dirname, 'public', 'sitemap.xml');
 
 app.get('/sitemap.xml', (req, res) => {
-  stats.cache.hits++;
-  if (!cachedSitemapXml) buildSitemapXml();
-  res.set({
-    'Content-Type': 'application/xml',
-    'Content-Length': cachedSitemapLength,
-    'Cache-Control': 'public, max-age=3600, s-maxage=7200'
-  });
-  res.send(cachedSitemapXml);
+  if (!fs.existsSync(SITEMAP_FILE)) {
+    return res.status(404).type('text').send('Sitemap not yet generated. Run: node tools/generate-sitemap.js');
+  }
+  res.sendFile(SITEMAP_FILE, { maxAge: '1h', headers: { 'Content-Type': 'application/xml' } });
 });
 
 const PAGE_ROUTES = ['terms', 'privacy', 'dmca', '2257', 'about'];
@@ -1294,49 +1669,105 @@ app.get('/embed/:id', (req, res) => {
 // ═══════════════════════════════════════════════════════════════
 
 const SEO_CONTENT_TEMPLATES = {
-  'amateur': { title: 'Amateur', h1: 'Amateur — Real Homemade Asian Amateur Videos', emoji: '📹' },
-  'homemade': { title: 'Homemade', h1: 'Homemade — Real Amateur Home Videos', emoji: '🏠' },
-  'tudung': { title: 'Tudung', h1: 'Tudung — Malaysian Hijab Amateur Videos', emoji: '🧕' },
-  'hijab': { title: 'Hijab', h1: 'Hijab — Malay Muslimah Amateur Videos', emoji: '🧕' },
-  'malay': { title: 'Malay', h1: 'Malay — Malaysian Amateur Videos', emoji: '🇲🇾' },
-  'melayu': { title: 'Melayu', h1: 'Melayu — Malay Amateur Videos', emoji: '🇲🇾' },
-  'indonesian': { title: 'Indonesian', h1: 'Indonesian — Real Indo Amateur Videos', emoji: '🇮🇩' },
-  'indo': { title: 'Indo', h1: 'Indo — Indonesian Amateur Videos', emoji: '🇮🇩' },
-  'thai': { title: 'Thai', h1: 'Thai — Real Thai Amateur Videos', emoji: '🇹🇭' },
-  'japanese': { title: 'Japanese', h1: 'Japanese — Real Jap Amateur Videos', emoji: '🇯🇵' },
-  'korean': { title: 'Korean', h1: 'Korean — Real South Korean Amateur Videos', emoji: '🇰🇷' },
-  'chinese': { title: 'Chinese', h1: 'Chinese — Real Chinese Amateur Videos', emoji: '🇨🇳' },
-  'vietnamese': { title: 'Vietnamese', h1: 'Vietnamese — Real Viet Amateur Videos', emoji: '🇻🇳' },
-  'filipino': { title: 'Filipino', h1: 'Filipino — Pinay Amateur Videos', emoji: '🇵🇭' },
-  'milf': { title: 'MILF', h1: 'MILF — Mature Asian Amateur Videos', emoji: '🔥' },
-  'teen': { title: 'Teen', h1: 'Teen — Young Asian Amateur Videos', emoji: '🌸' },
-  'couple': { title: 'Couple', h1: 'Couple — Real Couple Amateur Videos', emoji: '💑' },
-  'bini': { title: 'Bini', h1: 'Bini — Malay Wife Amateur Videos', emoji: '💢' },
-  'janda': { title: 'Janda', h1: 'Janda — Malay Divorcee Amateur Videos', emoji: '💋' },
-  'viral': { title: 'Viral', h1: 'Viral — Trending Malay Amateur Videos', emoji: '📈' },
-  'skandal': { title: 'Skandal', h1: 'Skandal — Malay Scandal Amateur Videos', emoji: '🔴' },
-  'bocor': { title: 'Bocor', h1: 'Bocor — Leaked Malay Amateur Videos', emoji: '💧' },
-  'chubby': { title: 'Chubby', h1: 'Chubby — BBW Malay Amateur Videos', emoji: '🍑' },
-  'montok': { title: 'Montok', h1: 'Montok — Thick Curvy Malay Amateur Videos', emoji: '🔥' },
-  'kolej': { title: 'Kolej', h1: 'Kolej — Malaysian College Amateur Videos', emoji: '🎓' },
-  'pov': { title: 'POV', h1: 'POV — Point of View Amateur Videos Asia', emoji: '👁️' },
-  'public': { title: 'Public', h1: 'Public — Outdoor Asian Amateur Videos', emoji: '🌳' },
-  'private': { title: 'Private', h1: 'Private — Exclusive Personal Amateur Videos', emoji: '🤫' }
+  'amateur': { title: 'Amateur', h1: 'Amateur — Real Homemade Asian Amateur Videos', emoji: '📹', lang: 'en' },
+  'homemade': { title: 'Homemade', h1: 'Homemade — Real Amateur Home Videos', emoji: '🏠', lang: 'en' },
+  'tudung': { title: 'Tudung', h1: 'Tudung — Video Tudung Melayu Amateur', emoji: '🧕', lang: 'ms' },
+  'hijab': { h1: 'Hijab — Malay Muslimah Amateur Videos', emoji: '🧕', lang: 'en' },
+  'malay': { title: 'Malay', h1: 'Malay — Malaysian Amateur Videos', emoji: '🇲🇾', lang: 'en' },
+  'melayu': { title: 'Melayu', h1: 'Melayu — Malay Amateur Videos', emoji: '🇲🇾', lang: 'ms' },
+  'indonesian': { title: 'Indonesian', h1: 'Indonesian — Real Indo Amateur Videos', emoji: '🇮🇩', lang: 'en' },
+  'indo': { title: 'Indo', h1: 'Indo — Indonesian Amateur Videos', emoji: '🇮🇩', lang: 'en' },
+  'thai': { title: 'Thai', h1: 'Thai — Real Thai Amateur Videos', emoji: '🇹🇭', lang: 'en' },
+  'japanese': { title: 'Japanese', h1: 'Japanese — Real Jap Amateur Videos', emoji: '🇯🇵', lang: 'en' },
+  'korean': { title: 'Korean', h1: 'Korean — Real South Korean Amateur Videos', emoji: '🇰🇷', lang: 'en' },
+  'chinese': { title: 'Chinese', h1: 'Chinese — Real Chinese Amateur Videos', emoji: '🇨🇳', lang: 'en' },
+  'vietnamese': { title: 'Vietnamese', h1: 'Vietnamese — Real Viet Amateur Videos', emoji: '🇻🇳', lang: 'en' },
+  'filipino': { title: 'Filipino', h1: 'Filipino — Pinay Amateur Videos', emoji: '🇵🇭', lang: 'en' },
+  'milf': { title: 'MILF', h1: 'MILF — Mature Asian Amateur Videos', emoji: '🔥', lang: 'en' },
+  'teen': { title: 'Teen', h1: 'Teen — Young Asian Amateur Videos', emoji: '🌸', lang: 'en' },
+  'couple': { title: 'Couple', h1: 'Couple — Real Couple Amateur Videos', emoji: '💑', lang: 'en' },
+  'bini': { title: 'Bini', h1: 'Bini — Malay Wife Amateur Videos', emoji: '💢', lang: 'ms' },
+  'janda': { title: 'Janda', h1: 'Janda — Malay Divorcee Amateur Videos', emoji: '💋', lang: 'ms' },
+  'viral': { title: 'Viral', h1: 'Viral — Trending Malay Amateur Videos', emoji: '📈', lang: 'en' },
+  'skandal': { title: 'Skandal', h1: 'Skandal — Malay Scandal Amateur Videos', emoji: '🔴', lang: 'ms' },
+  'bocor': { title: 'Bocor', h1: 'Bocor — Leaked Malay Amateur Videos', emoji: '💧', lang: 'ms' },
+  'chubby': { title: 'Chubby', h1: 'Chubby — BBW Malay Amateur Videos', emoji: '🍑', lang: 'en' },
+  'montok': { title: 'Montok', h1: 'Montok — Thick Curvy Malay Amateur Videos', emoji: '🔥', lang: 'ms' },
+  'kolej': { title: 'Kolej', h1: 'Kolej — Malaysian College Amateur Videos', emoji: '🎓', lang: 'ms' },
+  'pov': { title: 'POV', h1: 'POV — Point of View Amateur Videos Asia', emoji: '👁️', lang: 'en' },
+  'public': { title: 'Public', h1: 'Public — Outdoor Asian Amateur Videos', emoji: '🌳', lang: 'en' },
+  'private': { title: 'Private', h1: 'Private — Exclusive Personal Amateur Videos', emoji: '🤫', lang: 'en' },
+  'awek': { title: 'Awek', h1: 'Awek — Video Awek Melayu Amateur', emoji: '🇲🇾', lang: 'ms' },
+  'ustazah': { title: 'Ustazah', h1: 'Ustazah — Video Ustazah Melayu Amateur', emoji: '🧕', lang: 'ms' },
+  'bogel': { title: 'Bogel', h1: 'Bogel — Video Bogel Melayu Amateur', emoji: '🔥', lang: 'ms' },
+  'kereta': { title: 'Kereta', h1: 'Kereta — Video Dalam Kereta Melayu', emoji: '🚗', lang: 'ms' },
+  'tandas': { title: 'Tandas', h1: 'Tandas — Video Tandas Melayu Amateur', emoji: '🚻', lang: 'ms' },
+  'homestay': { title: 'Homestay', h1: 'Homestay — Video Homestay Melayu Amateur', emoji: '🏨', lang: 'ms' },
+  'hotel': { title: 'Hotel', h1: 'Hotel — Video Hotel Melayu Amateur', emoji: '🏨', lang: 'en' },
+  'outdoor': { title: 'Outdoor', h1: 'Outdoor — Video Outdoor Melayu Amateur', emoji: '🌳', lang: 'en' },
+  'pancut': { title: 'Pancut', h1: 'Pancut — Video Pancut Dalam Melayu', emoji: '💦', lang: 'ms' },
+  'henjut': { title: 'Henjut', h1: 'Henjut — Video Henjut Keras Melayu', emoji: '🔥', lang: 'ms' },
+  'kulum': { title: 'Kulum', h1: 'Kulum — Video Kulum Batang Melayu', emoji: '💋', lang: 'ms' },
+  'jilat': { title: 'Jilat', h1: 'Jilat — Video Jilat Pepek Melayu', emoji: '👅', lang: 'ms' },
+  'non-con': { title: 'Non-Con', h1: 'Non-Con — Amateur Videos', emoji: '⚠️', lang: 'en' },
+  'revenge': { title: 'Revenge', h1: 'Revenge Porn — Amateur Videos', emoji: '🔴', lang: 'en' },
+  'blackmail': { title: 'Blackmail', h1: 'Blackmail — Amateur Videos', emoji: '🖤', lang: 'en' },
+  'bdsm': { title: 'BDSM', h1: 'BDSM — Amateur Videos', emoji: '⛓️', lang: 'en' },
+  'gangbang': { title: 'Gangbang', h1: 'Gangbang — Amateur Videos', emoji: '👥', lang: 'en' },
+  'creampie': { title: 'Creampie', h1: 'Creampie — Amateur Videos', emoji: '💦', lang: 'en' },
+  'squirt': { title: 'Squirt', h1: 'Squirt — Amateur Videos', emoji: '💦', lang: 'en' },
+  'lesbian': { title: 'Lesbian', h1: 'Lesbian — Amateur Videos', emoji: '🌈', lang: 'en' },
+  'stepsister': { title: 'Stepsister', h1: 'Stepsister — Amateur Videos', emoji: '🍑', lang: 'en' },
+  'maid': { title: 'Maid', h1: 'Maid — Amateur Videos', emoji: '🧹', lang: 'en' },
+  'office': { title: 'Office', h1: 'Office — Amateur Videos', emoji: '💼', lang: 'en' },
+  'asrama': { title: 'Asrama', h1: 'Asrama — Video Asrama Melayu Amateur', emoji: '🎓', lang: 'ms' },
+  'projek': { title: 'Projek', h1: 'Projek — Video Projek Melayu Amateur', emoji: '🔥', lang: 'ms' },
+  'lif': { title: 'Lif', h1: 'Lif — Video Dalam Lif Melayu', emoji: '🛗', lang: 'ms' },
+  'ramas': { title: 'Ramas', h1: 'Ramas — Video Ramas Tetek Melayu', emoji: '✋', lang: 'ms' },
+  'crot': { title: 'Crot', h1: 'Crot — Video Crot Di Muka Melayu', emoji: '💦', lang: 'ms' },
+  'main': { title: 'Main', h1: 'Main — Video Main Melayu Amateur', emoji: '🔥', lang: 'ms' },
+  'rakam': { title: 'Rakam', h1: 'Rakam — Video Rakam Phone Melayu', emoji: '📱', lang: 'ms' },
 };
+
+const MALAY_KEYWORDS = new Set([
+  'awek', 'ustazah', 'bogel', 'kereta', 'tandas', 'homestay', 'pancut', 'henjut',
+  'kulum', 'jilat', 'melayu', 'bini', 'janda', 'skandal', 'bocor', 'montok',
+  'kolej', 'asrama', 'projek', 'lif', 'ramas', 'crot', 'main', 'rakam',
+  'bawal', 'labuh', 'gans', 'gersang', 'ajak', 'senyap', 'tetek', 'padu',
+  'malay', 'malaysia', 'sabah', 'sarawak', 'tudung', 'bini', 'janda',
+  'viral', 'skandal', 'bocor', 'chubby', 'montok', 'kolej'
+]);
 
 function generateKeywordContent(keyword, matchedVideos) {
   const tpl = SEO_CONTENT_TEMPLATES[keyword];
   const count = matchedVideos.length;
   const totalViews = matchedVideos.reduce((s, v) => s + (v.views || 0), 0);
   const categories = [...new Set(matchedVideos.map(v => v.category).filter(Boolean))];
+  const isMs = tpl && tpl.lang === 'ms';
 
   // Pick a random high-view video for example
   const topVideo = matchedVideos.length > 0 ? matchedVideos.sort((a, b) => b.views - a.views)[0] : null;
 
   const titleWord = tpl ? tpl.title : keyword.charAt(0).toUpperCase() + keyword.slice(1);
-  const h1 = tpl ? tpl.h1 : `${titleWord} — ${titleWord} Amateur Videos`;
-  const emoji = tpl ? tpl.emoji : '🔞';
+  const emoji = tpl ? tpl.emoji : (isMs ? '🇲🇾' : '🔞');
 
+  if (isMs) {
+    const h1 = tpl ? tpl.h1 : `${titleWord} — Video ${titleWord} Melayu Amateur`;
+    const content = `<h2>${emoji} ${h1}</h2>
+<p><strong>xMelayu</strong> menampilkan koleksi <strong>${count} video ${keyword} amateur</strong> — konten sebenar dari Malaysia, Indonesia, Thailand, dan seluruh Asia Tenggara. Setiap video adalah kandungan rumah yang autentik.</p>
+<p>Sama ada anda mencari <strong>video ${keyword} amateur</strong>, <strong>klip ${keyword}</strong>, atau koleksi ${keyword} terbaik, kategori ini menyampaikan passion mentah dari orang sebenar. Kategori ${keyword} kami dikemas kini setiap hari dengan muat naik baharu.</p>${categories.length > 0 ? `
+<h3>Kategori ${keyword} Teratas</h3>
+<p>Koleksi ${keyword} kami merangkumi pelbagai kategori: ${categories.slice(0, 5).join(', ')}. Setiap video dipilih dengan teliti untuk ketulenan dan kualiti.</p>` : ''}
+<h3>Kenapa Tonton Video ${titleWord} di xMelayu?</h3>
+<p><strong>Kandungan Autentik:</strong> Setiap video adalah content amateur sebenar, bukan studio.<br>
+<strong>Kualiti HD:</strong> Semua video strim dalam kualiti HD dengan muat turun pantas.<br>
+<strong>Dikemas Kini Setiap Hari:</strong> Video ${keyword} baharu ditambah setiap hari.<br>
+<strong>PERCUMA:</strong> Tiada langganan diperlukan — semua kandungan percuma untuk ditonton.</p>
+<p>Lihat koleksi <a href="/" style="color:#ff2d55">video ${keyword} amateur</a> kami dan temui mengapa ribuan penonton memilih xMelayu untuk dose harian kandungan amateur Asia tulen.</p>`;
+    return { title: `${h1} | xMelayu`, h1, content, emoji };
+  }
+
+  const h1 = tpl ? tpl.h1 : `${titleWord} — ${titleWord} Amateur Videos`;
   const content = `<h2>${emoji} ${h1}</h2>
 <p><strong>xMelayu</strong> presents our curated collection of <strong>${count} ${keyword} amateur videos</strong> — real content from Malaysia, Indonesia, Thailand, and across Southeast Asia. Every video is authentic homemade content featuring real couples and amateur performers.</p>
 <p>Whether you are searching for <strong>${keyword} amateur videos</strong>, <strong>${keyword} clips</strong>, or the best <strong>${keyword} collection</strong>, this category delivers raw, unfiltered passion from real people. Our ${keyword} category is updated daily with fresh uploads.</p>${categories.length > 0 ? `
@@ -1382,10 +1813,11 @@ app.get('/k/:keyword', cachePage, (req, res) => {
     return title.includes(keyword) || kws.some(k => k.includes(keyword));
   }).sort((a, b) => b.views - a.views);
 
-  if (matched.length === 0) return next();
+  if (matched.length === 0) return res.redirect('/');
 
   const seoContent = generateKeywordContent(keyword, matched);
   const relatedKeywords = findRelatedKeywords(keyword, matched);
+  const isMalay = MALAY_KEYWORDS.has(keyword) || (seoContent.h1 && /Video \w+ Melayu/.test(seoContent.h1));
 
   const canonicalUrl = `${SITE_BASE}/k/${encodeURIComponent(keyword)}`;
   const websiteSchema = seo.generateStructuredData('website');
@@ -1393,21 +1825,26 @@ app.get('/k/:keyword', cachePage, (req, res) => {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     'name': seoContent.h1,
-    'description': `${matched.length} ${keyword} porn videos - authentic amateur content.`,
+    'description': isMalay
+      ? `${matched.length} video ${keyword} - konten amateur autentik dari Malaysia.`
+      : `${matched.length} ${keyword} porn videos - authentic amateur content.`,
     'url': canonicalUrl,
     'numberOfItems': matched.length
   };
 
   res.render('keyword', {
     title: seoContent.title,
-    metaDescription: `Watch ${matched.length} free ${keyword} porn videos. Real amateur ${keyword} content from Malaysia, Indonesia & Southeast Asia. HD streaming, updated daily.`,
-    keywords: [keyword, ...relatedKeywords.slice(0, 5), 'amateur porn', 'asian porn', 'xmelayu'].join(', '),
+    metaDescription: isMalay
+      ? `Tonton ${matched.length} video ${keyword} percuma. Kandungan amateur sebenar dari Malaysia, Indonesia & Asia Tenggara. Strim HD, dikemas kini setiap hari.`
+      : `Watch ${matched.length} free ${keyword} porn videos. Real amateur ${keyword} content from Malaysia, Indonesia & Southeast Asia. HD streaming, updated daily.`,
+    keywords: [keyword, ...relatedKeywords.slice(0, 5), isMalay ? 'video melayu' : 'amateur porn', isMalay ? 'malay porn' : 'asian porn', 'xmelayu'].join(', '),
     heading: seoContent.h1,
     canonicalUrl,
     videos: matched.slice(0, 72),
     content: seoContent.content,
     relatedKeywords,
-    structuredData: [websiteSchema, gallerySchema]
+    structuredData: [websiteSchema, gallerySchema],
+    lang: isMalay ? 'ms' : 'en'
   });
 });
 
@@ -1509,102 +1946,94 @@ app.get('/api/admin/chat/conversation/:visitorId', (req, res) => {
   res.json({ messages });
 });
 
+// ═══ 301 REDIRECTS — old vulgar IDs → clean IDs (Map lookup, not individual routes) ═══
+const oldIdRedirects = new Map();
+const newIdToOldId = new Map(); // reverse: newId → oldId (for SEO H1)
+const backupNameMap = new Map(); // videoId → archival "xmelayu-NNNN-name" title
+try {
+  const raw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'old-id-redirects.json'), 'utf8'));
+  for (const [oldId, newId] of Object.entries(raw)) {
+    oldIdRedirects.set(oldId, newId);
+    newIdToOldId.set(newId, oldId);
+  }
+  console.log(`Loaded ${oldIdRedirects.size} old-id redirects (Map lookup)`);
+} catch (e) {
+  console.error('Failed to load old-id redirects:', e.message);
+}
+// Load backup index to get archival "xmelayu-NNNN-name" titles (indexed by Google)
+try {
+  const backupIdx = JSON.parse(fs.readFileSync(path.join(__dirname, 'data-backup-old', 'video-index.json'), 'utf8'));
+  for (const entry of Object.values(backupIdx)) {
+    if (entry.id && entry.name) backupNameMap.set(entry.id, entry.name);
+  }
+  console.log(`Loaded ${backupNameMap.size} backup archival names`);
+} catch (e) {
+  console.error('Failed to load backup names:', e.message);
+}
+
+// Single middleware — O(1) Map lookup instead of 5000+ route registrations
+app.use((req, res, next) => {
+  // Only check single-segment paths like /Old-Video-Id-AB12CD
+  const id = req.path.replace(/^\//, '').replace(/\/.*$/, '');
+  if (id && oldIdRedirects.has(id)) return res.redirect(301, '/' + oldIdRedirects.get(id));
+  next();
+});
+
 app.get('/:id', async (req, res) => {
   const video = videos.find(v => v.id === req.params.id);
   if (!video) return res.status(404).render('error', { message: 'Video not found' });
-  video._rawVideoUrl = `/raw/videos/${video.id}.mp4`;
 
-  const allScored = videos
-    .filter(v => v.id !== video.id)
-    .map(v => {
-      let score = 0;
-      if (v.category === video.category) score += 3;
-      const kwOverlap = video.keywords?.filter(k => v.keywords?.includes(k)).length || 0;
-      const tagOverlap = video.subTags?.filter(t => v.subTags?.includes(t)).length || 0;
-      score += kwOverlap * 2 + tagOverlap * 2;
-      if (video.title?.toLowerCase().includes(v.category?.toLowerCase()) || v.title?.toLowerCase().includes(video.category?.toLowerCase())) score += 1;
-      score += Math.log2((v.views || 100) + 1) * 0.5;
-      return { v, score };
-    })
-    .sort((a, b) => b.score - a.score);
+  const videoDesc = videoDescriptions[video.id] || null;
+  const canonicalUrl = `${SITE_BASE}/${video.id}`;
+  const meta = buildVideoMeta(video, videoDesc);
 
-  // ═══ SECTION DISTRIBUTION — simple offset slicing ═══
-  // Each section uses a different range/offset so the 6000+ library is spread evenly
-  // No complex tracking — slight overlap is fine for discovery
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
+  // Score related videos by keyword/tag overlap + views
+  const others = videos.filter(v => v.id !== video.id);
+  const allScored = others.map(v => {
+    let score = 0;
+    if (v.category === video.category) score += 3;
+    score += (video.keywords?.filter(k => v.keywords?.includes(k)).length || 0) * 2;
+    score += (video.subTags?.filter(t => v.subTags?.includes(t)).length || 0) * 2;
+    score += Math.log2((v.views || 100) + 1) * 0.5;
+    return { v, score };
+  }).sort((a, b) => b.score - a.score);
 
-  // Hero Carousel: top 24 most relevant to current video
+  // Section slices — each section pulls from different offset of scored list
   const heroRelated = allScored.slice(0, 24).map(x => x.v);
-
-  // Prev/Next navigation — sequential walk through allScored (relevance order)
-  const prevVideo = allScored.length > 0 ? allScored[0].v : null;
-  const nextVideo = allScored.length > 1 ? allScored[1].v : (allScored.length > 0 ? allScored[0].v : null);
-
-  // Trending Now: top 20 by views globally
-  const trending = videos
-    .filter(v => v.id !== video.id)
-    .sort((a, b) => (b.views || 0) - (a.views || 0))
-    .slice(0, 20);
-
-  // Most Viewed: next 20 by views (offset 20, different from trending)
-  const mostViewed = videos
-    .filter(v => v.id !== video.id)
-    .sort((a, b) => (b.views || 0) - (a.views || 0))
-    .slice(20, 40);
-
-  // Editor's Picks: randomized from top 30% quality pool
-  const qualityPool = videos
-    .filter(v => v.id !== video.id)
-    .sort((a, b) => (b.views || 0) - (a.views || 0))
-    .slice(0, Math.floor(videos.length * 0.3));
-  const editorsPicks = shuffle(qualityPool).slice(0, 20);
-
-  // Category Groups: pull from full library by category
-  const catGroups = {};
-  videos.forEach(v => {
-    const cat = v.category || 'Other';
-    if (!catGroups[cat]) catGroups[cat] = [];
-    if (catGroups[cat].length < 20) catGroups[cat].push(v);
-  });
-  const categoryGroups = Object.entries(catGroups)
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 8);
-
-  // Recently Added: top 20 by upload date
-  const recent = videos
-    .filter(v => v.id !== video.id)
-    .sort((a, b) => new Date(b.uploaded || 0) - new Date(a.uploaded || 0))
-    .slice(0, 20);
-
-  // Explore sections: randomized from offset ranges of the full library
-  const allShuffled = shuffle(videos.filter(v => v.id !== video.id));
-  const seg = Math.floor(allShuffled.length / 3);
-  const exploreSlice1 = allShuffled.slice(0, 20);
-  const exploreSlice2 = allShuffled.slice(seg, seg + 20);
-  const exploreSlice3 = allShuffled.slice(seg * 2, seg * 2 + 20);
-
-  // Related: scored for sidebar only (NOT duplicated in grid)
   const related = allScored.filter(x => x.score > 0).slice(0, 30).map(x => x.v);
 
-  const canonicalUrl = `${SITE_BASE}/${req.params.id}`;
-  const videoDesc = videoDescriptions[video.id] || null;
-  const displayTitle = cleanVideoTitle(video);
-  let seoTitle = displayTitle;
-  if (videoDesc && videoDesc.text) {
-    const strongMatch = videoDesc.text.match(/<strong>([^<]+)<\/strong>/);
-    if (strongMatch) seoTitle = strongMatch[1].trim();
-  }
+  // Trending / Most Viewed — by global views
+  const byViews = [...others].sort((a, b) => (b.views || 0) - (a.views || 0));
+  const trending = byViews.slice(0, 20);
+  const mostViewed = byViews.slice(20, 40);
+
+  // Editor's Picks — shuffle top 30% quality pool
+  const qualityPool = byViews.slice(0, Math.floor(others.length * 0.3) || 1);
+  const editorsPicks = shuffle(qualityPool).slice(0, 20);
+
+  // Category groups
+  const catMap = {};
+  others.forEach(v => {
+    const cat = v.category || 'Other';
+    if (!catMap[cat]) catMap[cat] = [];
+    if (catMap[cat].length < 20) catMap[cat].push(v);
+  });
+  const categoryGroups = Object.entries(catMap).sort((a, b) => b[1].length - a[1].length).slice(0, 8);
+
+  // Recent + Explore
+  const recent = [...others].sort((a, b) => new Date(b.uploaded || 0) - new Date(a.uploaded || 0)).slice(0, 20);
+  const allShuffled = shuffle(others);
+  const seg = Math.floor(allShuffled.length / 3);
+
+  // Prev/Next nav
+  const prevVideo = allScored[0]?.v || null;
+  const nextVideo = allScored[1]?.v || allScored[0]?.v || null;
+
   res.render('player', {
-    displayTitle,
-    seoTitle,
-    title: video.title,
+    displayTitle: meta.displayTitle,
+    seoTitle: meta.displayTitle,
+    title: meta.displayTitle,
+    oldId: backupNameMap.get(video.id) || (newIdToOldId.has(video.id) ? backupNameMap.get(newIdToOldId.get(video.id)) : null) || null,
     video,
     heroRelated,
     related,
@@ -1613,14 +2042,17 @@ app.get('/:id', async (req, res) => {
     mostViewed,
     editorsPicks,
     recent,
-    exploreSlice1,
-    exploreSlice2,
-    exploreSlice3,
+    exploreSlice1: allShuffled.slice(0, 20),
+    exploreSlice2: allShuffled.slice(seg, seg + 20),
+    exploreSlice3: allShuffled.slice(seg * 2, seg * 2 + 20),
     canonicalUrl,
     siteBase: SITE_BASE,
-    videoDescription: videoDesc,
-    prevVideo: prevVideo ? { id: prevVideo.id, title: prevVideo.title, thumbnail: prevVideo.thumbnail, category: prevVideo.category } : null,
-    nextVideo: nextVideo ? { id: nextVideo.id, title: nextVideo.title, thumbnail: nextVideo.thumbnail, category: nextVideo.category } : null
+    videoDescription: { ...videoDesc, text: meta.ogDesc },
+    structuredData: buildVideoSchemas(video, meta, canonicalUrl),
+    seoMetaDesc: meta.description,
+    ogDesc: meta.ogDesc,
+    prevVideo: prevVideo ? { id: prevVideo.id, title: cleanVideoTitle(prevVideo), thumbnail: prevVideo.thumbnail, category: prevVideo.category } : null,
+    nextVideo: nextVideo ? { id: nextVideo.id, title: cleanVideoTitle(nextVideo), thumbnail: nextVideo.thumbnail, category: nextVideo.category } : null
   });
 });
 
@@ -1740,8 +2172,17 @@ app.post('/api/view/:id', (req, res) => {
 });
 
 // Redirect /v/:id to /:id (handles bot probes and legacy links)
-app.get('/v/:id', (req, res) => res.redirect(301, '/' + req.params.id.replace(/\.mp4$/i, '')));
-app.get('/video/:id', (req, res) => res.redirect(301, '/' + req.params.id.replace(/\.mp4$/i, '')));
+// If old ID, redirect directly to new ID (1-hop)
+app.get('/v/:id', (req, res) => {
+  const clean = req.params.id.replace(/\.mp4$/i, '');
+  const newId = oldIdRedirects.get(clean);
+  res.redirect(301, '/' + (newId || clean));
+});
+app.get('/video/:id', (req, res) => {
+  const clean = req.params.id.replace(/\.mp4$/i, '');
+  const newId = oldIdRedirects.get(clean);
+  res.redirect(301, '/' + (newId || clean));
+});
 // Redirect old /xamateur/real/v/:id links to canonical /xamateur/:id
 app.get('/xamateur/real/v/:id', (req, res) => res.redirect(301, '/xamateur/' + req.params.id.replace(/\.mp4$/i, '')));
 
@@ -1844,6 +2285,11 @@ ${D}
 ║  Legend: 2xx=ok  4xx=ratelimit  5xx=error   💬=chat             ║
 ╚══════════════════════════════════════════════════════════════════╝
 `);
+    // Generate sitemap in background — non-blocking, separate process
+    exec('node tools/generate-sitemap.js', { cwd: __dirname }, (err, stdout) => {
+      if (err) console.error('[SITEMAP] Generation failed:', err.message);
+      else process.stdout.write(stdout);
+    });
   });
 })();
 

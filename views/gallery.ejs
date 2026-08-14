@@ -8,18 +8,18 @@
 <% if (typeof metaDesc !== 'undefined' && metaDesc) { %>
   <meta name="description" content="<%= metaDesc %>">
 <% } else if (typeof isSuperX !== 'undefined' && isSuperX) { %>
-  <meta name="description" content="xMateur asian amateur videos featuring authentic homemade content from Malaysia, Indonesia & Southeast Asia. Popular in United States, Canada, UK & Australia.">
+  <meta name="description" content="Watch 6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.">
 <% } else { %>
-  <meta name="description" content="xMelayu Malaysian amateur video collection featuring authentic homemade content from Malaysia and Southeast Asia.">
+  <meta name="description" content="Watch 6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.">
 <% } %>
 <% if (typeof metaKeywords !== 'undefined' && metaKeywords) { %>
   <meta name="keywords" content="<%= metaKeywords %>">
 <% } else if (typeof isSuperX !== 'undefined' && isSuperX) { %>
-  <meta name="keywords" content="xmateur, xamateur, amateur, asian amateur, homemade, malaysia, southeast asia">
+  <meta name="keywords" content="xmateur, malay porn, melayu xxx, awek tudung, awek montok, viral scandal, bini geram, janda bogel, indonesian viral, indo amateur, bokep melayu, thai amateur, southeast asian porn, filipina amateur, lucah melayu">
 <% } else { %>
-  <meta name="keywords" content="xmelayu, malaysian amateur, malay video, southeast asian content">
+  <meta name="keywords" content="xmelayu, malay porn, melayu xxx, awek tudung, awek montok, viral scandal, bini geram, janda bogel, melayu scandal, bokep melayu, indonesian viral, indo amateur, thai amateur, lucah melayu, seks melayu">
 <% } %>
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:large, max-image-preview:large">
   <meta name="author" content="xMelayu">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
@@ -29,41 +29,50 @@
   
   <!-- Open Graph -->
 <% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
-  <meta property="og:title" content="Super X Melayu - Malaysian Amateur Video Collection">
-  <meta property="og:description" content="xMateur asian amateur video collection featuring authentic homemade content from Malaysia and Southeast Asia.">
+  <meta property="og:title" content="Super X Melayu | Awek Tudung, Viral Malay Porn & Amateur Videos">
+  <meta property="og:description" content="6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="<%= canonicalUrl %>">
   <meta property="og:site_name" content="Super X Melayu">
   <meta property="og:image" content="<%= siteBase %>/og-image.webp">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Super X Melayu - Malaysian Amateur Videos">
+  <meta property="og:image:alt" content="Super X Melayu — Malaysian & Indonesian Amateur Videos">
 <% } else { %>
-  <meta property="og:title" content="xMelayu - Malaysian Amateur Video Collection">
-  <meta property="og:description" content="xMelayu Malaysian amateur video collection featuring authentic homemade content from Malaysia and Southeast Asia.">
+  <meta property="og:title" content="xMelayu | Awek Tudung, Viral Malay Porn & Amateur Videos HD">
+  <meta property="og:description" content="6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="<%= canonicalUrl %>">
   <meta property="og:site_name" content="xMelayu">
   <meta property="og:image" content="<%= siteBase %>/og-image.webp">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="xMelayu - Malaysian Amateur Videos">
+  <meta property="og:image:alt" content="xMelayu — Malaysian Amateur Porn Videos">
 <% } %>
-  <meta property="og:locale" content="en_US">
-  <meta property="og:locale:alternate" content="ms_MY">
+  <meta property="og:locale" content="ms_MY">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="id_ID">
+  <meta property="og:locale:alternate" content="th_TH">
+  <meta property="og:locale:alternate" content="fil_PH">
+  
+  <!-- Hreflang for tier 1/2/3 targeting -->
+  <link rel="alternate" hreflang="ms" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/' %>">
+  <link rel="alternate" hreflang="en" href="<%= siteBase %>/en">
+  <link rel="alternate" hreflang="id" href="<%= siteBase %>/id">
+  <link rel="alternate" hreflang="th" href="<%= siteBase %>/th">
+  <link rel="alternate" hreflang="x-default" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/' %>">
   
    <!-- Twitter Card -->
 <% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Super X Melayu - Malaysian Amateur Video Collection">
-  <meta name="twitter:description" content="xMateur asian amateur video collection from Malaysia and Southeast Asia.">
+  <meta name="twitter:title" content="Super X Melayu | Awek Tudung, Viral Malay Porn & Amateur Videos">
+  <meta name="twitter:description" content="6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming.">
 <% } else { %>
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="xMelayu - Malaysian Amateur Video Collection">
-  <meta name="twitter:description" content="xMelayu Malaysian amateur video collection from Malaysia and Southeast Asia.">
+  <meta name="twitter:title" content="xMelayu | Awek Tudung, Viral Malay Porn & Amateur Videos HD">
+  <meta name="twitter:description" content="6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming.">
 <% } %>
   <meta name="twitter:image" content="<%= siteBase %>/og-image.webp">
-  <link rel="image_src" href="<%= siteBase %>/og-image.webp">
   
   <meta name="theme-color" content="#0a0a0b">
 
@@ -89,12 +98,14 @@
     "@type": "WebSite",
     "name": "xMelayu",
     "url": "<%= siteBase %>/",
-    "description": "xMelayu Malaysian amateur video collection featuring authentic homemade content from Malaysia and Southeast Asia.",
+    "description": "xMelayu — Malaysian amateur videos, awek tudung, viral scandal, bini montok, janda bogel, melayu xxx, indo viral, Thai amateur. HD streaming.",
+    "alternateName": ["xMelayu Online", "Malay Porn", "Awek Tudung", "Melayu XXX"],
     "potentialAction": {
       "@type": "SearchAction",
       "target": "<%= siteBase %>/?q={search_term_string}",
       "query-input": "required name=search_term_string"
-    }
+    },
+    "inLanguage": ["ms", "en", "id", "th"]
   }
   </script>
   <script type="application/ld+json">
@@ -102,28 +113,65 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "xMelayu",
+    "alternateName": ["x Melayu", "xx Melayu", "xxx Melayu", "xmalay", "xmelayu", "x melayu", "xmalayu", "x melayu porn", "xmelayu site", "xmalayporn", "xmalay porn", "xmalayporn.com", "xmalay", "xmalay.xyz", "xmalay1", "xmalay1.net"],
     "url": "<%= siteBase %>/",
     "logo": "<%= siteBase %>/logo.svg",
-    "sameAs": []
+    "description": "Malaysian, Indonesian & Southeast Asian amateur video platform",
+    "foundingDate": "2024",
+    "sameAs": [
+      "https://xmelayu.site",
+      "https://xmelayu.online"
+    ]
   }
   </script>
   <% if (typeof totalVideos !== 'undefined' && totalVideos > 0) { %>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "VideoGallery",
-    "name": "<%= typeof pageTitle !== 'undefined' ? pageTitle : 'xMelayu - Malaysian Amateur Video Collection' %>",
-    "description": "<%= typeof metaDesc !== 'undefined' ? metaDesc : 'Malaysian amateur video collection' %>",
+    "@type": "CollectionPage",
+    "name": "xMelayu — Awek Tudung, Viral Malay Porn & Amateur Videos",
+    "description": "Watch 6000+ Malaysian, Indonesian & Thai amateur videos in HD. Awek tudung, viral scandals, bini montok. Free streaming, updated daily.",
     "url": "<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : siteBase + '/' %>",
-    "numberOfItems": <%= totalVideos %>,
-    "genre": ["Amateur", "Malaysian"],
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Malaysian Amateur Videos",
+      "numberOfItems": <%= totalVideos %>,
+      "itemListElement": []
+    },
+    "about": {
+      "@type": "Thing",
+      "name": "Malaysian Amateur Videos",
+      "alternateName": ["Awek Tudung", "Malay Porn", "Melayu XXX", "Bokep Melayu"]
+    },
+    "audience": { "@type": "PeopleAudience", "suggestedAge": "18+" },
+    "contentRating": "R18+",
+    "inLanguage": ["ms", "en", "id", "th"],
     "publisher": {
       "@type": "Organization",
-      "name": "xMelayu"
+      "name": "xMelayu",
+      "url": "<%= siteBase %>/"
     }
   }
   </script>
   <% } %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    "name": "Main Navigation",
+    "url": "<%= siteBase %>/",
+    "hasPart": [
+      { "@type": "SiteNavigationElement", "name": "Awek Tudung", "url": "<%= siteBase %>/?q=awek+tudung" },
+      { "@type": "SiteNavigationElement", "name": "Viral", "url": "<%= siteBase %>/?q=viral" },
+      { "@type": "SiteNavigationElement", "name": "Montok", "url": "<%= siteBase %>/?q=montok" },
+      { "@type": "SiteNavigationElement", "name": "Indonesian", "url": "<%= siteBase %>/?q=indonesian" },
+      { "@type": "SiteNavigationElement", "name": "Thai", "url": "<%= siteBase %>/?q=thai" },
+      { "@type": "SiteNavigationElement", "name": "Janda", "url": "<%= siteBase %>/?q=janda" },
+      { "@type": "SiteNavigationElement", "name": "Bini", "url": "<%= siteBase %>/?q=bini" },
+      { "@type": "SiteNavigationElement", "name": "Chubby", "url": "<%= siteBase %>/?q=chubby" }
+    ]
+  }
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -135,6 +183,19 @@
   }
   </script>
 <link rel="stylesheet" href="/css/gallery.css?v=<%= typeof cacheVersion!=='undefined'?cacheVersion:'' %>">
+
+<!-- SEO: Malaysian/Indonesian niche keywords for crawlers (tier 1/2/3) -->
+<section aria-hidden="true" class="seo-hidden" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;font-size:11px;line-height:1.4;color:#666">
+  <h2>xMelayu — Malaysian Amateur Porn Videos & Awek Tudung Collection</h2>
+  <p><strong>xMelayu</strong> is the #1 platform for <em>Malaysian amateur porn</em>, <strong>aweik tudung</strong>, <strong>viral scandal</strong>, and <em>bini montok</em> videos from across Malaysia and Southeast Asia. Our collection features <strong>janda bogel</strong>, <strong>melayu xxx</strong>, <strong>bokep melayu</strong>, and <strong>seks melayu</strong> in HD quality.</p>
+  <h3>Indonesian Amateur Videos — <em>Bokep Indo &amp; Viral</em></h3>
+  <p>Browse <strong>Indonesian amateur porn</strong>, <em>bokep indo</em>, <strong>ABG montok</strong>, <strong>tante girang</strong>, <strong>memek basah</strong>, and <strong>viral Indonesian</strong> videos. Updated daily with fresh <strong>Southeast Asian homemade content</strong>.</p>
+  <h3>Thai &amp; Filipino Amateur — <em>Asian Porn Collection</em></h3>
+  <p>Watch <strong>Thai amateur porn</strong>, <em>pinoy scandal</em>, <strong>Filipina amateur</strong>, and <strong>Southeast Asian homemade</strong> videos. From Kuala Lumpur to Jakarta, Bangkok to Manila.</p>
+  <h3>Popular Categories</h3>
+  <p><strong>Awek Tudung</strong> • <em>Viral Scandal</em> • <strong>Bini Montok</strong> • <em>Janda Bogel</em> • <strong>Melayu XXX</strong> • <em>Bokep Melayu</em> • <strong>Indonesian Viral</strong> • <em>ABG Montok</em> • <strong>Thai Amateur</strong> • <em>Filipina Amateur</em> • <strong>Southeast Asian Homemade</strong> • <em>Lucah Melayu</em></p>
+  <p><strong>Tier 1:</strong> United States, United Kingdom, Canada, Australia • <strong>Tier 2:</strong> Malaysia, Indonesia, Singapore, Philippines, Thailand • <strong>Tier 3:</strong> Brunei, Vietnam, Myanmar, Cambodia</p>
+</section>
 
 <style>
 .super-x { text-align:center; padding:18px 16px 12px; position:relative; overflow:hidden; border-radius:12px; margin:0 0 12px; background:linear-gradient(135deg,#0d0d12 0%,#1a0a14 50%,#0d0d12 100%); border:1px solid rgba(255,45,85,0.15); }
@@ -312,8 +373,47 @@ html { scroll-behavior:smooth; }
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
 ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
 @media (max-width:1024px) { .video-grid { grid-template-columns:repeat(3,1fr); } }
-@media (max-width:768px) { .video-grid { grid-template-columns:repeat(2,1fr); gap:12px; } .video-thumb { aspect-ratio:16/11; } .v-title { font-size:12px; margin:6px 10px 2px; } .v-meta { margin:0 10px 8px; } }
-@media (max-width:480px) { .video-grid { grid-template-columns:repeat(2,1fr); gap:8px; } .video-thumb { aspect-ratio:16/11; } .carousel-card { flex:0 0 180px; } .video-card { border-radius:8px; } .v-title { font-size:11px; margin:4px 8px 2px; } .v-meta { margin:0 8px 6px; font-size:9px; } }
+@media (max-width:768px) {
+  .main-content { padding:6px !important; }
+  .hero-section { padding:10px 8px 8px !important; margin-bottom:6px !important; }
+  .super-x { padding:10px 8px 8px !important; margin:0 0 6px !important; border-radius:8px !important; }
+  .video-section { margin-bottom:12px !important; }
+  .s-title { font-size:15px !important; margin-bottom:10px !important; }
+  .video-grid { grid-template-columns:repeat(2,1fr); gap:6px; }
+  .video-thumb { aspect-ratio:16/11; }
+  .video-card { border-radius:8px; }
+  .v-title { font-size:11px; margin:4px 6px 2px; line-height:1.25; }
+  .v-meta { margin:0 6px 6px; font-size:9px; }
+  .browse-footer { padding:20px 8px 24px !important; }
+  .cornerstone-grid { gap:8px !important; }
+  .cornerstone-card { padding:14px 12px !important; }
+  .cc-title { font-size:14px !important; }
+  .cc-desc { font-size:11px !important; }
+  .browse-categories { gap:6px !important; }
+  .browse-cat-chip { padding:7px 12px !important; font-size:11px !important; }
+  .browse-footer-title { font-size:20px !important; }
+  .seo-content { padding:16px 8px !important; }
+  .seo-content h2 { font-size:20px !important; }
+  .seo-content h3 { font-size:16px !important; }
+  .seo-content p { font-size:13px !important; }
+}
+@media (max-width:480px) {
+  .main-content { padding:4px !important; }
+  .hero-section { padding:8px 6px 6px !important; }
+  .super-x { padding:8px 6px 6px !important; }
+  .video-grid { grid-template-columns:repeat(2,1fr); gap:4px; }
+  .video-thumb { aspect-ratio:16/11; }
+  .video-card { border-radius:6px; }
+  .v-title { font-size:10px; margin:3px 5px 1px; }
+  .v-meta { margin:0 5px 4px; font-size:8px; }
+  .carousel-card { flex:0 0 150px; }
+  .browse-footer { padding:16px 6px 20px !important; }
+  .cornerstone-card { padding:10px 8px !important; }
+  .cc-emoji { font-size:24px !important; }
+  .cc-title { font-size:12px !important; }
+  .browse-cat-chip { padding:5px 10px !important; font-size:10px !important; }
+  .browse-cta a { padding:10px 24px !important; font-size:13px !important; }
+}
 /* Full-width content when no sidebar */
 .content-area { width:100%; max-width:100%; }
 
@@ -408,54 +508,12 @@ html { scroll-behavior:smooth; }
   .header .logo-img { max-width:110px; height:auto; }
 }
 
-/* View toggles */
-.view-toggles{display:flex;gap:4px;background:#1a1a1e;border:1px solid #2a2a30;border-radius:8px;padding:3px}
-.view-btn{background:none;border:none;color:#6b6b75;font-size:16px;padding:4px 8px;border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit}
-.view-btn:hover{color:#f59e0b}
-.view-btn.active{background:#2a2a30;color:#fbbf24}
-.view-list .video-card{display:flex;gap:12px;padding:8px}
-.view-list .video-thumb{flex:0 0 160px;aspect-ratio:16/11;border-radius:8px}
-.view-list .video-info{flex:1;padding:4px 0}
-.view-list .video-title{font-size:14px}
-.view-list .v-meta{margin-left:0}
-@media(max-width:640px){.view-list .video-thumb{flex:0 0 100px}}
-.view-compact .video-card{display:flex;gap:10px;padding:6px 8px;border-radius:8px}
-.view-compact .video-thumb{flex:0 0 80px;aspect-ratio:16/11;border-radius:6px}
-.view-compact .video-info{padding:0;display:flex;align-items:center;gap:8px;flex:1}
-.view-compact .v-title{font-size:12px;margin:0;flex:1}
-.view-compact .v-meta{white-space:nowrap;margin:0}
-
-/* Age verify */
-.age-verify-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.age-verify-overlay.active{display:flex}
-.age-verify-modal{background:#141418;border:1px solid #2a2a30;border-radius:20px;padding:40px 32px;max-width:400px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.4)}
-.age-verify-icon{font-size:48px;margin-bottom:12px}
-.age-verify-modal h2{font-size:22px;font-weight:800;color:#fbbf24;margin-bottom:10px}
-.age-verify-modal p{font-size:14px;color:#9ca3af;line-height:1.6;margin-bottom:24px}
-.age-verify-buttons{display:flex;gap:10px;justify-content:center}
-.age-btn{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:Nunito,sans-serif;cursor:pointer;transition:all .2s}
-.age-yes{background:linear-gradient(135deg,#d97706,#f59e0b);color:#000}
-.age-yes:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,.3)}
-.age-no{background:#1a1a1e;color:#6b6b75;border:1px solid #2a2a30}
-.age-no:hover{background:#1f1f23;color:#ef4444;border-color:#ef4444}
-
 </style>
 </head>
 <body>
 <!-- display ads only (no popunder) -->
 
-<div class="age-verify-overlay" id="ageVerify">
-  <div class="age-verify-modal">
-    <div class="age-verify-icon">🇲🇾</div>
-    <h2>Are you 18+?</h2>
-    <p>xMelayu contains adult content. You must be 18 years or older to enter.</p>
-    <div class="age-verify-buttons">
-      <button class="age-btn age-yes" id="ageYes">Yes, I am 18+</button>
-      <button class="age-btn age-no" id="ageNo">No, Leave</button>
-    </div>
-  </div>
-</div>
-
+    
   <header class="header">
     <button class="sidebar-toggle gone" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Sidebar">☰</button>
     <button class="mobile-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
@@ -628,7 +686,7 @@ html { scroll-behavior:smooth; }
           <p style="font-size:12px;color:#888;text-align:center;margin:0">Malaysian amateur video collection. Updated daily.</p>
         </div>
 <% } %>
-        <div id="videoFeed"><% if (typeof ssrVideos !== 'undefined' && ssrVideos && ssrVideos.length) { %><div class="video-section"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h2 class="s-title" style="margin:0">Latest Malay Videos</h2><div class="view-toggles"><button class="view-btn active" data-view="grid" title="Grid view">▦</button><button class="view-btn" data-view="list" title="List view">☰</button><button class="view-btn" data-view="compact" title="Compact view">≡</button></div></div><div class="video-grid view-grid" id="videoGrid"><% ssrVideos.forEach(function(v, idx) { %><a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>" title="<%= v.title %>"><div class="video-thumb" style="position:relative"><img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" <%= idx < 4 ? 'fetchpriority="high"' : '' %>><button class="like-btn" data-id="<%= v.id %>" onclick="event.stopPropagation();event.preventDefault();toggleLike('<%= v.id %>', this)">♡ <span class="like-count"><%= v.likes || 0 %></span></button></div><div class="v-title"><%= v.title %></div><span class="v-meta"><%= v.category || 'Video' %></span></a><% }); %></div></div><% } %></div>
+        <div id="videoFeed"><% if (typeof ssrVideos !== 'undefined' && ssrVideos && ssrVideos.length) { %><div class="video-section"><h3 class="s-title">Latest Videos</h3><div class="video-grid"><% ssrVideos.forEach(function(v, idx) { %><a href="/<%= v.id %>" class="video-card" data-id="<%= v.id %>"><div class="video-thumb" style="position:relative"><img src="<%= v.thumbnail %>" alt="<%= cleanAlt(v) %>" loading="lazy" <%= idx < 4 ? 'fetchpriority="high"' : '' %>><button class="like-btn" data-id="<%= v.id %>" onclick="event.stopPropagation();event.preventDefault();toggleLike('<%= v.id %>', this)">♡ <span class="like-count"><%= v.likes || 0 %></span></button></div><div class="v-title"><%= v.title %></div><span class="v-meta"><%= v.category || 'Video' %></span></a><% }); %></div></div><% } %></div>
 
         <!-- Carousel: Amateur -->
         <div class="carousel-section" id="carousel-amateur" style="display:none;">
@@ -701,6 +759,75 @@ html { scroll-behavior:smooth; }
     </div>
   </main>
 
+  <!-- ═══ KEEP BROWSING — cornerstone collections + category chips ═══ -->
+  <% if (typeof cornerstonePages !== 'undefined' && cornerstonePages) { %>
+  <style>
+    .browse-footer{background:#0d0d12;border-top:1px solid #222;padding:48px 24px 40px}
+    .browse-footer-inner{max-width:1100px;margin:0 auto}
+    .browse-footer-title{font-size:26px;font-weight:800;color:#fff;text-align:center;margin-bottom:8px}
+    .browse-footer-sub{text-align:center;color:#888;font-size:14px;margin-bottom:32px}
+    .cornerstone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:40px}
+    .cornerstone-card{display:block;background:linear-gradient(135deg,#1a1a24 0%,#14141c 100%);border:1px solid #2a2a35;border-radius:14px;padding:24px 20px;text-decoration:none;transition:all .2s;position:relative;overflow:hidden}
+    .cornerstone-card:hover{border-color:#e91e63;transform:translateY(-3px);box-shadow:0 8px 30px rgba(233,30,99,.15)}
+    .cornerstone-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e91e63,#ff6b35);opacity:0;transition:opacity .2s}
+    .cornerstone-card:hover::before{opacity:1}
+    .cc-emoji{font-size:32px;margin-bottom:10px;display:block}
+    .cc-title{font-size:16px;font-weight:700;color:#eee;margin-bottom:6px;line-height:1.3}
+    .cc-desc{font-size:12px;color:#888;line-height:1.5;margin-bottom:10px}
+    .cc-count{font-size:12px;font-weight:600;color:#e91e63}
+    .browse-categories{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:32px}
+    .browse-cat-chip{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#1a1a24;border:1px solid #333;border-radius:30px;color:#ccc;text-decoration:none;font-size:13px;font-weight:500;transition:all .2s}
+    .browse-cat-chip:hover{border-color:#e91e63;color:#fff;background:#1f1a24}
+    .browse-cta{text-align:center;margin-top:20px}
+    .browse-cta a{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#e91e63,#ff6b35);color:#fff;font-weight:700;font-size:15px;border-radius:30px;text-decoration:none;transition:all .2s}
+    .browse-cta a:hover{transform:scale(1.05);box-shadow:0 6px 24px rgba(233,30,99,.3)}
+    .browse-stats{text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid #1a1a24}
+    .browse-stats span{color:#666;font-size:12px;margin:0 12px}
+    .browse-stats strong{color:#e91e63}
+  </style>
+  <div class="browse-footer">
+    <div class="browse-footer-inner">
+      <h2 class="browse-footer-title">🔥 Explore More Collections Xxx</h2>
+      <p class="browse-footer-sub">Don't stop here — browse our curated collections</p>
+
+      <div class="cornerstone-grid">
+        <% var csEntries = Object.entries(cornerstonePages); csEntries.forEach(function(pair) { var slug = pair[0]; var pg = pair[1]; %>
+        <a href="<%= slug %>" class="cornerstone-card">
+          <span class="cc-emoji"><%= slug.includes('tudung') ? '🧕' : slug.includes('xamateur') ? '🎬' : slug.includes('xmateur') ? '🎥' : slug.includes('mega') ? '🔥' : slug.includes('super') ? '⚡' : '📂' %></span>
+          <div class="cc-title"><%= (pg.heading || pg.title || slug).replace(/<[^>]*>/g, '').substring(0, 50) %></div>
+          <div class="cc-desc"><%= (pg.metaDescription || '').replace(/<[^>]*>/g, '').substring(0, 100) %></div>
+          <div class="cc-count"><%= (pg.videoFilter && pg.videoFilter.max) || 40 %>+ videos</div>
+        </a>
+        <% }); %>
+      </div>
+
+      <div class="browse-categories">
+        <a href="/?q=tudung" class="browse-cat-chip">🧕 Tudung Xxx</a>
+        <a href="/?q=viral" class="browse-cat-chip">🔥 Viral Xx</a>
+        <a href="/?q=montok" class="browse-cat-chip">🍑 Montok Xxx</a>
+        <a href="/?q=janda" class="browse-cat-chip">👵 Janda Xx</a>
+        <a href="/?q=bini" class="browse-cat-chip">👩 Bini Xxx</a>
+        <a href="/?q=chubby" class="browse-cat-chip">🎀 Chubby Xx</a>
+        <a href="/?q=indonesian" class="browse-cat-chip">🇮🇩 Indonesian Xxx</a>
+        <a href="/?q=thai" class="browse-cat-chip">🇹🇭 Thai Xx</a>
+        <a href="/?q=couple" class="browse-cat-chip">💕 Couple Xxx</a>
+        <a href="/?q=student" class="browse-cat-chip">🎓 Student Xx</a>
+        <a href="/collections" class="browse-cat-chip">📂 All Collections Xxx</a>
+      </div>
+
+      <div class="browse-cta">
+        <a href="/collections">Browse All Collections →</a>
+      </div>
+
+      <div class="browse-stats">
+        <span><strong><%= typeof totalVideos !== 'undefined' ? totalVideos : 6000 %>+</strong> videos</span>
+        <span><strong>Updated</strong> Daily</span>
+        <span><strong>100%</strong> Free</span>
+        <span><strong>HD</strong> Quality</span>
+      </div>
+    </div>
+  </div>
+  <% } %>
 
 <% if (typeof isSuperX !== 'undefined' && isSuperX) { %>
   <%- include('_about-superx') %>
@@ -1175,55 +1302,15 @@ html { scroll-behavior:smooth; }
       for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i === state.superxCarouselIdx);
     }
 
-    // Card click opens floating player (single click)
+    // Card click → navigate to player page (single click, instant)
     document.addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('button')) return;
       const card = e.target.closest('.video-card, .superx-carousel-card');
       if (card && card.dataset.id) {
         e.preventDefault();
         killAllPreviews();
-        openFloatingPlayer(card.dataset.id, card);
+        window.location.href = '/' + card.dataset.id;
       }
-    });
-
-    function navigateToPlayerPage(videoId) {
-      window.location.href = '/' + videoId;
-    }
-
-    // Desktop: double-click for full page
-    document.addEventListener('dblclick', (e) => {
-      const card = e.target.closest('.video-card, .superx-carousel-card');
-      if (card && card.dataset.id) {
-        e.preventDefault();
-        killAllPreviews();
-        navigateToPlayerPage(card.dataset.id);
-      }
-    });
-
-    // Age verification
-    var ageVerify = document.getElementById('ageVerify');
-    var ageYes = document.getElementById('ageYes');
-    var ageNo = document.getElementById('ageNo');
-    if (ageVerify && !localStorage.getItem('xmelayu_age_verified')) {
-      ageVerify.classList.add('active');
-    }
-    if (ageYes) ageYes.addEventListener('click', function() {
-      localStorage.setItem('xmelayu_age_verified', '1');
-      ageVerify.classList.remove('active');
-    });
-    if (ageNo) ageNo.addEventListener('click', function() {
-      window.location.href = 'https://google.com';
-    });
-
-    // View toggle
-    var videoGrid = document.getElementById('videoGrid');
-    var viewBtns = document.querySelectorAll('.view-btn');
-    viewBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        viewBtns.forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        if (videoGrid) videoGrid.className = 'video-grid view-' + this.dataset.view;
-      });
     });
 
     // ESC closes floating overlay; ← → navigates
@@ -1486,11 +1573,9 @@ html { scroll-behavior:smooth; }
       return n;
     }
 
-    var ALT_ONLY_WORDS = new Set(['pussy','tits','ass','boobs','dick','cock','cum','fuck','suck','blowjob','handjob','orgasm','anal','dildo','vibrator','masturbate','moan','creampie','gangbang','threesome','foursome','deepthroat','squirting','facial','cuckold','nude','naked','xxx','sex','porn']);
     function cleanAlt(v) {
       var txt = v.id || v.title || '';
-      txt = txt.replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
-      return txt.split(/\s+/).filter(function(w) { return w.length > 1 && !ALT_ONLY_WORDS.has(w.toLowerCase()); }).join(' ') || txt;
+      return txt.replace(/-[0-9A-F]{4,}$/i, '').replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
     }
     function formatDuration(seconds) {
       const mins = Math.floor(seconds / 60);
@@ -1563,7 +1648,7 @@ html { scroll-behavior:smooth; }
       const thumb = v.thumbnail || '';
       const vid = v.id;
       const badgeHtml = getBadgeHtml(v);
-      return `<a href="/${vid}" class="video-card" data-id="${vid}" data-preview="${v._rawVideoUrl || v.video || ''}" title="${v.title.replace(/"/g,'&quot;')}">
+      return `<a href="/${vid}" class="video-card" data-id="${vid}" data-preview="${v._rawVideoUrl || v.video || ''}">
         <div class="video-thumb" style="position:relative">
           <img src="${thumb}" alt="${cleanAlt(v)}" loading="lazy" ${idx < 4 ? 'fetchpriority="high"' : ''}>
           <video muted loop playsinline preload="none"></video>
@@ -1576,12 +1661,76 @@ html { scroll-behavior:smooth; }
     }
 
     const hc = <% if (typeof heroConfig !== 'undefined' && heroConfig) { %><%- JSON.stringify(heroConfig) %><% } else { %>{}<% } %>;
+
+    // Rotating multilingual section headers — covers tier 1/2/3 naturally
+    const SECTION_HEADERS = {
+      discover: [
+        '🎬 Video Viral Terbaru Xxx',
+        '🎬 Discover Malay Amateur Xx',
+        '🎬 Koleksi Video Amateur Xxx',
+        '🎬 Temukan Video Melayu Xx',
+        '🎬 Video Bokep Melayu Xxx',
+        '🎬 Phim Amator Malay Xx',
+        '🎬 Latest Viral Videos Xxx',
+        '🎬 Video Viral Southeast Asia Xx',
+      ],
+      trending: [
+        '🔥 Sedang Viral Sekarang Xxx',
+        '🔥 Trending Malay Videos Xx',
+        '🔥 Video Panas Melayu Xxx',
+        '🔥 Bokep Viral Indonesia Xx',
+        '🔥 Trending Southeast Asia Xxx',
+        '🔥 Video Hangat Hari Ini Xx',
+        '🔥 Phim Hot Malay Xxx',
+        '🔥 Most Watched This Week Xx',
+      ],
+      tudung: [
+        '🧕 Tudung Hijab Videos Xxx',
+        '🧕 Awek Tudung Viral Xx',
+        '🧕 Hijab Amateur Videos Xxx',
+        '🧕 Video Tudung Malaysia Xx',
+        '🧕 Bokep Hijab Indonesia Xxx',
+        '🧕 Malaysian Hijab Collection Xx',
+        '🧕 Gadis Bertudung Mesum Xxx',
+        '🧕 Phim Hijab Malay Xx',
+      ],
+      malay: [
+        '🇲🇾 Video Amatur Malaysia Xxx',
+        '🇲🇾 Malay Amateur Videos Xx',
+        '🇲🇾 Koleksi Melayu Xxx',
+        '🇲🇾 Video Melayu HD Xx',
+        '🇲🇾 Bokep Melayu Xxx',
+        '🇲🇾 Malaysian Homemade Xx',
+        '🇲🇾 Video Kampung Viral Xxx',
+        '🇲🇾 Phim Amator Malaysia Xx',
+      ],
+      more: [
+        '🎲 Video Lain-Lain Xxx',
+        '🎲 More Videos Xx',
+        '🎲 Tonton Lagi Xxx',
+        '🎲 Video Serupa Xx',
+        '🎲 Bokep Lainnya Xxx',
+        '🎲 Watch Next Xx',
+        '🎲 Phim Khac Xxx',
+        '🎲 Discover More Xx',
+        '🎲 Video Berkaitan Xxx',
+        '🎲 Untuk Anda Xx',
+      ]
+    };
+    let _sectionIdx = { discover: 0, trending: 0, tudung: 0, malay: 0, more: 0 };
+    function nextHeader(pool) {
+      const arr = SECTION_HEADERS[pool] || SECTION_HEADERS.more;
+      const h = arr[_sectionIdx[pool] % arr.length];
+      _sectionIdx[pool] = (_sectionIdx[pool] + 1) % arr.length;
+      return h;
+    }
+
     const CATS = [
-      { t: 'Malaysian Hijab Videos', p: /tudung|hijab/i },
-      { t: 'Viral Amateur Videos', p: /viral|scandal|bocor/i },
-      { t: 'Mature Amateur Videos', p: /milf|mature|emak|bini/i },
-      { t: 'Indonesian Amateur Videos', p: /indon|indonesia|jakarta/i },
-      { t: 'Malaysian Amateur Videos', p: /kolej|uitm|pelajar/i },
+      { t: '🧕 Video Tudung Hijab Xxx', p: /tudung|hijab/i },
+      { t: '🔥 Video Viral Skandal Xx', p: /viral|scandal|bocor/i },
+      { t: '👵 Video Mature Janda Xxx', p: /milf|mature|emak|bini/i },
+      { t: '🇮🇩 Video Indonesia Viral Xx', p: /indon|indonesia|jakarta/i },
+      { t: '🎓 Video Student Kolej Xxx', p: /kolej|uitm|pelajar/i },
     ];
 
     function section(title, vids) {
@@ -1641,10 +1790,10 @@ html { scroll-behavior:smooth; }
             }
             return result;
           }
-          let html = section('Discover Malay Amateur', pick(all, 15));
-          html += section('Trending Malay Videos', pick(all, 15));
-          html += section('Tudung Malay Hijab', pick(all, 15));
-          html += section('Malay Amateur Videos', pick(all, 15));
+          let html = section(nextHeader('discover'), pick(all, 15));
+          html += section(nextHeader('trending'), pick(all, 15));
+          html += section(nextHeader('tudung'), pick(all, 15));
+          html += section(nextHeader('malay'), pick(all, 15));
           CATS.forEach(c => {
             const vids = all.filter(v => c.p.test((v.title||'')+' '+kwText(v)));
             if (vids.length > 3) html += section(c.t, pick(vids, 10));
@@ -1677,9 +1826,7 @@ html { scroll-behavior:smooth; }
       state.batchIndex = end;
       if (batch.length === 0) return;
 
-      const tier1Labels = ['Asian Amateur Videos', 'Real Amateur Clips', 'Exclusive Amateur Content', 'Amateur Homemade Videos', 'Authentic Asian Amateur', 'Hidden Amateur Videos', 'Natural Couple Videos'];
-      const label = tier1Labels[state.batchIndex % tier1Labels.length];
-      feed.insertAdjacentHTML('beforeend', section(label, batch));
+      feed.insertAdjacentHTML('beforeend', section(nextHeader('more'), batch));
 
       state.hasMore = state.batchIndex < state.batchVideos.length;
       requestAnimationFrame(() => {
@@ -2072,14 +2219,13 @@ html { scroll-behavior:smooth; }
     });
   </script>
 
-<%- include('chat') %>
 <script type="text/javascript">
   setTimeout(function() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = 'https://js.juicyads.com/jp.php?c=4464v213p224u4r2p2a443b444&u=https%3A%2F%2Fwww.juicyads.rocks';
     document.body.appendChild(script);
-  }, 9000);
+  }, 9000); // 60,000 milliseconds = 1 minute
 </script>
 
 </body>
