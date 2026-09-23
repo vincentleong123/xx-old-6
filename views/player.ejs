@@ -588,6 +588,60 @@ body {
 /* Hide card body when preview visible */
 .v-card:hover .thumb .preview-strip ~ .play-overlay { opacity:0; }
 .thumb.preview-active img { opacity:0; transition:opacity 0.2s; }
+
+/* ══════════════════════════════════════════════════════════════
+   AD / FULLSCREEN / PLAYER SAFETY — injected-ad UI cleanup
+   ══════════════════════════════════════════════════════════════ */
+/* Never let the injected VAST ad player stretch its video */
+.video-wrapper video,
+#videoWrapper video,
+body > div video,
+body > ins video {
+  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.video-wrapper ins,
+.video-wrapper iframe,
+.video-wrapper video {
+  max-width: 100%;
+}
+/* Fullscreen hygiene for rotational auto-fullscreen */
+.video-wrapper:fullscreen,
+.video-wrapper:-webkit-full-screen {
+  border-radius: 0;
+  background: #000;
+}
+.video-wrapper:fullscreen video,
+.video-wrapper:-webkit-full-screen video { background: #000; }
+
+/* Dismiss button injected onto sticky bottom ads that lack one */
+.xm-ad-dismiss {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2147483647;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(10,10,11,0.82);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  transition: transform 0.15s;
+  font-family: inherit;
+}
+.xm-ad-dismiss:hover { background: #e81123; transform: scale(1.1); }
+
+/* Duplicate scrubber painted by injected ad players — keep just the native bar */
+.xm-extra-scrubber { display: none !important; }
   </style>
 </head>
 <body>
@@ -1341,6 +1395,191 @@ body {
       if (mainContent) {
         new MutationObserver(function() { attachPreviewListeners(); }).observe(mainContent, { childList: true, subtree: true });
       }
+    })();
+  </script>
+
+  <script>
+    /* ══════════════════════════════════════════════════════════════
+       1/3  STICKY AD DISMISS — inject a close (✕) button onto any
+       bottom-anchored ad wrapper that the ad SDK forgot to give one.
+       Only targets fixed/absolute elements that wrap a cross-origin
+       iframe (i.e. external ad frames), so the site UI is never touched.
+       ══════════════════════════════════════════════════════════════ */
+    (function () {
+      if (!window.MutationObserver) return;
+      var HANDLED = 'xmAdHandled';
+      var EXCLUDE = /chat-fab|chat-window|xm-ad-dismiss|pip-container|mobile-menu|floating-player/i;
+
+      function isBottomBar(el) {
+        if (!el || el.nodeType !== 1 || el === document.body || el === document.documentElement) return false;
+        var cs = getComputedStyle(el);
+        if (cs.position !== 'fixed' && cs.position !== 'absolute') return false;
+        if (cs.visibility === 'hidden' || cs.display === 'none' || Number(cs.opacity) === 0) return false;
+        if (EXCLUDE.test(el.id + ' ' + el.className)) return false;
+        var r = el.getBoundingClientRect();
+        if (!r || r.width < 80 || r.height < 30) return false;
+        var vh = window.innerHeight || document.documentElement.clientHeight || 1;
+        if (vh - r.bottom > 140) return false;  /* must hug the bottom edge */
+        if (r.height > vh * 0.4) return false;   /* sticky strips are short */
+        return true;
+      }
+
+      function closestBar(node) {
+        var n = node;
+        while (n && n.nodeType === 1 && n !== document.body) {
+          if (isBottomBar(n)) return n;
+          n = n.parentElement;
+        }
+        return null;
+      }
+
+      function isExternalAd(el) {
+        var frames = el.querySelectorAll('iframe');
+        for (var i = 0; i < frames.length; i++) {
+          try {
+            var w = frames[i].contentWindow;
+            if (w && (w === window || frames[i].contentDocument)) continue; /* same-origin → ours */
+          } catch (e) { return true; }  /* cross-origin iframe → external ad */
+        }
+        return frames.length > 0;
+      }
+
+      function attachTo(el) {
+        if (el.dataset[HANDLED]) return;
+        el.dataset[HANDLED] = '1';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'xm-ad-dismiss';
+        btn.setAttribute('aria-label', 'Close ad');
+        btn.textContent = '\u2715';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          el.style.display = 'none';
+        }, true);
+        el.appendChild(btn);
+      }
+
+      function scan() {
+        var tops = document.querySelectorAll('body > div, body > iframe, body > ins');
+        for (var i = 0; i < tops.length; i++) {
+          var bar = closestBar(tops[i]);
+          if (bar && isExternalAd(bar)) attachTo(bar);
+        }
+      }
+
+      var mo = new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          if (muts[i].addedNodes.length) { scan(); break; }
+        }
+      });
+      mo.observe(document.documentElement, { childList: true, subtree: true });
+      window.addEventListener('load', function () { setTimeout(scan, 800); setTimeout(scan, 4000); });
+      setTimeout(scan, 2500);
+    })();
+
+    /* ══════════════════════════════════════════════════════════════
+       2/3  ROTATION AUTO-FULLSCREEN — on mobile, rotating to landscape
+       while a video is playing pumps the player to fullscreen; rotating
+       back to portrait returns to the normal page. Manual fullscreen is
+       never force-closed.
+       ══════════════════════════════════════════════════════════════ */
+    (function () {
+      var player = document.getElementById('videoPlayer');
+      var wrapper = player ? player.parentElement : null;
+      if (!player || !wrapper) return;
+      if (!('ontouchstart' in window)) return;
+      if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) return;
+
+      var autoEntered = false;
+
+      function isLandscape() {
+        try {
+          if (screen.orientation && screen.orientation.type) {
+            return screen.orientation.type.indexOf('landscape') === 0;
+          }
+        } catch (e) {}
+        if (typeof window.orientation === 'number') return window.orientation === 90 || window.orientation === -90;
+        return window.innerHeight < window.innerWidth;
+      }
+      function requestFs() {
+        if (player.webkitEnterFullscreen) {
+          try { autoEntered = true; player.webkitEnterFullscreen(); return; } catch (e) {}
+        }
+        var fn = wrapper.requestFullscreen || wrapper.webkitRequestFullscreen || wrapper.mozRequestFullScreen || wrapper.msRequestFullscreen;
+        if (fn) { try { autoEntered = true; fn.call(wrapper); } catch (e) {} }
+      }
+      function exitFs() {
+        if (player.webkitExitFullscreen && (player.webkitDisplayingFullscreen || document.webkitIsFullScreen)) {
+          try { player.webkitExitFullscreen(); autoEntered = false; return; } catch (e) {}
+        }
+        var fn = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+        if (fn) { try { fn.call(document); } catch (e) {} }
+        autoEntered = false;
+      }
+      function inFs() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+      }
+
+      function onOrient() {
+        if (isLandscape()) {
+          if (!player.paused && !inFs()) requestFs();
+        } else if (autoEntered && inFs()) {
+          exitFs();
+        }
+      }
+
+      window.addEventListener('orientationchange', function () { setTimeout(onOrient, 300); });
+      var lastMode = null;
+      window.addEventListener('resize', function () {
+        if (!window.orientation) {
+          var mode = window.innerHeight < window.innerWidth;
+          if (mode !== lastMode) { lastMode = mode; setTimeout(onOrient, 300); }
+        }
+      });
+      window.addEventListener('webkitfullscreenchange', onFsChange);
+      window.addEventListener('fullscreenchange', onFsChange);
+      function onFsChange() { if (!inFs()) autoEntered = false; }
+    })();
+
+    /* ══════════════════════════════════════════════════════════════
+       3/3  DUPLICATE TIMELINE CLEANUP — the injected ad player paints
+       its own seek/progress bar over the native HTML5 controls. Native
+       controls live in the video shadow DOM, so ANY scrubber element
+       found in the page's light DOM was added by the ad SDK and is
+       hidden, leaving exactly one clean timeline.
+       ══════════════════════════════════════════════════════════════ */
+    (function () {
+      if (!window.MutationObserver) return;
+      var wrap = document.getElementById('videoWrapper');
+      var SCRUB =
+        '.vjs-progress-control, .vjs-progress-holder, .jw-progress, .jw-slider, ' +
+        'div[class*="seek-bar"], div[class*="seekbar"], div[class*="scrubber"], ' +
+        'div[class*="scrub-bar"], div[class*="time-slider"], div[class*="progressbar"], ' +
+        'div[class*="ad-progress"], div[class*="adProgress"], div[class*="ima-ad-progress"], ' +
+        'div[class*="timeline"]';
+
+      function killFrom(root) {
+        if (!root || !root.querySelectorAll) return;
+        root.querySelectorAll(SCRUB).forEach(function (el) {
+          el.classList.add('xm-extra-scrubber');
+        });
+      }
+
+      function killAll() {
+        killFrom(wrap);
+        document.querySelectorAll('.video-wrapper, [class*="ad-player"], [class*="adplayer"]').forEach(killFrom);
+      }
+
+      var mo = new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          if (muts[i].addedNodes.length) { killAll(); break; }
+        }
+      });
+      mo.observe(document.documentElement, { childList: true, subtree: true });
+      killAll();
+      setTimeout(killAll, 3000);
+      setTimeout(killAll, 8000);
     })();
   </script>
 

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Video.js Player Prototype — xMelayu</title>
+  <link href="https://vjs.zencdn.net/8.12.0/video-js.css" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #ff2d55;
+      --bg: #0a0a0b;
+      --bg2: #111114;
+      --text: #fff;
+      --text2: #a0a0a8;
+      --border: #2a2a30;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px clamp(12px, 4vw, 40px) 80px;
+    }
+    .proto-top {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .proto-badge {
+      background: var(--accent); color: #fff;
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      padding: 5px 12px; border-radius: 20px; text-transform: uppercase;
+    }
+    .proto-title { font-size: 18px; font-weight: 700; }
+    .proto-back { margin-left: auto; color: var(--text2); font-size: 13px; text-decoration: none; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; }
+    .proto-back:hover { color: var(--text); border-color: var(--accent); }
+
+    .stage {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+    .video-js {
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .video-js .vjs-big-play-button {
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      width: 64px; height: 64px; line-height: 64px;
+      left: 50%; top: 50%; transform: translate(-50%, -50%);
+      box-shadow: 0 8px 30px rgba(255,45,85,0.5);
+    }
+    .video-js .vjs-big-play-button:hover { background: #ff4d6f; }
+    .video-js .vjs-control-bar { background: rgba(8,8,10,0.9); }
+    .video-js .vjs-play-progress,
+    .video-js .vjs-volume-level { background: var(--accent); }
+    .video-js .vjs-slider { background: rgba(255,255,255,0.15); }
+    .video-js .vjs-time-tooltip { background: var(--accent); color: #fff; }
+    .video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content { background: #141418; }
+    .video-js .vjs-menu-button-popup .vjs-menu-item--selected { background: var(--accent); }
+
+    /* custom bar buttons */
+    .xm-bar-btn { font-size: 17px; text-shadow: none; }
+    .xm-bar-btn:hover { color: var(--accent); }
+
+    /* hover scrub preview window */
+    .xm-preview {
+      position: absolute;
+      z-index: 20;
+      width: 240px;
+      height: 136px;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+      pointer-events: none;
+      display: none;
+      overflow: hidden;
+    }
+    .xm-preview canvas { width: 240px; height: 135px; display: block; object-fit: cover; }
+    .xm-preview .xm-preview-time {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      bottom: 6px; padding: 2px 8px; border-radius: 10px;
+      background: rgba(0,0,0,0.72); color: #ffd7de;
+      font-size: 11px; font-weight: 600; font-family: 'SF Mono', Consolas, monospace;
+    }
+
+    /* settings popover */
+    .xm-pop {
+      position: absolute;
+      right: 10px;
+      bottom: 56px;
+      z-index: 30;
+      width: 260px;
+      background: rgba(15,15,18,0.97);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+      display: none;
+    }
+    .xm-pop.open { display: block; }
+    .xm-pop-head {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--text2); margin-bottom: 12px;
+    }
+    .xm-pop-close { background: none; border: none; color: var(--text2); font-size: 15px; cursor: pointer; line-height: 1; }
+    .xm-pop-close:hover { color: #fff; }
+    .xm-field { margin-bottom: 12px; }
+    .xm-field:last-child { margin-bottom: 0; }
+    .xm-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+    .xm-label b { color: var(--text); font-weight: 600; font-family: 'SF Mono', Consolas, monospace; }
+    .xm-field input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+    .xm-pop select {
+      width: 100%; padding: 6px 8px; background: #1c1c21; color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px; font-size: 12px;
+    }
+    .xm-pop-row { display: flex; gap: 8px; }
+    .xm-pop-row .xm-btn-link {
+      flex: 1; padding: 7px 0; background: var(--accent); border: none; border-radius: 8px;
+      color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center;
+    }
+    .xm-pop-row .xm-btn-link:hover { background: #ff4d6f; }
+    .xm-pop-hint { font-size: 10px; color: #6b6b75; margin-top: 8px; line-height: 1.5; }
+
+    .proto-cards {
+      max-width: 960px; margin: 20px auto 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
+    }
+    .proto-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+      font-size: 12px; color: var(--text2); line-height: 1.6;
+    }
+    .proto-card h3 { font-size: 12px; color: #fff; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .proto-card b { color: #ffd7de; }
+    .proto-card .dim { color: #6b6b75; }
+  </style>
+</head>
+<body>
+  <div class="proto-top">
+    <span class="proto-badge">Prototype</span>
+    <span class="proto-title">Video.js player — controls + scrub preview + settings</span>
+    <a class="proto-back" href="/">← Back to gallery</a>
+  </div>
+
+  <div class="stage" id="stage">
+    <video id="vjsVideo" class="video-js vjs-big-play-centered" controls playsinline
+           poster="<%= poster %>" preload="metadata"
+           data-setup='{ "playbackRates": [0.5, 0.75, 1, 1.25, 1.5, 2], "userActions": { "hotkeys": true } }'>
+      <source src="<%= src %>" type="video/mp4">
+    </video>
+
+    <div class="xm-preview" id="xmPreview">
+      <canvas id="xmCanvas" width="320" height="180"></canvas>
+      <div class="xm-preview-time" id="xmPreviewTime">0:00</div>
+    </div>
+
+    <div class="xm-pop" id="xmPop">
+      <div class="xm-pop-head">
+        <span>Video Settings</span>
+        <button class="xm-pop-close" id="xmPopClose" title="Close">&#10005;</button>
+      </div>
+      <div class="xm-field">
+        <div class="xm-label"><span>Brightness</span><b id="xmBrVal">1.00</b></div>
+        <input type="range" id="xmBr" min="0.5" max="1.8" step="0.05" value="1">
+      </div>
+      <div class="xm-field">
+        <div class="xm-label"><span>Contrast</span><b id="xmCnVal">1.00</b></div>
+        <input type="range" id="xmCn" min="0.5" max="2" step="0.05" value="1">
+      </div>
+      <div class="xm-field">
+        <div class="xm-label"><span>Saturation</span><b id="xmStVal">1.00</b></div>
+        <input type="range" id="xmSt" min="0" max="2" step="0.05" value="1">
+      </div>
+      <div class="xm-field">
+        <div class="xm-label"><span>Playback speed</span></div>
+        <select id="xmRate">
+          <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+      </div>
+      <div class="xm-pop-row">
+        <button class="xm-btn-link" id="xmReset">Reset</button>
+      </div>
+      <div class="xm-pop-hint">Brightness/contrast/saturation only affect this page for now — persisted settings need a small backend/storage toggle.</div>
+    </div>
+  </div>
+
+  <div class="proto-cards">
+    <div class="proto-card">
+      <h3>Scrub preview</h3>
+      Hover the timeline → floating window shows the scene at that time, exactly like YouTube. Desktop only.
+    </div>
+    <div class="proto-card">
+      <h3>Settings</h3>
+      Gear button ⚙ opens <b>brightness, contrast, saturation, speed</b> + PiP. Built-in speed menu also available from the control bar.
+    </div>
+    <div class="proto-card">
+      <h3>Not wired yet</h3>
+      <b>VAST preroll</b> (needs your tag), <b>quality selector</b> (needs multi-bitrate sources), PPV/remove-ads overlay. <span class="dim">— next step after you approve this player.</span>
+    </div>
+  </div>
+
+  <!-- hidden preview scrubber video — same source, seeks independently so playback never interrupts -->
+  <video id="xmScrub" muted playsinline preload="metadata" style="display:none" crossorigin="anonymous"></video>
+
+  <script src="https://vjs.zencdn.net/8.12.0/video.min.js"></script>
+  <script>
+    (function () {
+      var player = videojs('vjsVideo');
+
+      function fmt(s) {
+        if (!isFinite(s) || s < 0) s = 0;
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+
+      /* ────────────────────────────────────────────────
+         SCRUB PREVIEW (YouTube-style)
+         ──────────────────────────────────────────────── */
+      var stage = document.getElementById('stage');
+      var preview = document.getElementById('xmPreview');
+      var pTime = document.getElementById('xmPreviewTime');
+      var pCanvas = document.getElementById('xmCanvas');
+      var pCtx = pCanvas.getContext('2d');
+      var scrubVideo = document.getElementById('xmScrub');
+      var scrubTmr = 0;
+
+      player.ready(function () {
+        scrubVideo.src = player.currentSrc ? player.currentSrc() : '<%= src %>';
+        scrubVideo.load();
+
+        player.on('loadedmetadata', function () {
+          if (scrubVideo.src !== player.currentSrc()) {
+            scrubVideo.src = player.currentSrc();
+            scrubVideo.load();
+          }
+        });
+      });
+
+      function showPreview(x, time) {
+        preview.style.display = 'block';
+        pTime.textContent = fmt(time);
+        var stageRect = stage.getBoundingClientRect();
+        var half = preview.offsetWidth / 2;
+        var clampX = Math.max(half, Math.min(x, stageRect.width - half));
+        preview.style.left = (clampX - half) + 'px';
+        preview.style.top = '8px';
+        scheduleSeek(time);
+      }
+
+      function hidePreview() {
+        preview.style.display = 'none';
+      }
+
+      function scheduleSeek(time) {
+        window.clearTimeout(scrubTmr);
+        scrubTmr = window.setTimeout(function () {
+          if (scrubVideo.seeking || scrubVideo._xvSeeking) return;
+          scrubVideo._xvSeeking = true;
+          scrubVideo.addEventListener('seeked', onScrubSeeked);
+          try { scrubVideo.currentTime = time; } catch (e) { scrubVideo._xvSeeking = false; }
+        }, 60);
+      }
+
+      function onScrubSeeked() {
+        scrubVideo.removeEventListener('seeked', onScrubSeeked);
+        scrubVideo._xvSeeking = false;
+        if (preview.style.display === 'none') return;
+        try {
+          pCtx.drawImage(scrubVideo, 0, 0, pCanvas.width, pCanvas.height);
+          /* match the site's warm/bright boost used on thumbnails */
+          var img = pCtx.getImageData(0, 0, pCanvas.width, pCanvas.height);
+          var d = img.data, i;
+          for (i = 0; i < d.length; i += 4) {
+            d[i]     = Math.min(255, d[i]     * 1.12);
+            d[i + 1] = Math.min(255, d[i + 1] * 1.10);
+            d[i + 2] = Math.min(255, d[i + 2] * 1.06);
+          }
+          pCtx.putImageData(img, 0, 0);
+        } catch (e) {}
+      }
+
+      player.ready(function () {
+        var progress = player.controlBar.progressControl.el();
+        progress.addEventListener('mousemove', function (e) {
+          var rect = progress.getBoundingClientRect();
+          var frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          var dur = player.duration();
+          if (!isFinite(dur)) return;
+          var t = frac * dur;
+          var stageRect = stage.getBoundingClientRect();
+          showPreview(e.clientX - stageRect.left, t);
+        });
+        progress.addEventListener('mouseleave', hidePreview);
+      });
+
+      /* ────────────────────────────────────────────────
+         SETTINGS: gear + PiP buttons, popover
+         ──────────────────────────────────────────────── */
+      var vjsEl = document.getElementById('vjsVideo');
+      var videoEl = null;
+      player.ready(function () {
+        videoEl = player.tech(true).el();
+
+        function addBarButton(label, html, onClick) {
+          var bar = player.controlBar.el();
+          var marker = bar.querySelector('.vjs-fullscreen-control');
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'vjs-control vjs-button xm-bar-btn';
+          btn.setAttribute('title', label);
+          btn.innerHTML = html;
+          btn.addEventListener('click', function (e) {
+            e.preventDefault(); e.stopPropagation(); onClick();
+          });
+          bar.insertBefore(btn, marker);
+          return btn;
+        }
+
+        addBarButton('Settings', '&#9881;', togglePop);
+        if (document.pictureInPictureEnabled && videoEl.requestPictureInPicture) {
+          addBarButton('Picture in Picture', '&#11131;', function () {
+            try {
+              if (document.pictureInPictureElement) document.exitPictureInPicture();
+              else { if (videoEl.paused) player.play(); videoEl.requestPictureInPicture().catch(function () {}); }
+            } catch (e) {}
+          });
+        }
+      });
+
+      var pop = document.getElementById('xmPop');
+      function togglePop() { pop.classList.toggle('open'); }
+
+      document.getElementById('xmPopClose').addEventListener('click', function () { pop.classList.remove('open'); });
+      document.addEventListener('click', function (e) {
+        if (pop.classList.contains('open') &&
+            !pop.contains(e.target) && !e.target.matches('.xm-bar-btn')) pop.classList.remove('open');
+      });
+
+      function applyFx() {
+        var br = document.getElementById('xmBr').value;
+        var cn = document.getElementById('xmCn').value;
+        var st = document.getElementById('xmSt').value;
+        document.getElementById('xmBrVal').textContent = Number(br).toFixed(2);
+        document.getElementById('xmCnVal').textContent = Number(cn).toFixed(2);
+        document.getElementById('xmStVal').textContent = Number(st).toFixed(2);
+        if (videoEl) videoEl.style.filter = 'brightness(' + br + ') contrast(' + cn + ') saturate(' + st + ')';
+      }
+      ['xmBr', 'xmCn', 'xmSt'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', applyFx);
+      });
+
+      document.getElementById('xmRate').addEventListener('change', function () {
+        player.playbackRate(parseFloat(this.value));
+      });
+
+      document.getElementById('xmReset').addEventListener('click', function () {
+        document.getElementById('xmBr').value = 1;
+        document.getElementById('xmCn').value = 1;
+        document.getElementById('xmSt').value = 1;
+        document.getElementById('xmRate').value = 1;
+        player.playbackRate(1);
+        applyFx();
+      });
+
+      /* ────────────────────────────────────────────────
+         ROTATION AUTO-FULLSCREEN (mobile)
+         ──────────────────────────────────────────────── */
+      if ('ontouchstart' in window && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')) {
+        var autoEntered = false;
+        function isLand() {
+          try {
+            if (screen.orientation && screen.orientation.type) return screen.orientation.type.indexOf('landscape') === 0;
+          } catch (e) {}
+          if (typeof window.orientation === 'number') return window.orientation === 90 || window.orientation === -90;
+          return window.innerHeight < window.innerWidth;
+        }
+        function orientTick() {
+          if (isLand()) {
+            if (!player.paused() && !player.isFullscreen()) {
+              autoEntered = true;
+              try { player.requestFullscreen(); } catch (e) {}
+            }
+          } else if (autoEntered && player.isFullscreen()) {
+            try { player.exitFullscreen(); } catch (e) {}
+            autoEntered = false;
+          }
+        }
+        window.addEventListener('orientationchange', function () { setTimeout(orientTick, 300); });
+        player.on('fullscreenchange', function () { if (!player.isFullscreen()) autoEntered = false; });
+      }
+    })();
+  </script>
+</body>
+</html>

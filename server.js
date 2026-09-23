@@ -1979,6 +1979,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// ═══ PLAYER PROTOTYPE — try-before-you-commit test page (noindex) ═══
+app.get('/player-prototype', (req, res) => {
+  const v = videos[Math.floor(Math.random() * Math.min(25, videos.length || 1))] || videos[0];
+  if (!v) return res.status(404).render('error', { message: 'No videos loaded yet' });
+  res.render('player-prototype', {
+    videoId: v.id,
+    title: v.title,
+    src: v._rawVideoUrl || `/raw/videos/${encodeURIComponent(v.id)}.mp4`,
+    poster: v.thumbnail
+  });
+});
+
 app.get('/:id', async (req, res) => {
   const video = videos.find(v => v.id === req.params.id);
   if (!video) return res.status(404).render('error', { message: 'Video not found' });
